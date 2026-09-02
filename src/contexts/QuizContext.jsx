@@ -1,0 +1,158 @@
+import { createContext, useContext, useState, useEffect } from 'react';
+import { useUser } from './UserContext';
+import { getPDFText } from '../services/pdfService';
+import { generateQuizQuestions } from '../services/questionGenerator';
+import {
+  quizzesRef,
+  quizDoc,
+  createDoc,
+  patchDoc,
+  removeDoc,
+  onSnapshot,
+  query,
+  where,
+  orderBy,
+  serverTimestamp,
+} from '../firebase/firestore';
+
+const QuizContext = createContext(undefined);
+
+export function QuizProvider({ children }) {
+  const { user, isLoggedIn } = useUser();
+  const uid = user?.id;
+
+  const [quizzes, setQuizzes] = useState([]);
+  const [activeQuizId, setActiveQuizId] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // ─── REAL-TIME: Load user's quizzes ───
+  useEffect(() => {
+    if (!uid) {
+      setQuizzes([]);
+      setLoading(false);
+      return;
+    }
+
+    const q = query(quizzesRef, where('userId', '==', uid), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snap) => {
+      setQuizzes(snap.docs.map(d => ({
+        id: d.id,
+        ...d.data(),
+        completedAt: d.data().completedAt?.toDate?.()?.toISOString() || d.data().completedAt,
+        createdAt: d.data().createdAt?.toDate?.()?.toISOString() || d.data().createdAt,
+      })));
+      setLoading(false);
+    }, (err) => {
+      console.error('Quizzes listener error:', err);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [uid]);
+
+  // ─── GENERATE QUIZ FROM PDFs ───
+  const generateQuiz = async (selectedPdfIds, selectedPdfTitles, count) => {
+    if (!uid) return null;
+
+    let combinedText = '';
+    for (const id of selectedPdfIds) {
+      try {
+        const text = await getPDFText(id);
+        if (text) combinedText += text + '\n\n';
+      } catch (err) {
+        console.error('Failed to read text for pdf:', id, err);
+      }
+    }
+
+    let questions = [];
+    if (combinedText.trim().length > 50) {
+      questions = generateQuizQuestions(combinedText, count);
+    }
+
+    if (questions.length === 0) return null;
+
+    const title = selectedPdfTitles.length > 1
+      ? `Quiz from ${selectedPdfTitles.length} PDFs`
+      : `Quiz: ${selectedPdfTitles[0] || 'Custom'}`;
+
+    const quizId = await createDoc(quizzesRef, {
+      userId: uid,
+      title,
+      description: `${questions.length} questions from your study materials.`,
+      questions,
+      totalQuestions: questions.length,
+      score: null,
+      answers: [],
+      completedAt: null,
+    });
+
+    return quizId;
+  };
+
+  // ─── SUBMIT ANSWER ───
+  const submitAnswer = async (quizId, questionIndex, selectedOptionIndex) => {
+    const quiz = quizzes.find(q => q.id === quizId);
+    if (!quiz) return;
+
+    const newAnswers = [...(quiz.answers || [])];
+    newAnswers[questionIndex] = selectedOptionIndex;
+
+    await patchDoc(quizDoc(quizId), { answers: newAnswers });
+  };
+
+  // ─── FINISH QUIZ ───
+  const finishQuiz = async (quizId) => {
+    const quiz = quizzes.find(q => q.id === quizId);
+    if (!quiz) return;
+
+    const correct = quiz.questions.reduce((acc, q, i) => {
+      return acc + ((quiz.answers || [])[i] === q.correctIndex ? 1 : 0);
+    }, 0);
+
+    await patchDoc(quizDoc(quizId), {
+      score: correct,
+      completedAt: serverTimestamp(),
+    });
+  };
+
+  // ─── RESET QUIZ ───
+  const resetQuiz = async (quizId) => {
+    await patchDoc(quizDoc(quizId), {
+      score: null,
+      answers: [],
+      completedAt: null,
+    });
+  };
+
+  // ─── DELETE QUIZ ───
+  const deleteQuiz = async (quizId) => {
+    await removeDoc(quizDoc(quizId));
+    if (activeQuizId === quizId) setActiveQuizId(null);
+  };
+
+  return (
+    <QuizContext.Provider
+      value={{
+        quizzes,
+        activeQuizId,
+        setActiveQuizId,
+        generateQuiz,
+        submitAnswer,
+        finishQuiz,
+        resetQuiz,
+        deleteQuiz,
+        loading,
+      }}
+    >
+      {children}
+    </QuizContext.Provider>
+  );
+}
+
+export function useQuiz() {
+  const context = useContext(QuizContext);
+  if (context === undefined) {
+    throw new Error('useQuiz must be used within a QuizProvider');
+  }
+  return context;
+}
