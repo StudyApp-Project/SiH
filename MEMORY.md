@@ -1,9 +1,10 @@
 # 🧠 Project Memory & Agent Execution Blueprint — EduWrap
 
-> **CRITICAL DIRECTIVE FOR ALL AI AGENTS:**  
-> 1. Read this file **FIRST** before touching any code.  
-> 2. Read `IMPLEMENTATION_PLAN.md` for full architectural details, data schemas, and security rules.  
-> 3. Work on **ONE PHASE AT A TIME**. Do NOT skip ahead or implement multiple phases simultaneously.  
+> **CRITICAL DIRECTIVE FOR ALL AI AGENTS:**
+>
+> 1. Read this file **FIRST** before touching any code.
+> 2. Read `IMPLEMENTATION_PLAN.md` for full architectural details, data schemas, and security rules.
+> 3. Work on **ONE PHASE AT A TIME**. Do NOT skip ahead or implement multiple phases simultaneously.
 > 4. After completing tasks, run the verification gates, update the checkboxes `[x]`, and append to the Session Log at the bottom.
 
 ---
@@ -12,22 +13,22 @@
 
 To prevent common agent mistakes, adhere strictly to these locked constraints:
 
-| # | Rule | Why It Matters |
-|---|---|---|
-| 1 | **No Hardcoded AI Model Names** | Configure AI models via `GEMINI_MODEL` environment variable on the server-side Worker. Never hardcode `gemini-2.0-flash` or any specific version. |
-| 2 | **No AI Keys in Browser** | All AI requests route through Cloudflare Worker. Never expose API keys in frontend bundles. |
-| 3 | **No Direct Client Writes to Competency Records** | Learners cannot write to `competency_records/{uid}`. Only the trusted Worker evaluates assessments and writes competency changes. `assessment_results` are also Worker-only writes. *(Scaffolded in Phase 1 to prevent rule blocking).* |
-| 4 | **Multi-Tenancy (`organizationId`) Everywhere** | Include `organizationId` in all domain records from Day 1. Firestore rules must scope queries by `resource.data.organizationId == userOrg()`. |
-| 5 | **FRAC Alignment** | The data model mirrors the government's official **FRAC** (Framework of Roles, Activities and Competencies) methodology: `ROLE → ACTIVITY → COMPETENCY` three-construct mapping, with `Behavioural / Functional / Domain` categories. Do NOT invent a parallel competency taxonomy. |
-| 6 | **Strict Provenance Labeling** | Label all domain data: `✅ VERIFIED OFFICIAL` (iGOT exists, FRAC methodology, ISS designations), `⚠️ PROPOSED FRAMEWORK` (our competencies, L1–L5 descriptors, scoring), `🟡 SYNTHETIC DEMO DATA` (mock employees, courses, MCQs, scores). |
-| 7 | **Self-Assessed vs Assessment-Verified Distinction** | Competency levels must visually distinguish 🛡️ assessment-verified from ✍️ self-assessed. Never treat self-reported levels as authoritative. |
-| 8 | **Tailwind CSS v4 Syntax** | Always use `bg-(--bg-elevated)`, `text-(--text-primary)`. **NEVER** use legacy `bg-[var(--...)]`. |
-| 9 | **Preserve Deprecated Code** | Hide deprecated features (*Rooms, Doubts, Flashcards, Notes, Sandbox*) from navigation. Do **NOT** delete files without proper unhooking. These are the top scope-creep risk. |
-| 10 | **Firebase Storage First, R2 Later** | Firebase Storage is the **default** for document uploads during hackathon. R2 is the **stretch goal** (lower egress cost). Don't block progress waiting for R2 setup. |
-| 11 | **iGOT = DSEP Adapter & Deep Links** | Adhere to DSEP Protocol interface, simulate Karma Points tied to APAR, and provide deep links to live iGOT course catalog pages (`https://igotkarmayogi.gov.in/app/toc/...`). |
-| 12 | **Mandatory Verification Gate** | Before reporting a phase done: `npx eslint . --quiet` (0 errors), `npm run build` (clean), and `npm test` (100% pass). |
-| 13 | **Single-Prompt Batch Generation** | Never send individual concurrent requests per question to Gemini. Batch 10–15 questions into a single structured prompt to stay within Gemini's 15 RPM free tier limit. |
-| 14 | **PDF Page Limit Protection** | Always enforce a 15-page limit or chapter selector during client-side PDF extraction to prevent browser tab memory freezing on 200-page MoSPI manuals. |
+| #   | Rule                                                 | Why It Matters                                                                                                                                                                                                                                                                      |
+| --- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **No Hardcoded AI Model Names**                      | Configure AI models via `GEMINI_MODEL` environment variable on the server-side Worker. Never hardcode `gemini-2.0-flash` or any specific version.                                                                                                                                   |
+| 2   | **No AI Keys in Browser**                            | All AI requests route through Cloudflare Worker. Never expose API keys in frontend bundles.                                                                                                                                                                                         |
+| 3   | **No Direct Client Writes to Competency Records**    | Learners cannot write to `competency_records/{uid}`. Only the trusted Worker evaluates assessments and writes competency changes. `assessment_results` are also Worker-only writes. _(Scaffolded in Phase 1 to prevent rule blocking)._                                             |
+| 4   | **Multi-Tenancy (`organizationId`) Everywhere**      | Include `organizationId` in all domain records from Day 1. Firestore rules must scope queries by `resource.data.organizationId == userOrg()`.                                                                                                                                       |
+| 5   | **FRAC Alignment**                                   | The data model mirrors the government's official **FRAC** (Framework of Roles, Activities and Competencies) methodology: `ROLE → ACTIVITY → COMPETENCY` three-construct mapping, with `Behavioural / Functional / Domain` categories. Do NOT invent a parallel competency taxonomy. |
+| 6   | **Strict Provenance Labeling**                       | Label all domain data: `✅ VERIFIED OFFICIAL` (iGOT exists, FRAC methodology, ISS designations), `⚠️ PROPOSED FRAMEWORK` (our competencies, L1–L5 descriptors, scoring), `🟡 SYNTHETIC DEMO DATA` (mock employees, courses, MCQs, scores).                                          |
+| 7   | **Self-Assessed vs Assessment-Verified Distinction** | Competency levels must visually distinguish 🛡️ assessment-verified from ✍️ self-assessed. Never treat self-reported levels as authoritative.                                                                                                                                        |
+| 8   | **Tailwind CSS v4 Syntax**                           | Always use `bg-(--bg-elevated)`, `text-(--text-primary)`. **NEVER** use legacy `bg-[var(--...)]`.                                                                                                                                                                                   |
+| 9   | **Preserve Deprecated Code**                         | Hide deprecated features (_Rooms, Doubts, Flashcards, Notes, Sandbox_) from navigation. Do **NOT** delete files without proper unhooking. These are the top scope-creep risk.                                                                                                       |
+| 10  | **Firebase Storage First, R2 Later**                 | Firebase Storage is the **default** for document uploads during hackathon. R2 is the **stretch goal** (lower egress cost). Don't block progress waiting for R2 setup.                                                                                                               |
+| 11  | **iGOT = DSEP Adapter & Deep Links**                 | Adhere to DSEP Protocol interface, simulate Karma Points tied to APAR, and provide deep links to live iGOT course catalog pages (`https://igotkarmayogi.gov.in/app/toc/...`).                                                                                                       |
+| 12  | **Mandatory Verification Gate**                      | Before reporting a phase done: `npx eslint . --quiet` (0 errors), `npm run build` (clean), and `npm test` (100% pass).                                                                                                                                                              |
+| 13  | **Single-Prompt Batch Generation**                   | Never send individual concurrent requests per question to Gemini. Batch 10–15 questions into a single structured prompt to stay within Gemini's 15 RPM free tier limit.                                                                                                             |
+| 14  | **PDF Page Limit Protection**                        | Always enforce a 15-page limit or chapter selector during client-side PDF extraction to prevent browser tab memory freezing on 200-page MoSPI manuals.                                                                                                                              |
 
 ---
 
@@ -47,25 +48,27 @@ Official Profile → FRAC Role Selection (JSO / SSO / Field Investigator) → Ac
 **Gap severity formula** (FRAC-aware):
 $$\text{severityScore} = (\text{targetLevel} - \text{currentLevel}) \times \text{priorityWeight}$$
 where $\text{critical}=3, \text{important}=2, \text{desirable}=1$.  
-A $\Delta=1$ gap on a *critical* activity competency ranks above a $\Delta=2$ gap on a *desirable* one.
+A $\Delta=1$ gap on a _critical_ activity competency ranks above a $\Delta=2$ gap on a _desirable_ one.
 
 ---
 
 ## 📋 3. Master Interactive Checklist & Phase Roadmap
 
-### ✅ Pre-Phase: Repository Cleanup & Quality Baseline (DONE)
-- [x] Audit entire codebase and map all components, contexts, and services.
-- [x] Delete dead/scratch files (`test.html`, `vite.svg`, `react.svg`, `hero.png`, `public/icons.svg`).
-- [x] Remove hardcoded static demo PDFs (`public/pdfs/*`).
-- [x] Fix ESLint configuration and component effect issues (0 errors).
-- [x] Verify production build compiles clean (`npm run build`).
-- [x] Synchronize master plan to `IMPLEMENTATION_PLAN.md` and establish `MEMORY.md`.
-- [x] Incorporate FRAC alignment, AI assistant spec, iGOT research, data privacy posture, and governance items.
-- [x] Resolve all 15 audit loopholes from the SIH 26101 comprehensive review.
+### ✅ Pre-Phase: Repository Cleanup & Quality Baseline
+
+- [ ] Audit entire codebase and map all components, contexts, and services.
+- [ ] Delete dead/scratch files (`test.html`, `vite.svg`, `react.svg`, `hero.png`, `public/icons.svg`).
+- [ ] Remove hardcoded static demo PDFs (`public/pdfs/*`).
+- [ ] Fix ESLint configuration and component effect issues (0 errors).
+- [ ] Verify production build compiles clean (`npm run build`).
+- [ ] Synchronize master plan to `IMPLEMENTATION_PLAN.md` and establish `MEMORY.md`.
+- [ ] Incorporate FRAC alignment, AI assistant spec, iGOT research, data privacy posture, and governance items.
+- [ ] Resolve all 15 audit loopholes from the SIH 26101 comprehensive review.
 
 ---
 
 ### 🟡 PHASE 1 — Foundation, Domain Model & Cloud Infrastructure (CURRENT FOCUS)
+
 > **Goal**: Establish the FRAC domain models, Cloudflare Pages hosting, Cloudflare Worker scaffolding, security boundary, user schema, and role-based navigation.
 
 - [ ] **1.1 Configuration & Frontend Deployment**:
@@ -85,14 +88,14 @@ A $\Delta=1$ gap on a *critical* activity competency ranks above a $\Delta=2$ ga
 - [ ] **1.4 Database Seeding Script**:
   - [ ] Create `scripts/seed-firestore.js` to batch-populate Firestore collections (`courses`, `questions`, `roles`, `activities`, `competencies`) from `src/data/` via `npm run seed`.
 - [ ] **1.5 User & Auth Extension**:
-  - [ ] Extend [UserContext.jsx](file:///Users/vamsikrishna/Dev%20Projects/i%20proj/EduWrap/src/contexts/UserContext.jsx) schema: add `role` (`learner` | `trainer` | `admin`), `organizationId`, `employeeId`, `department`, `designation`, `cadre`, `selectedRoleId`. *(Note: `competencyProfile` is not on the user doc; UserContext subscribes to `competency_records/{uid}` separately).*
+  - [ ] Extend [UserContext.jsx](file:///Users/vamsikrishna/Dev%20Projects/i%20proj/EduWrap/src/contexts/UserContext.jsx) schema: add `role` (`learner` | `trainer` | `admin`), `organizationId`, `employeeId`, `department`, `designation`, `cadre`, `selectedRoleId`. _(Note: `competencyProfile` is not on the user doc; UserContext subscribes to `competency_records/{uid}` separately)._
   - [ ] Add **Simulated Parichay (MeriPehchaan National Gov SSO)** login button with pre-configured demo personas.
   - [ ] Add email domain validation for government domains (`@gov.in`, `@nic.in`, `@mospi.gov.in`) with `DEMO_MODE=true` toggle.
 - [ ] **1.6 RBAC & Navigation Restructure**:
   - [ ] Create `src/components/guards/RoleGuard.jsx` for conditional rendering.
   - [ ] Add bilingual toggle button (English / हिंदी) to header navigation.
   - [ ] Update [AppLayout.jsx](file:///Users/vamsikrishna/Dev%20Projects/i%20proj/EduWrap/src/layouts/AppLayout.jsx) sidebar with role-conditional navigation (Learner / Trainer / Admin views).
-  - [ ] Unhook deprecated routes (*Rooms, Doubts, Flashcards, Notes, Sandbox*) from sidebar without deleting source files.
+  - [ ] Unhook deprecated routes (_Rooms, Doubts, Flashcards, Notes, Sandbox_) from sidebar without deleting source files.
 - [ ] **1.7 Data Layer & Security Rules**:
   - [ ] Update [firestore.js](file:///Users/vamsikrishna/Dev%20Projects/i%20proj/EduWrap/src/firebase/firestore.js) with collection refs.
   - [ ] Deploy `firestore.rules` enforcing `organizationId` scoping, immutable audit logs, and `allow write: if false` on `competency_records` and `assessment_results` (trusted writes route through Worker).
@@ -107,6 +110,7 @@ A $\Delta=1$ gap on a *critical* activity competency ranks above a $\Delta=2$ ga
 ---
 
 ### ⚪ PHASE 2 — Competency Intelligence & Adaptive Assessment (Core Loop)
+
 > **Goal**: Profile with verified badges, adaptive diagnostic assessment, priority-weighted skill gap dashboard, recommendation engine, and iGOT integration.
 
 - [ ] Rebuild [Profile.jsx](file:///Users/vamsikrishna/Dev%20Projects/i%20proj/EduWrap/src/pages/Profile.jsx):
@@ -138,6 +142,7 @@ A $\Delta=1$ gap on a *critical* activity competency ranks above a $\Delta=2$ ga
 ---
 
 ### ⚪ PHASE 3 — Content Intelligence (AI Pipeline & Trainer Workflow)
+
 > **Goal**: Document upload (Firebase Storage default, R2 stretch goal), single-batch AI MCQ generation with confidence tagging, trainer review queue.
 
 - [ ] Enhance Cloudflare Worker (`worker/index.js`, `worker/ai-router.js`) for AI proxy routing + storage presigned URLs.
@@ -158,6 +163,7 @@ A $\Delta=1$ gap on a *critical* activity competency ranks above a $\Delta=2$ ga
 ---
 
 ### ⚪ PHASE 4 — Role-Specific Dashboards & Onboarding
+
 > **Goal**: Tailored dashboards for Learner, Trainer, and Admin personas + official onboarding flow.
 
 - [ ] Rebuild [Onboarding.jsx](file:///Users/vamsikrishna/Dev%20Projects/i%20proj/EduWrap/src/pages/Onboarding.jsx) (role selection → official credentials → target role → diagnostic assessment).
@@ -173,6 +179,7 @@ A $\Delta=1$ gap on a *critical* activity competency ranks above a $\Delta=2$ ga
 ---
 
 ### ⚪ PHASE 5 — Intelligence, Analytics & AI Assistant (NEXT)
+
 > **Goal**: Gap-aware AI learning assistant, training effectiveness metrics, and advanced pathways.
 
 - [ ] AI Learning Assistant — gap-aware conversational assistant grounded in actual `competency_records` (Capability 1 from §11a).
@@ -184,6 +191,7 @@ A $\Delta=1$ gap on a *critical* activity competency ranks above a $\Delta=2$ ga
 ---
 
 ### ⚪ PHASE 6 — End-to-End Golden Path & Demo Polish
+
 > **Goal**: Seamless 10-minute end-to-end demo flow with zero rough edges.
 
 - [ ] End-to-end integration test of the Golden Path (Survey Sampling closed loop):
@@ -202,6 +210,7 @@ A $\Delta=1$ gap on a *critical* activity competency ranks above a $\Delta=2$ ga
 ---
 
 ### ⚪ PHASE 7 — Production Hardening & Sustainability (FUTURE)
+
 - [ ] Automated Firestore backup export pipeline.
 - [ ] GitHub Actions CI/CD (lint, test, build).
 - [ ] PWA offline capability for profile viewing.
@@ -236,40 +245,18 @@ Sandbox               DEPRECATE      Unhook from nav; preserve code for Statisti
 
 ## 🔑 5. Key Terminology Reference
 
-| Term | Meaning | Source |
-|---|---|---|
-| **FRAC** | Framework of Roles, Activities and Competencies — one of Six Pillars of Mission Karmayogi | ✅ VERIFIED OFFICIAL |
-| **iGOT Karmayogi** | Government learning platform, 1+ crore users, 16 languages, built on Sunbird/DIKSHA | ✅ VERIFIED OFFICIAL |
-| **Parichay / MeriPehchaan** | National Single Sign-On (NSSO) service for Central Government employees by NIC | ✅ VERIFIED OFFICIAL |
-| **ISS / SSS / NSSO FOD** | Indian Statistical Service / Subordinate Statistical Service / Field Operations Division | ✅ VERIFIED OFFICIAL |
-| **CAPI** | Computer Assisted Personal Interviewing — digital tablets used by NSSO field enumerators | ✅ VERIFIED OFFICIAL |
-| **Karma Points** | iGOT's unit of progress tracking, tied to APAR (Annual Performance Appraisal Report) | ✅ VERIFIED OFFICIAL |
-| **DSEP Protocol** | Decentralized Skilling and Education Protocol — plausible future iGOT integration surface | ✅ VERIFIED FACT |
-| **C4GT** | CodeForGoodTech — public GitHub org tracking iGOT platform components | ✅ VERIFIED FACT |
-| **L1–L5** | Five-level proficiency scale consistent with FRAC guidance; specific descriptors are PROPOSED | ⚠️ PROPOSED |
+| Term                        | Meaning                                                                                       | Source               |
+| --------------------------- | --------------------------------------------------------------------------------------------- | -------------------- |
+| **FRAC**                    | Framework of Roles, Activities and Competencies — one of Six Pillars of Mission Karmayogi     | ✅ VERIFIED OFFICIAL |
+| **iGOT Karmayogi**          | Government learning platform, 1+ crore users, 16 languages, built on Sunbird/DIKSHA           | ✅ VERIFIED OFFICIAL |
+| **Parichay / MeriPehchaan** | National Single Sign-On (NSSO) service for Central Government employees by NIC                | ✅ VERIFIED OFFICIAL |
+| **ISS / SSS / NSSO FOD**    | Indian Statistical Service / Subordinate Statistical Service / Field Operations Division      | ✅ VERIFIED OFFICIAL |
+| **CAPI**                    | Computer Assisted Personal Interviewing — digital tablets used by NSSO field enumerators      | ✅ VERIFIED OFFICIAL |
+| **Karma Points**            | iGOT's unit of progress tracking, tied to APAR (Annual Performance Appraisal Report)          | ✅ VERIFIED OFFICIAL |
+| **DSEP Protocol**           | Decentralized Skilling and Education Protocol — plausible future iGOT integration surface     | ✅ VERIFIED FACT     |
+| **C4GT**                    | CodeForGoodTech — public GitHub org tracking iGOT platform components                         | ✅ VERIFIED FACT     |
+| **L1–L5**                   | Five-level proficiency scale consistent with FRAC guidance; specific descriptors are PROPOSED | ⚠️ PROPOSED          |
 
 ---
 
 ## 📜 6. Session Execution Log
-
-### Session 1: September 2, 2026 (Daytime)
-* **Completed**: Full architectural review, dead file removal (`test.html`, unused SVGs/PDFs), ESLint error resolution (0 errors), production build verification, and synchronization of `IMPLEMENTATION_PLAN.md` & `MEMORY.md`.
-* **State**: Workspace clean, ready for Phase 1.
-
-### Session 2: September 2, 2026 (Night)
-* **Completed**: External review incorporated 7 major improvements (FRAC alignment, priority-weighted gap severity, AI Assistant 5 capabilities, iGOT research, governance items, R2/Firebase framing, Stage 5a validation).
-
-### Session 3: September 3, 2026 (Early Morning)
-* **Completed**: Full SIH 26101 Compliance & Loophole Audit:
-  1. Resolved Worker & Security Rules deadlock: Moved Worker scaffolding to Phase 1 (`/api/evaluate-assessment` with Admin SDK) so Phase 2 assessments can write securely.
-  2. Promoted Adaptive Learning to Phase 2: 3-stage dynamic difficulty branching engine.
-  3. Promoted Bilingual Support to Phase 1 & 2: English/Hindi toggle for navigation, competencies, and questions.
-  4. Added Field Investigator / Primary Enumerator (NSSO FOD) to roles and personas.
-  5. Added Parichay (Jan-Parichay Gov SSO) simulated authentication.
-  6. Added Karma Points & APAR milestone tracking.
-  7. Added Cloudflare Pages deployment to Phase 1 (`eduwrap.pages.dev`).
-  8. Added `scripts/seed-firestore.js` database seeding script to Phase 1.
-  9. Enforced Gemini 15-RPM batch generation and client-side 15-page limit on PDF extraction.
-  10. Unified Golden Path narrative around Survey Sampling & Estimation (NSSO/NSSTA).
-* **State**: Both `IMPLEMENTATION_PLAN.md` and `MEMORY.md` are synchronized, free of architectural deadlocks, and 100% aligned with SIH 26101 requirements.
-* **Next Action**: Execute **Phase 1.1 through 1.9**.
