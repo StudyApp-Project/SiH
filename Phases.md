@@ -2,13 +2,13 @@
 
 ## StatVidya — Build Phases & Implementation Breakdown
 
-| Field              | Value                                                        |
-| ------------------ | ------------------------------------------------------------ |
-| Companion docs     | PRD.md, ARCHITECTURE.md, rules.md, Design.md, memory.md      |
-| Purpose            | Break the project into sequential, dependency-ordered phases with clear deliverables and exit criteria |
-| Status             | Draft v1.0                                                   |
+| Field | Value |
+|---|---|
+| Companion docs | PRD.md, Architecture.md, rules.md, Design.md, memory.md |
+| Purpose | Break the project into sequential, dependency-ordered phases with clear deliverables and exit criteria |
+| Status | **Active v2.0 — Architecture Pivot (Supabase + Cloudflare + Next.js)** |
 
-> **How phases map to milestones**: PRD §7 defines four milestones (MVP, V1, V1.1, V2). This document breaks the **MVP** milestone into Phases 1–6, which is the scope that matters for SIH. V1/V1.1/V2 are outlined at the end for roadmap visibility but not broken into daily tasks.
+> **How phases map to milestones**: PRD §7 defines four milestones (MVP, V1, V1.1, V2). This document breaks the **MVP** milestone into Phases 1–6, which represents the core scope for SIH 26101. The post-MVP roadmap is detailed at the end.
 
 ---
 
@@ -16,293 +16,221 @@
 
 ```mermaid
 gantt
-    title StatVidya MVP Build Phases
+    title StatVidya MVP Build Phases (v2.0 Stack)
     dateFormat X
     axisFormat %s
     
     section Foundation
-    Phase 1 - Project Setup & Auth     :p1, 0, 2d
+    Phase 1 - Next.js Setup, Supabase Auth & Shell  :p1, 0, 2d
     
     section Core Data
-    Phase 2 - FRAC Domain Model & Seed :p2, after p1, 2d
+    Phase 2 - PostgreSQL Schema, FRAC & Seed Data   :p2, after p1, 2d
     
     section Core Loop
-    Phase 3 - Competency & Gap Engine  :p3, after p2, 2d
-    Phase 4 - Assessment Engine        :p4, after p3, 3d
+    Phase 3 - Competency Engine & Gap Dashboard     :p3, after p2, 2d
+    Phase 4 - Adaptive Assessment Engine & Offline  :p4, after p3, 3d
     
     section Content & Intelligence
-    Phase 5 - Content Pipeline & Recs  :p5, after p3, 3d
+    Phase 5 - Cloudflare R2 & Multi-AI Pipeline    :p5, after p3, 3d
     
     section Polish
-    Phase 6 - Admin, Offline, i18n     :p6, after p4, 2d
+    Phase 6 - Admin Analytics, Outcome Correlation & i18n :p6, after p4, 2d
 ```
 
 ---
 
-## Phase 1 — Project Setup, Auth & Shell
+## Phase 1 — Next.js Setup, Supabase Auth & App Shell
 
-**Goal**: A deployable app with authentication, role-based navigation, and the complete folder structure. Nothing fancy — but everything builds on this.
+**Goal**: A deployable Next.js 15 application on Vercel with Supabase Auth, Parichay SSO demo persona picker, role-based navigation, shadcn/ui components, and `@serwist/next` PWA service worker.
 
 **PRD Requirements Covered**: FR-AUTH-1, FR-AUTH-2, FR-RBAC-1, FR-RBAC-2, FR-ORG-1, FR-PWA-1
 
 ### Deliverables
 
-| #  | Task                                                                                    | FR Reference  |
-| -- | --------------------------------------------------------------------------------------- | ------------- |
-| 1  | Initialize Vite + React + TypeScript project in `apps/web/`                             | —             |
-| 2  | Set up Tailwind CSS 4.x with the design tokens from Design.md                           | —             |
-| 3  | Set up Firebase project (Auth, Firestore, Storage, Functions, Hosting)                   | —             |
-| 4  | Create `firebase.json`, `firestore.rules` (deny-all default), `firestore.indexes.json`  | —             |
-| 5  | Set up Cloud Functions (2nd gen) boilerplate in `functions/`                              | —             |
-| 6  | Implement Firebase Auth (email/password + Google OAuth)                                   | FR-AUTH-1     |
-| 7  | Create simulated Parichay SSO with pre-seeded demo personas (one-click login)            | FR-AUTH-2     |
-| 8  | Define TypeScript interfaces for all core entities (PRD §13)                              | —             |
-| 9  | Create `RequireRole` guard component + role-based route layout                            | FR-RBAC-1     |
-| 10 | Set up React Router with the full route map (ARCH §4.1) — pages are stub/placeholder     | —             |
-| 11 | Create `AppLayout` (sidebar, topbar, language toggle placeholder)                        | —             |
-| 12 | Configure `vite-plugin-pwa` with basic manifest + service worker                          | FR-PWA-1      |
-| 13 | Set up ESLint + Prettier config, enforce `strict: true` in tsconfig                       | —             |
-| 14 | Set up `react-i18next` with `en/common.json` and `hi/common.json` (navigation strings)    | —             |
-| 15 | Create `.env.example` and document all required environment variables                     | —             |
-| 16 | First deploy to Firebase Hosting — confirm the shell loads                                | —             |
+| # | Task | PRD / Arch Reference |
+|---|---|---|
+| 1 | Initialize Next.js 15 App Router + React 19 + TypeScript project | Arch §3, §13 |
+| 2 | Configure Tailwind CSS v4 with `@theme inline` OKLCH tokens and install shadcn/ui | Design.md, PRD §22 |
+| 3 | Initialize Supabase client libraries (`@supabase/ssr`, `@supabase/supabase-js`) | Arch §5, §13 |
+| 4 | Create Supabase project configuration, `.env.example`, and environment variables | Arch §14 |
+| 5 | Implement Supabase Auth (Email/Password + Google OAuth) | FR-AUTH-1 |
+| 6 | Create simulated Parichay SSO persona switcher (`/api/sso/demo-persona`) with 4 pre-seeded personas | FR-AUTH-2, Arch §5.2 |
+| 7 | Create edge `middleware.ts` for session verification and role-based route guarding | Arch §4.2 |
+| 8 | Build responsive App Shell: `AppLayout`, `Sidebar`, `Topbar`, `Breadcrumb`, `OfflineIndicator` | Arch §4.1 |
+| 9 | Configure `@serwist/next` PWA service worker with offline manifest and app icons | FR-PWA-1, Arch §11 |
+| 10 | Configure bilingual `i18n` dictionary setup (`en.json` and `hi.json`) with language switcher | FR-I18N-1 |
+| 11 | Deploy initial shell to Vercel and verify live routing | Arch §15 |
 
 ### Exit Criteria
-- [ ] User can sign up, log in (email or Google), and see a role-appropriate dashboard stub
-- [ ] Simulated SSO lets you click into a demo persona without entering credentials
-- [ ] Routes are guarded — learner can't access `/admin/analytics`
-- [ ] App installs as a PWA (Chrome shows install prompt)
-- [ ] `organizationId` is present on the User document from account creation
-- [ ] Firestore rules deny all writes by default (only Auth-related reads allowed)
+- [ ] User can sign up, log in (Email/Google), or click a demo persona to authenticate without manual typing
+- [ ] Simulated Parichay SSO logs in directly as Amit (JSO), Sunita (FI), Priya (Trainer), or Rajesh (Admin)
+- [ ] Edge middleware redirects unauthorized users (e.g., Learner accessing `/admin/analytics` redirected to `/dashboard`)
+- [ ] App installs as a standalone PWA (Chrome/Edge displays install prompt)
+- [ ] `organization_id` claim is populated on user session from account creation
+- [ ] Next.js App Shell renders cleanly in both Light and Dark mode using OKLCH color tokens
 
 ---
 
-## Phase 2 — FRAC Domain Model, Seed Data & Provenance
+## Phase 2 — PostgreSQL Schema, FRAC Domain Model & Seed Data
 
-**Goal**: The FRAC-aligned data model is real and visible. Competencies, roles, activities, and courses exist in Firestore with provenance labels. The onboarding flow creates a learner profile.
+**Goal**: The official FRAC-aligned relational schema is deployed in Supabase PostgreSQL with Row Level Security (RLS), multi-tenant isolation, automated audit triggers, and pre-seeded official statistical taxonomy.
 
-**PRD Requirements Covered**: FR-TRUST-1, FR-ONB-1, FR-ONB-2, FR-PROFILE-2
+**PRD Requirements Covered**: FR-TRUST-1, FR-ONB-1, FR-ONB-2, FR-PROFILE-2, FR-RBAC-2
 
 ### Deliverables
 
-| #  | Task                                                                                     | FR Reference  |
-| -- | ---------------------------------------------------------------------------------------- | ------------- |
-| 1  | Create seed data files in `apps/web/src/data/` — competencies (15–20), roles (5–8), activities, activity-competency mappings, course catalog | FR-TRUST-1 |
-| 2  | Every seed record includes `provenance` field — compile-time enforced via TypeScript      | FR-TRUST-1    |
-| 3  | Create `<ProvenanceBadge>` component (✅ Verified / ⚠️ Proposed / 🟡 Synthetic)          | FR-TRUST-1    |
-| 4  | Write `scripts/seed-firestore.ts` — idempotent, validates 100% provenance coverage        | FR-TRUST-1    |
-| 5  | Build multi-step onboarding: role selection → official details → select government role → initial self-assessment (L1–L5 per competency) | FR-ONB-1 |
-| 6  | Field Investigator persona defaults to Hindi locale during onboarding                     | FR-ONB-2      |
-| 7  | Create `competency_records` for the user upon onboarding completion (self-assessed)       | FR-PROFILE-2  |
-| 8  | Distinguish 🛡️ assessment-verified vs ✍️ self-assessed badges on all competency levels   | FR-PROFILE-2  |
-| 9  | Set up Firestore security rules for `competencies`, `roles`, `activities` (read-only for all authenticated), `users` (read/write own), `competency_records` (read own, deny client writes) | FR-RBAC-2, FR-ORG-1 |
-| 10 | Run the seed script against dev Firestore and verify data shows up correctly              | —             |
+| # | Task | PRD / Arch Reference |
+|---|---|---|
+| 1 | Write Supabase migration `001_initial_schema.sql` (all tables, foreign keys, enums, check constraints) | PRD §23, Arch §6 |
+| 2 | Write Supabase migration `002_rls_policies.sql` enforcing multi-tenant `organization_id` checks | PRD §23, Arch §6.2 |
+| 3 | Write Supabase migration `003_triggers_and_audit.sql` for automated `audit_log` recording | Arch §6.3 |
+| 4 | Create seed script `supabase/seed.sql` populating official FRAC data (Roles, Activities, Competencies) | FR-TRUST-1 |
+| 5 | Enforce `provenance` field across all seed records with `<ProvenanceBadge>` component | FR-TRUST-1 |
+| 6 | Build multi-step Onboarding flow (`/onboarding`): Cadre selection → Government Role → Initial Self-Assessment | FR-ONB-1 |
+| 7 | FI (Field Investigator) persona defaults to Hindi locale automatically during onboarding | FR-ONB-2 |
+| 8 | Insert self-assessed `competency_records` upon onboarding completion | FR-PROFILE-2 |
+| 9 | Distinguish 🛡️ Assessment-Verified vs ✍️ Self-Assessed badges across all competency views | FR-PROFILE-2 |
 
 ### Exit Criteria
-- [ ] New user completes onboarding and arrives at dashboard with a populated competency profile
-- [ ] Every domain-data surface in the UI shows a `<ProvenanceBadge>`
-- [ ] Seed script validates 100% provenance coverage before writing
-- [ ] FI persona onboarding renders in Hindi by default
-- [ ] Self-assessed levels are visually distinct from verified levels
-- [ ] `competency_records` cannot be written to from the client (Firestore rules deny it)
+- [ ] All PostgreSQL migrations apply cleanly via `supabase db push` or Supabase CLI
+- [ ] RLS policies prevent users from accessing data belonging to other organizations
+- [ ] Direct client writes to `competency_records` are rejected by RLS (only server functions permitted)
+- [ ] Every domain-data element in the UI displays a visible `<ProvenanceBadge>`
+- [ ] Onboarding creates a complete learner profile with baseline competency levels
 
 ---
 
 ## Phase 3 — Competency Engine, Gap Analysis & Dashboard
 
-**Goal**: The core intelligence loop — gap severity, readiness index, skill gap page, and the learner dashboard. This is where the product starts to feel useful.
+**Goal**: The core intelligence loop: weighted gap severity calculation, workforce readiness indexing, the interactive Skill Gap radar view, and multi-signal iGOT course recommendations.
 
-**PRD Requirements Covered**: FR-COMP-1, FR-COMP-2, FR-COMP-3, FR-COMP-4, FR-REC-1, FR-REC-2, FR-REC-4
+**PRD Requirements Covered**: FR-COMP-1–4, FR-REC-1, FR-REC-2, FR-REC-4, FR-IGOT-1, FR-IGOT-2
 
 ### Deliverables
 
-| #  | Task                                                                                    | FR Reference  |
-| -- | --------------------------------------------------------------------------------------- | ------------- |
-| 1  | Implement `competencyService.ts` — gap severity formula, readiness index, severity buckets | FR-COMP-1/2/3 |
-| 2  | **Unit tests** for severity formula, bucket assignment, readiness index (non-negotiable) | FR-COMP-1/2/3 |
-| 3  | Create `CompetencyContext.tsx` — subscribes to user's competency records + role requirements | —          |
-| 4  | Build Skill Gap Analysis page — gap cards ordered by severity, each naming the FRAC Activity | FR-COMP-4 |
-| 5  | Build `<RadarChart>` component (custom SVG) for competency visualization                 | —             |
-| 6  | Build `<ProgressRing>` component (custom SVG) for readiness index                        | —             |
-| 7  | Build Learner Dashboard — readiness index, top gaps, recommended next actions             | —             |
-| 8  | Implement `recommendationService.ts` — multi-signal course ranking formula                | FR-REC-1      |
-| 9  | **Unit tests** for recommendation ranking                                                 | FR-REC-1      |
-| 10 | Build Learning Pathways page — ranked courses with "why this" explanation + iGOT deep links | FR-REC-2/4  |
-| 11 | Implement `integrationService.ts` — mock iGOT adapter with `SYNTHETIC_DEMO_DATA` label   | FR-IGOT-1/2   |
-| 12 | Profile page — competency radar, readiness index, provenance badges                       | —             |
+| # | Task | PRD / Arch Reference |
+|---|---|---|
+| 1 | Implement `services/competencyService.ts` (gap severity formula, readiness index, severity buckets) | FR-COMP-1/2/3 |
+| 2 | Write comprehensive **unit tests** for severity formulas and bucket boundaries | FR-COMP-1/2/3 |
+| 3 | Build Skill Gap Analysis page (`/skill-gap`) — gap cards sorted by severity, referencing FRAC Activities | FR-COMP-4 |
+| 4 | Build bespoke `<RadarChart>` SVG component for multi-axis competency visualization | Design.md |
+| 5 | Build bespoke `<ProgressRing>` SVG component for visual readiness percentage | Design.md |
+| 6 | Build role-adaptive Learner Dashboard (`/dashboard`) — readiness index, top gaps, next best actions | PRD §10 |
+| 7 | Implement `services/recommendationService.ts` — multi-signal course ranking algorithm | FR-REC-1 |
+| 8 | Build Learning Pathways page (`/pathways`) — ranked courses with "why this" explainability | FR-REC-2/4 |
+| 9 | Implement `services/integrationService.ts` — mock iGOT adapter with `SYNTHETIC_DEMO_DATA` badge | FR-IGOT-1/2 |
+| 10 | Build Official Profile page (`/profile`) with historical progression and verified competency badges | FR-PROFILE-1/2 |
 
 ### Exit Criteria
-- [ ] Gap severity computation passes unit tests: a Δ=1 critical gap ranks above a Δ=2 desirable gap
-- [ ] Readiness index returns 100% when all competencies meet/exceed target
-- [ ] Skill Gap page orders gaps by severity, references FRAC Activity names
-- [ ] Learning Pathways shows ranked courses with "why" explanations
-- [ ] Course cards deep-link to real iGOT pages where real URLs exist
-- [ ] Mock iGOT adapter is clearly labeled as demo mode in the UI
+- [ ] Severity score correctly ranks a $\Delta=1$ Critical gap above a $\Delta=2$ Desirable gap
+- [ ] Overall readiness index accurately calculates 100% when all competencies meet or exceed role targets
+- [ ] Skill Gap page displays interactive radar chart and FRAC activity mappings
+- [ ] Learning Pathways provides explainable recommendations with direct deep-links to iGOT courses
+- [ ] Mock iGOT adapter is clearly labeled with demo mode indicators
 
 ---
 
-## Phase 4 — Adaptive Assessment Engine & Offline
+## Phase 4 — Adaptive Assessment Engine & Offline Sync
 
-**Goal**: The assessment flow works end-to-end, including adaptive difficulty, server-side scoring, offline capability, and competency-record updates via triggers.
+**Goal**: End-to-end adaptive assessment execution, Supabase Edge Function grading, zero-data-loss offline submission via IndexedDB, and automatic reconciliation upon reconnect.
 
 **PRD Requirements Covered**: FR-ASSESS-1–5, FR-OFFLINE-1–3, FR-PWA-2
 
 ### Deliverables
 
-| #  | Task                                                                                    | FR Reference   |
-| -- | --------------------------------------------------------------------------------------- | -------------- |
-| 1  | Implement `assessmentService.ts` — adaptive branching logic (medium → harder/easier → converge on L1–L5) | FR-ASSESS-1 |
-| 2  | **Unit tests** for adaptive branching: scripted answer sequences converge to expected levels | FR-ASSESS-1  |
-| 3  | Build Assessment page UI — timer, question navigation, "flag this question" control, bilingual toggle | FR-ASSESS-2/3 |
-| 4  | Create at least 10 Hindi-stem questions for the survey-sampling domain                    | FR-ASSESS-3   |
-| 5  | Implement `evaluateAssessment` Cloud Function — validate auth, check idempotency, score server-side, write `assessment_results` | FR-ASSESS-4/5 |
-| 6  | Implement `onAssessmentResultCreated` Firestore trigger — update `competency_records`, write `competency_history`, write `audit_log` | FR-ASSESS-5 |
-| 7  | Implement `offlineService.ts` — IndexedDB pending-results queue, connectivity detection, sync trigger | FR-OFFLINE-1 |
-| 8  | Build offline status indicator (online / cached-offline / pending sync) in active language | FR-OFFLINE-3  |
-| 9  | Implement automatic sync on reconnect + manual retry affordance                           | FR-OFFLINE-2  |
-| 10 | Configure service worker to cache assessment route + question data for offline use         | FR-PWA-2       |
-| 11 | Implement assessment prefetch ("download for offline") action                              | —              |
-| 12 | Firestore security rules: `assessment_results` deny client writes, `audit_log` append-only | FR-ASSESS-4   |
+| # | Task | PRD / Arch Reference |
+|---|---|---|
+| 1 | Implement `services/assessmentService.ts` — 3-stage adaptive branching (Medium → Hard/Easy → L1-L5) | FR-ASSESS-1 |
+| 2 | Write **unit tests** verifying branching decision trees converge to appropriate proficiency levels | FR-ASSESS-1 |
+| 3 | Build Assessment Runner UI (`/assessment/[id]`) — timer, bilingual question toggle, question navigation | FR-ASSESS-2/3 |
+| 4 | Seed 15+ verified bilingual questions for the NSSO survey sampling domain | FR-ASSESS-3 |
+| 5 | Implement Supabase Edge Function `evaluate-assessment` (server-side scoring, idempotency check) | Arch §8.2 |
+| 6 | Implement `services/offlineService.ts` using `idb` for the `pending_assessments` queue | Arch §11 |
+| 7 | Build persistent UI offline banner ("🟠 1 Assessment Pending Sync") with real-time status | FR-OFFLINE-3 |
+| 8 | Implement automatic queue flush on `window.online` with exponential backoff retry policy | FR-OFFLINE-2 |
+| 9 | Configure Service Worker runtime caching for assessment routes and prefetching | FR-PWA-2 |
+| 10 | Verify idempotent submissions: client-generated `local_id` guarantees zero double-scoring | Arch §8.2 |
 
 ### Exit Criteria
-- [ ] Adaptive branching unit tests pass for all scripted answer sequences
-- [ ] Completing an assessment online updates competency records within seconds
-- [ ] Assessment completed in airplane mode is not lost — "results will sync" indicator shows
-- [ ] On reconnect, results sync within 30s and competency records update
-- [ ] Retry on flaky reconnect doesn't double-score (idempotency via `localId`)
-- [ ] Server-side scoring: tampering with client-side answer state doesn't change the persisted score
-- [ ] `audit_log` entries exist for every assessment completion, cannot be edited or deleted
+- [ ] Adaptive branching tests pass across all scripted answer variations
+- [ ] Completing an assessment online updates competency records within 2 seconds
+- [ ] Assessments taken in Airplane Mode queue reliably in IndexedDB without data loss
+- [ ] Restoring network connectivity automatically submits queued assessments within 30 seconds
+- [ ] Client tampering with answer payloads cannot spoof the persisted score (server evaluates ground truth)
+- [ ] Immutable audit log record is created for every assessment submission
 
 ---
 
-## Phase 5 — Content Intelligence Pipeline
+## Phase 5 — Cloudflare R2 & Multi-AI Content Generation Pipeline
 
-**Goal**: Trainers can upload documents, AI generates questions in batches with confidence tags, trainers review and approve, approved questions enter the question bank and are immediately available to assessments.
+**Goal**: Trainers can upload massive PDF manuals (>50MB) directly to Cloudflare R2 ($0 egress), generate structured bilingual MCQs via Cloudflare AI Gateway (Gemini → Claude → GPT), and curate questions through a confidence-tagged review queue.
 
 **PRD Requirements Covered**: FR-CONTENT-1–9, FR-AI-2
 
 ### Deliverables
 
-| #  | Task                                                                                    | FR Reference   |
-| -- | --------------------------------------------------------------------------------------- | -------------- |
-| 1  | Build Document Manager page — drag-drop upload with page-range selector                   | FR-CONTENT-1   |
-| 2  | Implement `storageService.ts` — upload to Firebase Storage (signed URL pattern)           | —              |
-| 3  | Implement `getUploadUrl` Cloud Function                                                   | —              |
-| 4  | Client-side text extraction with `pdf.js` + `tesseract.js` OCR fallback                  | FR-CONTENT-2   |
-| 5  | Text chunking with section/heading awareness                                              | FR-CONTENT-3   |
-| 6  | Implement `generateQuestions` Cloud Function — AI proxy with rate limiting                 | FR-CONTENT-4   |
-| 7  | Create MCQ generation prompt in `functions/src/prompts/mcqGeneration.ts` — batched, JSON schema, confidence tags | FR-CONTENT-4/5 |
-| 8  | Implement rule-based fallback question generator (`questionGenerator.ts`)                  | FR-CONTENT-9   |
-| 9  | Build MCQ Generator page — configure generation (count, difficulty, target competency)     | —              |
-| 10 | Build competency validation sanity check screen                                            | FR-CONTENT-6   |
-| 11 | Build review queue — sorted low-confidence-first, approve/edit/reject, bulk-approve        | FR-CONTENT-7   |
-| 12 | On approval, questions immediately available to assessment engine                          | FR-CONTENT-8   |
-| 13 | `onQuestionWrite` Firestore trigger for audit logging                                      | —              |
-| 14 | Firestore security rules for `questions` (trainer write) and `documents` (trainer write)   | —              |
+| # | Task | PRD / Arch Reference |
+|---|---|---|
+| 1 | Create Cloudflare R2 bucket (`statvidya-documents`) with CORS configuration | Arch §7 |
+| 2 | Build Cloudflare Worker `r2-upload` issuing presigned S3 PUT/GET URLs | Arch §7.2, §8.1 |
+| 3 | Build Document Manager page (`/documents`) with direct-to-R2 drag-and-drop file upload | FR-CONTENT-1 |
+| 4 | Implement document chunking pipeline using `pdf.js` with semantic heading extraction | FR-CONTENT-2/3 |
+| 5 | Build Cloudflare Worker `ai-proxy` routing through Cloudflare AI Gateway | Arch §9.1 |
+| 6 | Configure multi-provider fallback: Google Gemini 2.5 Flash → Claude 3.5 Sonnet → GPT-4o-mini | Arch §9.1 |
+| 7 | Implement structured JSON schema enforcement for generated MCQs with confidence tags | Arch §9.2 |
+| 8 | Implement in-repo rule-based fallback generator (`questionGenerator.ts`) for offline generation | FR-CONTENT-9 |
+| 9 | Build MCQ Generator page (`/mcq-generator/[documentId]`) with competency alignment sanity check | FR-CONTENT-6 |
+| 10 | Build Trainer Review Queue sorting low-confidence questions first with approve/edit/reject actions | FR-CONTENT-7 |
+| 11 | Approved questions write to `questions` table and immediately become available in assessments | FR-CONTENT-8 |
 
 ### Exit Criteria
-- [ ] A 200+ page PDF doesn't freeze the browser (page-range selector works)
-- [ ] A scanned PDF still yields extractable text via OCR fallback
-- [ ] AI generates 10–15 MCQs in a single batched request with confidence tags
-- [ ] Simulating an AI outage triggers rule-based fallback — questions still generated
-- [ ] Trainer sees the sanity check, confirms/adjusts competency, then reviews the queue
-- [ ] Low-confidence questions appear first in the review queue
-- [ ] Approved questions immediately appear in the assessment question bank
-- [ ] Every generation/review action creates an audit log entry with prompt version
+- [ ] Large PDFs (50MB+) stream directly to Cloudflare R2 without transiting web servers
+- [ ] AI Gateway generates 10–15 structured bilingual MCQs in a single batched invocation
+- [ ] Simulating external AI rate limits triggers immediate automated failover to the secondary provider
+- [ ] Complete network disconnect falls back to in-repo rule-based generator
+- [ ] Trainer Review Queue surfaces low-confidence questions first with explainable flags
+- [ ] Approved questions enter the live assessment question bank immediately
 
 ---
 
-## Phase 6 — Admin Intelligence, i18n Polish & Integration
+## Phase 6 — Admin Intelligence, Outcome Correlation & i18n Polish
 
-**Goal**: Admin analytics with the outcome-correlation chart (Lever 2), full i18n polish, and the golden-path demo script runs end-to-end.
+**Goal**: MoSPI leadership analytics with macro workforce readiness indices, the training-to-survey outcome correlation engine (Lever 2), write-back priority training flags, and full bilingual polish.
 
-**PRD Requirements Covered**: FR-ADMIN-1, FR-ADMIN-3, FR-ADMIN-4, FR-ADMIN-5, FR-I18N-1–3
+**PRD Requirements Covered**: FR-ADMIN-1, FR-ADMIN-3–5, FR-I18N-1–3
 
 ### Deliverables
 
-| #  | Task                                                                                    | FR Reference   |
-| -- | --------------------------------------------------------------------------------------- | -------------- |
-| 1  | Build Admin Analytics page — org overview (headcount, average readiness, trend)            | FR-ADMIN-1     |
-| 2  | Build role/department breakdown table with drill-down to individuals                       | FR-ADMIN-3     |
-| 3  | Implement "Flag for priority training" write-back action                                   | FR-ADMIN-4     |
-| 4  | `onTrainingPriorityWrite` Firestore trigger for audit logging                              | FR-ADMIN-4     |
-| 5  | Build Outcome Correlation chart — competency level vs. simulated survey-quality metric      | FR-ADMIN-5     |
-| 6  | Add "Simulated" watermark + methodology note + `SYNTHETIC_DEMO_DATA` label to chart        | FR-ADMIN-5     |
-| 7  | Complete i18n — all navigation, competency names, role names, assessment UI strings in EN + HI | FR-I18N-2  |
-| 8  | Language toggle in header + `preferredLanguage` on user profile                             | FR-I18N-3      |
-| 9  | FI persona defaults to Hindi without requiring toggle                                       | FR-I18N-3      |
-| 10 | Responsive check on mid-range Android tablet viewport                                       | —              |
-| 11 | Run golden-path demo script (PRD §22.3) end-to-end                                         | —              |
-| 12 | Fix any issues found during the golden-path run                                              | —              |
+| # | Task | PRD / Arch Reference |
+|---|---|---|
+| 1 | Build Admin Analytics Dashboard (`/admin/analytics`) — cadre headcount, average readiness, trends | FR-ADMIN-1 |
+| 2 | Build Departmental drill-down table with individual official competency profiles | FR-ADMIN-3 |
+| 3 | Implement "Flag Department for Priority Training" write-back action | FR-ADMIN-4 |
+| 4 | Connect Supabase Realtime to broadcast priority training updates to all admin/trainer sessions | Arch §2, §6.1 |
+| 5 | Build Outcome Correlation Chart: competency level vs. simulated NSSO survey quality metric | FR-ADMIN-5 |
+| 6 | Include prominent "Simulated" watermark and methodology disclosure badge | FR-ADMIN-5 |
+| 7 | Complete 100% bilingual UI dictionary coverage (`en.json` and `hi.json`) | FR-I18N-2 |
+| 8 | Ensure seamless language toggling across all navigation and interactive components | FR-I18N-3 |
+| 9 | Validate tablet viewports (768px–1024px) for field investigator workflows | Design.md |
+| 10 | Execute end-to-end Golden-Path demo walkthrough (PRD §32) | PRD §32 |
 
 ### Exit Criteria
-- [ ] Admin dashboard shows org overview with real (seeded, not hardcoded) numbers
-- [ ] Drill-down from department → individual works within the same org
-- [ ] Flagging a department persists and is visible to other admins
-- [ ] Outcome correlation chart renders with "Simulated" watermark and methodology note
-- [ ] Full navigation and assessment flow renders correctly in both English and Hindi
-- [ ] Language toggle switches without reload artifacts
-- [ ] FI persona defaults to Hindi
-- [ ] **Golden-path demo script (PRD §22.3) runs end-to-end** on desktop and tablet viewport
+- [ ] Admin dashboard displays live, calculated workforce readiness indices across all cadres
+- [ ] Priority training flags persist to database and broadcast in real-time
+- [ ] Outcome correlation chart renders scatter plot with regression trendline and clear methodology disclaimers
+- [ ] Complete app navigation and assessment flow operates flawlessly in Hindi and English
+- [ ] Golden-path demo script executes from start to finish without errors or delays
 
 ---
 
-## Post-MVP Phases (Roadmap)
+## Post-MVP Roadmap
 
-These are outlined for planning but not broken into daily tasks. See PRD §7 for full scope.
-
-### V1 — Complete Core Loop
-
-| Area                    | Scope                                                             |
-| ----------------------- | ----------------------------------------------------------------- |
-| Content pipeline polish | Section-aware source citations (FR-CONTENT-3/10/11)               |
-| AI capabilities         | Gap narrator, post-assessment feedback, admin narrative, assistant (FR-AI-1/3/4/5) |
-| Profile enrichment      | Competency history timeline, Karma Points, APAR gauge (FR-PROFILE-1/3) |
-| Recommendations         | Pathway staging: foundational → applied → capstone (FR-REC-3)     |
-| Notifications           | In-app notification list (FR-NOTIF-1)                             |
-| iGOT documentation      | Live-mode adapter contract + DSEP/Sunbird reference (FR-IGOT-3/4) |
-| Configurability         | Severity weights configurable per org (FR-COMP-5)                 |
-
-### V1.1 — Hardening
-
-- Error boundaries on every route
-- WCAG 2.1 AA accessibility audit
-- Security-rule audit
-- Responsive pass: desktop / tablet / mobile
-- Performance pass against NFR targets (PRD §12)
-- Demo recording
-
-### V2 — Post-Pilot
-
-- Skill Gap Heatmap (FR-ADMIN-6)
-- Training Effectiveness with real data (FR-ADMIN-7)
-- Demand Forecasting (FR-ADMIN-8)
-- Live iGOT integration (pending gov credentials)
-- Semantic search / RAG over documents
-- Certifications / verifiable skill passport
-- Real government SSO (Parichay / MeriPehchaan)
-- Relational analytics layer (Postgres/D1)
-- Push/email notifications (FR-NOTIF-2)
+| Version | Focus Area | Key Deliverables |
+|---|---|---|
+| **V1 — Complete Core Loop** | AI Polish & Staging | Gap narrator, post-assessment feedback, pathway staging (foundational → applied → capstone), in-app notifications |
+| **V1.1 — Hardening** | Accessibility & Security | WCAG 2.1 AA audit, full RLS penetration testing, Playwright E2E test suites |
+| **V2 — Post-Pilot** | Enterprise MoSPI Scaling | Live iGOT Sunbird API integration, real NIC Jan-Parichay OIDC registration, skill heatmaps, automated demand forecasting |
 
 ---
 
-## Phase Dependency Graph
-
-```mermaid
-graph LR
-    P1["Phase 1: Setup & Auth"] --> P2["Phase 2: FRAC & Seed"]
-    P2 --> P3["Phase 3: Gap Engine & Dashboard"]
-    P3 --> P4["Phase 4: Assessment & Offline"]
-    P3 --> P5["Phase 5: Content Pipeline"]
-    P4 --> P6["Phase 6: Admin & Polish"]
-    P5 --> P6
-    P6 --> MVP["✅ MVP Demo-Ready"]
-    MVP --> V1["V1: Full Core Loop"]
-    V1 --> V11["V1.1: Hardening"]
-    V11 --> V2["V2: Post-Pilot"]
-```
-
-> **Note**: Phases 4 and 5 can be parallelized if working with a team. Phase 6 depends on both completing because the golden-path demo tests the full flow.
-
----
-
-*End of document. See memory.md for live progress tracking.*
+*End of Phases.md. Companion document: Architecture.md.*

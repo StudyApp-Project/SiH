@@ -6,18 +6,19 @@
 [![SIH 26101](https://img.shields.io/badge/SIH-Problem_26101-0052CC?style=flat-square&logo=gov.in)](https://www.sih.gov.in/)
 [![FRAC Grounded](https://img.shields.io/badge/Framework-FRAC_Grounded-138808?style=flat-square&logo=shield)](https://karmayogi.gov.in/)
 [![iGOT Karmayogi](https://img.shields.io/badge/Ecosystem-iGOT_Karmayogi-FF9933?style=flat-square)](https://igotkarmayogi.gov.in/)
-[![React 19](https://img.shields.io/badge/Frontend-React_19_+_Vite_8-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
-[![Tailwind CSS v4](https://img.shields.io/badge/Styling-Tailwind_CSS_v4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
-[![Firebase](https://img.shields.io/badge/Database-Firestore-FFCA28?style=flat-square&logo=firebase&logoColor=black)](https://firebase.google.com/)
-[![Google Gemini](https://img.shields.io/badge/AI-Gemini_Flash-8E75B2?style=flat-square&logo=google)](https://ai.google.dev/)
+[![Next.js 15](https://img.shields.io/badge/Frontend-Next.js_15_App_Router-000000?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![Tailwind CSS v4](https://img.shields.io/badge/Styling-Tailwind_CSS_v4_OKLCH-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Database-Supabase_PostgreSQL_16-3ECF8E?style=flat-square&logo=supabase)](https://supabase.com/)
+[![Cloudflare R2](https://img.shields.io/badge/Storage-Cloudflare_R2_$0_Egress-F38020?style=flat-square&logo=cloudflare)](https://cloudflare.com/)
+[![Multi-AI Gateway](https://img.shields.io/badge/AI-Gemini_2.5_+_Claude_3.5-8E75B2?style=flat-square&logo=google)](https://ai.google.dev/)
 
 ---
 
 ## 🎯 Executive Overview
 
-**StatVidya** is an intelligent, domain-grounded workforce competency platform built specifically for India's Official Statistical System (**MoSPI**, NSSO, ISS/SSS cadres, State DES offices).
+**StatVidya** is a domain-grounded workforce competency intelligence platform built specifically for India's Official Statistical System (**MoSPI**, NSSO, ISS/SSS cadres, State DES offices).
 
-Unlike generic LMS platforms or basic quiz generators, StatVidya fills the critical intelligence layer above **iGOT Karmayogi**: it identifies specific competency gaps, delivers offline/Hindi-first field assessments, and links training spending to real statistical outcome improvements.
+Positioned as the intelligence layer above **iGOT Karmayogi** (10M+ registered civil servants), StatVidya identifies specific competency gaps, delivers offline/Hindi-first field assessments, and directly correlates training investments with measurable improvements in field survey data quality.
 
 ```
 Profile → Assess → Gap → Recommend → Learn (via iGOT) → Practice → Reassess → Repeat
@@ -25,34 +26,56 @@ Profile → Assess → Gap → Recommend → Learn (via iGOT) → Practice → R
 
 ---
 
-## 🚀 Key Differentiation Levers
+## 🚀 Key Strategic Differentiators
 
 ```mermaid
 graph TD
-    L1["🌾 1. Field-First Delivery<br/>• Offline PWA & Hindi-First UI<br/>• NSSO FOD Field Investigators"] 
-    L2["📊 2. Outcome-Oriented Intelligence<br/>• Training ↔ Field Data Quality<br/>• Cadre Readiness Analytics"] 
+    L1["🌾 1. Field-First Delivery<br/>• Offline PWA (@serwist/next) & Hindi-First UI<br/>• NSSO FOD Field Investigators"] 
+    L2["📊 2. Outcome-Oriented Intelligence<br/>• Training Spending ↔ Survey Data Quality<br/>• Cadre Readiness Analytics"] 
     L3["🏛️ 3. FRAC Grounded Taxonomy<br/>• Role → Activity → Competency<br/>• Mission Karmayogi Alignment"]
 
     classDef lever fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
     class L1,L2,L3 lever;
 ```
 
-1. **Field Personnel First (NSSO FOD)**: Built for offline tablets and Hindi-first workflows for enumerators in the field—the largest and most critical workforce segment.
-2. **Training → Outcome Correlation**: Measures whether training improves statistical survey output quality, moving beyond self-referential quiz scores.
+1. **Field Personnel First (NSSO FOD)**: Built with an offline-first PWA architecture and native Hindi (Devanagari) interface for enumerators on low-cost Android tablets.
+2. **Training → Outcome Correlation**: Statistically correlates competency levels with field survey error reduction, moving beyond self-referential quiz scores.
 3. **FRAC Grounded**: Uses Mission Karmayogi’s official **Framework of Roles, Activities and Competencies** (Role $\to$ Activity $\to$ Competency) rather than an invented taxonomy.
 
 ---
 
-## 💡 The Core Loop
+## 🏛️ 3-Provider Cloud Architecture (v2.0)
 
-```mermaid
-flowchart LR
-    A["👤 Profile Ingestion<br/>(Cadre & Role)"] --> B["⚖️ Gap Engine<br/>(Priority-Weighted)"]
-    B --> C["🎯 iGOT Pathways<br/>(Deep-Linked)"]
-    C --> D["📑 AI Content Pipeline<br/>(PDF to MCQs)"]
-    D --> E["🧪 Adaptive Assessment<br/>(3-Stage L1-L5 Tree)"]
-    E --> F["🛡️ Verification & Analytics<br/>(Outcome Tracking)"]
-    F -.-> A
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                CLIENT TIER                                  │
+│  Next.js 15 App Router + Tailwind CSS v4 (OKLCH) + @serwist/next PWA        │
+│  State: TanStack Query + React Context | Offline: IndexedDB (`idb` queue)   │
+└───────────────────┬──────────────────────┬──────────────────────┬───────────┘
+                    │                      │                      │
+      Direct HTTPS  │        BFF HTTPS     │        Direct Upload │
+      & Realtime WS │        API Routes    │        & AI Proxy    │
+                    ▼                      ▼                      ▼
+┌──────────────────────────────┐ ┌──────────────────┐ ┌───────────────────────┐
+│       SUPABASE TIER          │ │   VERCEL TIER    │ │    CLOUDFLARE TIER    │
+│                              │ │                  │ │                       │
+│  • Supabase Auth (JWT)       │ │  • Next.js App   │ │  • Cloudflare Workers │
+│  • Parichay OIDC SSO         │ │    Server Comps  │ │    ├─ r2-upload       │
+│  • PostgreSQL 16+ with RLS   │ │  • Edge API      │ │    └─ ai-proxy        │
+│  • Edge Functions (Deno)     │ │    BFF Gate      │ │  • Cloudflare R2      │
+│  • Realtime WebSocket PubSub │ │                  │ │    ($0 Egress PDFs)   │
+│  • Storage (Avatars)         │ │                  │ │  • Cloudflare AI      │
+│                              │ │                  │ │    Gateway (Failover) │
+└──────────────────────────────┘ └──────────────────┘ └───────────┬───────────┘
+                                                                  │
+                                                                  ▼
+                                                      ┌───────────────────────┐
+                                                      │ EXTERNAL AI CHAIN     │
+                                                      │ 1. Gemini 2.5 Flash   │
+                                                      │ 2. Claude 3.5 Sonnet  │
+                                                      │ 3. GPT-4o-mini        │
+                                                      │ 4. In-Repo Rule Engine│
+                                                      └───────────────────────┘
 ```
 
 ---
@@ -61,10 +84,10 @@ flowchart LR
 
 | Persona | Primary Focus | Key Capabilities |
 | :--- | :--- | :--- |
-| 🌾 **Field Investigator** | NSSO FOD Field Enumeration | Offline PWA assessment, Hindi locale, zero data-loss sync |
-| 👨‍💼 **Desk Officer** | MoSPI HQ / ISS / SSS Cadre | FRAC gap analysis, APAR milestone tracking, iGOT Karma Points |
-| 👨‍🏫 **Trainer** | NSSTA / TPAC Faculty | AI PDF-to-MCQ batch pipeline, confidence review queue, question bank |
-| 🏢 **Administrator** | Department Head / MoSPI Leadership | Macro readiness index, priority training write-back, outcome correlation |
+| 🌾 **Sunita Devi** (Field Investigator) | NSSO FOD Field Enumeration | Offline PWA assessment runner, Hindi-first UI, zero data-loss sync |
+| 👨‍💼 **Amit Sharma** (Junior Statistical Officer) | MoSPI HQ / SSS Cadre | FRAC gap analysis, APAR milestone tracking, iGOT course enrolment |
+| 👨‍🏫 **Dr. Priya Verma** (NSSTA Faculty) | Training Academies | Direct-to-R2 large manual upload, AI MCQ generation, review queue |
+| 🏢 **Rajesh Kumar** (Additional Director General) | MoSPI Leadership | Macro readiness index, training priority write-back, outcome correlation |
 
 ---
 
@@ -80,13 +103,13 @@ StatVidya enforces a 100% visible **Provenance Labeling Policy** across all doma
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## 🛠️ Complete Tech Stack
 
-- **Frontend**: React 19, Vite 8, Tailwind CSS v4, Lucide Icons, Framer Motion
-- **PWA & Offline**: Workbox Service Worker, IndexedDB queue, `react-i18next`
-- **Backend & Auth**: Firebase Auth (Gov SSO simulation), Cloudflare Workers
-- **Database & Storage**: Firebase Firestore (Realtime), Firebase Storage
-- **AI & Processing**: Google Gemini Flash (Structured JSON batch mode), PDF.js
+- **Frontend**: Next.js 15 (App Router), React 19, Tailwind CSS v4, shadcn/ui, Lucide Icons
+- **PWA & Offline**: `@serwist/next` Service Worker, IndexedDB (`idb` queue), bilingual i18n
+- **Database & Auth**: Supabase PostgreSQL 16+ (Row Level Security), Supabase Auth, Parichay OIDC SSO
+- **Serverless & Storage**: Supabase Edge Functions (Deno), Cloudflare R2 ($0 egress), Cloudflare Workers
+- **AI Engine**: Cloudflare AI Gateway with automated failover (Gemini 2.5 Flash → Claude 3.5 Sonnet → GPT-4o-mini → In-repo Rule Engine)
 
 ---
 
@@ -101,9 +124,12 @@ cd SiH
 npm install
 
 # 3. Environment configuration
-cp .env.example .env
+cp .env.example .env.local
 
-# 4. Start dev server
+# 4. Start Supabase (Local or Remote)
+npx supabase start
+
+# 5. Start development server
 npm run dev
 ```
 
