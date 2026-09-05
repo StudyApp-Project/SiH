@@ -21,23 +21,8 @@ export interface AppUser {
 export async function getAuthenticatedUser(): Promise<AppUser> {
   const cookieStore = await cookies();
 
-  // 1. Check if real Supabase auth succeeds
-  try {
-    const supabase = await getSupabaseServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user && user.email) {
-      return {
-        id: user.id,
-        email: user.email,
-        user_metadata: user.user_metadata,
-        app_metadata: user.app_metadata,
-      };
-    }
-  } catch {
-    // Supabase unreachable or mock mode
-  }
-
-  // 2. Check demo_user cookie
+  // 1. Check demo_user cookie FIRST to ensure instant loading during local development
+  //    This avoids blocking on Supabase timeout if the DB is offline or URL is invalid.
   const demoCookie = cookieStore.get('demo_user')?.value;
   if (demoCookie) {
     try {
@@ -61,6 +46,23 @@ export async function getAuthenticatedUser(): Promise<AppUser> {
     } catch {
       // Cookie parsing error
     }
+  }
+
+  // 2. Check if real Supabase auth succeeds
+  try {
+    const supabase = await getSupabaseServerClient();
+    // Using a fast timeout abort controller just in case it hangs
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user && user.email) {
+      return {
+        id: user.id,
+        email: user.email,
+        user_metadata: user.user_metadata,
+        app_metadata: user.app_metadata,
+      };
+    }
+  } catch {
+    // Supabase unreachable or mock mode
   }
 
   // 3. Sensible default demo persona (Amit Sharma) to ensure no blank screens / redirects

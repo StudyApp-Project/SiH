@@ -41,34 +41,36 @@ export async function middleware(request: NextRequest) {
   );
 
   let user = null;
-  try {
-    const { data } = await supabase.auth.getUser();
-    user = data.user;
-  } catch {
-    // Supabase unreachable
+
+  // 1. Check demo_user cookie FIRST to ensure instant routing in local dev
+  const demoCookie = request.cookies.get('demo_user')?.value;
+  if (demoCookie) {
+    try {
+      const parsed = JSON.parse(decodeURIComponent(demoCookie));
+      if (parsed && parsed.email) {
+        user = {
+          id: parsed.id || 'demo-amit',
+          email: parsed.email,
+          app_metadata: { role: parsed.role || 'learner' },
+          user_metadata: {
+            name: parsed.name,
+            organization_id: parsed.organization_id || 'org-mospi',
+            preferred_language: parsed.preferred_language || 'en',
+          },
+        };
+      }
+    } catch {
+      // Parse error
+    }
   }
 
-  // Check demo user cookie if Supabase user is not found
+  // 2. Only hit Supabase if we don't have a valid demo cookie
   if (!user) {
-    const demoCookie = request.cookies.get('demo_user')?.value;
-    if (demoCookie) {
-      try {
-        const parsed = JSON.parse(decodeURIComponent(demoCookie));
-        if (parsed && parsed.email) {
-          user = {
-            id: parsed.id || 'demo-amit',
-            email: parsed.email,
-            app_metadata: { role: parsed.role || 'learner' },
-            user_metadata: {
-              name: parsed.name,
-              organization_id: parsed.organization_id || 'org-mospi',
-              preferred_language: parsed.preferred_language || 'en',
-            },
-          };
-        }
-      } catch {
-        // Parse error
-      }
+    try {
+      const { data } = await supabase.auth.getUser();
+      user = data.user;
+    } catch {
+      // Supabase unreachable
     }
   }
 
