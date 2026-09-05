@@ -55,16 +55,14 @@ export default async function LoginPage() {
                 dept="MoSPI Headquarters"
                 email="amit.sharma@mospi.gov.in"
                 lang="en"
-                t={t}
               />
               <DemoPersonaCard
                 icon="search"
                 name="Sunita Devi"
                 role="Field Investigator (NSSO FOD)"
                 dept="NSSO Field Operations Division"
-                email="sunita.devi@nssO.gov.in"
+                email="sunita.devi@nsso.gov.in"
                 lang="hi"
-                t={t}
               />
               <DemoPersonaCard
                 icon="graduation-cap"
@@ -73,7 +71,6 @@ export default async function LoginPage() {
                 dept="NSSTA"
                 email="priya.verma@nssta.gov.in"
                 lang="en"
-                t={t}
               />
               <DemoPersonaCard
                 icon="bar-chart"
@@ -82,7 +79,6 @@ export default async function LoginPage() {
                 dept="MoSPI"
                 email="rajesh.kumar@mospi.gov.in"
                 lang="en"
-                t={t}
               />
             </div>
           </div>
@@ -99,7 +95,6 @@ function DemoPersonaCard({
   dept,
   email,
   lang,
-  t,
 }: {
   icon: string;
   name: string;
@@ -107,12 +102,10 @@ function DemoPersonaCard({
   dept: string;
   email: string;
   lang: 'en' | 'hi';
-  t: (key: string) => string;
 }) {
   return (
-    <button
-      type="button"
-      onClick={() => selectDemoPersona(email, lang)}
+    <a
+      href={`/api/sso/demo-persona?email=${encodeURIComponent(email)}&lang=${lang}`}
       className="w-full flex items-start gap-4 p-4 rounded-xl border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-200 transition-colors text-left"
     >
       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
@@ -144,10 +137,6 @@ function DemoPersonaCard({
         <p className="text-xs text-slate-500 mt-0.5">{dept}</p>
         <p className="text-xs text-slate-400 mt-1 font-mono">{email}</p>
       </div>
-    </button>
+    </a>
   );
-}
-
-function selectDemoPersona(email: string, lang: 'en' | 'hi') {
-  window.location.href = `/api/sso/demo-persona?email=${encodeURIComponent(email)}&lang=${lang}`;
 }

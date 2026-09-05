@@ -139,7 +139,7 @@ export default function ProfileClient() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-100">
         <div className="text-center space-y-4">
           <div className="w-8 h-8 border-3 border-blue-700/30 border-t-blue-700 rounded-full animate-spin mx-auto"></div>
           <p className="text-sm text-slate-500 dark:text-zinc-400">{t('common.loading')}</p>
@@ -179,10 +179,10 @@ export default function ProfileClient() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-zinc-800 dark:to-blue-900/20 p-8">
+      <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-linear-to-br from-blue-50 to-indigo-50 dark:from-zinc-800 dark:to-blue-900/20 p-8">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           {/* Avatar */}
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+          <div className="w-20 h-20 rounded-full bg-linear-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
             {data.name.split(' ').map(n => n[0]).join('')}
           </div>
 
@@ -384,7 +384,7 @@ export default function ProfileClient() {
                     {history.map((entry, idx) => (
                       <div key={idx} className="relative">
                         {/* Timeline dot */}
-                        <div className={`absolute -left-[25px] w-4 h-4 rounded-full border-2 bg-white dark:bg-zinc-900 ${
+                        <div className={`absolute -left-6.25 w-4 h-4 rounded-full border-2 bg-white dark:bg-zinc-900 ${
                           entry.source === 'assessment-score'
                             ? 'border-blue-600 dark:border-blue-400'
                             : entry.source === 'course-completion'

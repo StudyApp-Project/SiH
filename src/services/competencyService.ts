@@ -12,14 +12,13 @@ import type {
   SeverityBucket,
   Activity,
   Competency,
-  Role,
 } from '@/lib/types';
 
 // ============================================================================
 // CONSTANTS
 // ============================================================================
 
-const SEVERITY_WEIGHTS = {
+export const SEVERITY_WEIGHTS = {
   critical: 100,
   important: 50,
   desirable: 10,
@@ -145,7 +144,7 @@ export async function analyzeCompetencyGaps({
 
       const userRecord = userCompetencies.find((r) => r.competency_id === ac.competency_id);
       const currentLevel = userRecord?.current_level ?? 1;
-      const evidenceType = userRecord?.evidence ? 'assessment-verified' : 'self-assessed';
+      const evidenceType: 'self-assessed' | 'assessment-verified' = userRecord?.evidence ? 'assessment-verified' : 'self-assessed';
 
       return buildCompetencyGap(
         competency,
@@ -153,7 +152,7 @@ export async function analyzeCompetencyGaps({
         currentLevel,
         ac.target_level,
         ac.priority,
-        evidenceType as any
+        evidenceType
       );
     })
     .filter((g): g is CompetencyGap => g !== null);

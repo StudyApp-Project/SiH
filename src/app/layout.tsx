@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
-import { getLocale } from 'next-intl/server';
-import { ThemeProvider } from 'next-themes';
+import { getLocale, getMessages } from 'next-intl/server';
+import { ThemeProvider } from '@/components/theme-provider';
 import { Inter, Noto_Sans_Devanagari, JetBrains_Mono } from 'next/font/google';
-import { AppLayout } from '@/components/layout/AppLayout';
 import { OfflineIndicator } from '@/components/layout/OfflineIndicator';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import './globals.css';
@@ -31,7 +29,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'StatVidya — Workforce Competency Intelligence',
-  description: 'Competency Intelligence Platform for India\'s Official Statistical System (MoSPI / NSSTA)',
+  description: "Competency Intelligence Platform for India's Official Statistical System (MoSPI / NSSTA)",
   manifest: '/manifest.json',
   icons: {
     icon: '/icons/icon-192x192.png',
@@ -44,37 +42,20 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let locale = 'en';
+  const locale = await getLocale();
+  const messages = await getMessages();
 
   return (
     <html
       lang={locale}
-      className="h-full antialiased"
+      className={`${inter.variable} ${notoDevanagari.variable} ${jetbrainsMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                const theme = localStorage.getItem('theme');
-                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.documentElement.classList.add('dark');
-                } else {
-                  document.documentElement.classList.remove('dark');
-                }
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider locale={locale}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ThemeProvider>
             <div className="flex flex-col min-h-full">
-              <AppLayout>
-                {children}
-              </AppLayout>
+              {children}
               <OfflineIndicator />
               <LanguageSwitcher />
             </div>

@@ -1,23 +1,33 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { WifiOff, Wifi, RefreshCw, Check } from 'lucide-react';
+import { WifiOff, Wifi, RefreshCw } from 'lucide-react';
 
 export function OfflineIndicator() {
   const t = useTranslations('offline');
+  const [mounted, setMounted] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
+
+  const syncPending = useCallback(async () => {
+    return Promise.resolve();
+  }, []);
 
   const loadPendingCount = useCallback(async () => {
     return new Promise<number>((resolve) => {
       try {
         const openReq = indexedDB.open('statvidya-offline', 1);
+        openReq.onupgradeneeded = () => {
+          const db = openReq.result;
+          if (!db.objectStoreNames.contains('pending_assessments')) {
+            db.createObjectStore('pending_assessments', { keyPath: 'id', autoIncrement: true });
+          }
+        };
         openReq.onsuccess = () => {
           const db = openReq.result;
-          if (!db) { resolve(0); return; }
+          if (!db || !db.objectStoreNames.contains('pending_assessments')) { resolve(0); return; }
           const txn = db.transaction('pending_assessments', 'readonly');
           const store = txn.objectStore('pending_assessments');
           const countReq = store.count();
@@ -34,6 +44,9 @@ export function OfflineIndicator() {
   }, []);
 
   useEffect(() => {
+    setMounted(true);
+    setIsOnline(navigator.onLine);
+
     const handleOnline = async () => {
       setIsOnline(true);
       if (pendingCount > 0) {
@@ -51,8 +64,6 @@ export function OfflineIndicator() {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    setIsOnline(navigator.onLine);
-
     loadPendingCount().then(setPendingCount);
 
     const interval = setInterval(() => {
@@ -64,13 +75,9 @@ export function OfflineIndicator() {
       window.removeEventListener('offline', handleOffline);
       clearInterval(interval);
     };
-  }, [pendingCount, loadPendingCount]);
+  }, [pendingCount, loadPendingCount, syncPending]);
 
-  const syncPending = async () => {
-    return Promise.resolve();
-  };
-
-  if (isOnline && pendingCount === 0 && !isSyncing) {
+  if (!mounted || (isOnline && pendingCount === 0 && !isSyncing)) {
     return null;
   }
 

@@ -1,8 +1,8 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard,
   Target,
@@ -36,17 +36,13 @@ const adminItems = [
   { href: '/admin/analytics', icon: BarChart3, label: 'nav.adminAnalytics' },
 ];
 
-interface SidebarProps {
-  t: (key: string) => string;
-}
-
-export function Sidebar({ t }: SidebarProps) {
+export function Sidebar() {
+  const t = useTranslations();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
   const isActive = (href: string) => {
-    if (href === '/dashboard') return pathname === '/dashboard';
-    return pathname.startsWith(href);
+    return pathname === href || pathname.startsWith(href + '/');
   };
 
   return (
@@ -132,9 +128,9 @@ export function Sidebar({ t }: SidebarProps) {
           })}
         </div>
 
-        <div>
+        <div className="mb-2">
           <p className={`text-[10px] font-semibold uppercase tracking-wider text-slate-400 pb-1 ${collapsed ? 'text-center' : ''}`}>
-            Administration
+            Admin
           </p>
           {adminItems.map((item) => {
             const Icon = item.icon;
@@ -157,18 +153,6 @@ export function Sidebar({ t }: SidebarProps) {
           })}
         </div>
       </nav>
-
-      <div className="border-t border-slate-200 p-2 dark:border-zinc-800">
-        <Link
-          href="/"
-          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-500 transition-colors hover:bg-slate-100 dark:hover:bg-zinc-800 ${
-            collapsed ? 'justify-center px-0' : ''
-          }`}
-        >
-          <ClipboardList className="h-5 w-5 flex-shrink-0" />
-          {!collapsed && <span>{t('nav.logout')}</span>}
-        </Link>
-      </div>
     </aside>
   );
 }

@@ -1,16 +1,9 @@
-import { NextIntlClientProvider } from 'next-intl';
-import { getLocale } from 'next-intl/server';
+import { AppLayout } from '@/components/layout/AppLayout';
 
-export default async function AppLayout({
+export default function AppRouteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const locale = await getLocale();
-
-  return (
-    <NextIntlClientProvider locale={locale}>
-      {children}
-    </NextIntlClientProvider>
-  );
+  return <AppLayout>{children}</AppLayout>;
 }

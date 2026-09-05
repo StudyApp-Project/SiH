@@ -1,45 +1,46 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { useLocale } from 'next-intl';
 import { useCallback } from 'react';
 import { Globe } from 'lucide-react';
 
 export function LanguageSwitcher() {
-  const t = useTranslations('nav');
   const router = useRouter();
   const pathname = usePathname();
+  const currentLocale = useLocale();
 
   const handleLanguageChange = useCallback(
     (lang: 'en' | 'hi') => {
-      document.cookie = `locale=${lang};path=/;max-age=31536000`;
+      if (typeof document !== 'undefined') {
+        document.cookie = `locale=${lang};path=/;max-age=31536000`;
+      }
       router.replace(pathname, { scroll: false });
     },
     [router, pathname]
   );
 
   return (
-    <div className="fixed bottom-4 right-4 flex items-center gap-2 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg shadow-lg px-2 py-1">
+    <div className="fixed bottom-4 right-4 flex items-center gap-2 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg shadow-lg px-2 py-1 z-50">
       <button
         onClick={() => handleLanguageChange('en')}
         className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-          document.documentElement.lang === 'en'
+          currentLocale === 'en'
             ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
             : 'text-slate-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-700'
         }`}
-        aria-pressed={document.documentElement.lang === 'en'}
+        aria-pressed={currentLocale === 'en'}
       >
         EN
       </button>
       <button
         onClick={() => handleLanguageChange('hi')}
         className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-          document.documentElement.lang === 'hi'
+          currentLocale === 'hi'
             ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
             : 'text-slate-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-700'
         }`}
-        aria-pressed={document.documentElement.lang === 'hi'}
+        aria-pressed={currentLocale === 'hi'}
       >
         HI
       </button>

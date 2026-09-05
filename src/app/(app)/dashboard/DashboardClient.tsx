@@ -238,7 +238,7 @@ export default function DashboardPage({ user }: DashboardProps) {
       </div>
 
       {/* Recommended Actions */}
-      <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-zinc-800/50 dark:to-blue-900/20 p-8 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-linear-to-br from-blue-50 to-indigo-50 dark:from-zinc-800/50 dark:to-blue-900/20 p-8 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900 dark:text-zinc-100 mb-4">
           {t('dashboard.nextActions')}
         </h2>

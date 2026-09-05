@@ -22,7 +22,7 @@ export interface Organization {
   name: string;
   code: string;
   ministry?: string;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
   created_at: string;
 }
 
@@ -123,7 +123,7 @@ export interface Document {
   file_size_bytes?: number;
   page_count?: number;
   status: DocumentStatus;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at: string;
 }
 
@@ -229,7 +229,7 @@ export interface AuditLog {
   action: string;
   entity_type: string;
   entity_id?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   prompt_version?: string;
   created_at: string;
 }
@@ -242,7 +242,7 @@ export interface Notification {
   title: string;
   body?: string;
   read: boolean;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   created_at: string;
 }
 

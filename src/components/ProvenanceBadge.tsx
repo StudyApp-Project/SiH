@@ -159,7 +159,7 @@ export function ProvenanceDisclosure() {
 
       <p className="text-sm text-gray-600 dark:text-gray-400">
         StatVidya explicitly labels every domain data element with its origin and verification status. This
-        transparency ensures you always know whether data represents official government fact, our team's proposal,
+        transparency ensures you always know whether data represents official government fact, our team&apos;s proposal,
         or demonstration simulations.
       </p>
 
