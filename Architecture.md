@@ -54,6 +54,9 @@
    - Built to natively interface with **Jan-Parichay / MeriPehchaan (NIC OIDC)**, while maintaining seamless one-click simulated demo personas for SIH jury evaluations.
 6. **Immutable Audit Trails**:
    - Regulatory accountability is guaranteed via PostgreSQL triggers writing directly to an append-only `audit_log` table.
+7. **Institutional Ground Truth (MoSPI & NSSTA Official Datasets)**:
+   - Built directly on the datasets and official training manuals published on `nssta.gov.in` and `mospi.gov.in` as mandated by SIH PS 26101.
+   - Real 100+ page NSS field manuals stream to Cloudflare R2 ($0 egress), statutory cadres (ISS, SSS, FOD) populate PostgreSQL `seed.sql`, official bilingual glossaries power the question bank, and field scrutiny error rates drive the outcome correlation engine (PRD §9.4).
 
 ---
 
@@ -688,14 +691,14 @@ export const MCQ_RESPONSE_SCHEMA = {
 
 ## 10. Large PDF Processing Pipeline
 
-Government statistical manuals (such as NSS 78th Round Household Survey Instructions) frequently exceed 200+ pages and 50MB. Processing these requires a structured 5-stage pipeline:
+Official government statistical manuals published on **`mospi.gov.in`** and **`nssta.gov.in`** (such as the *NSS Instructions to Field Staff Vol. I & II* or *NSSTA In-Service Training Manuals on Official Statistics*) frequently exceed 200+ pages and 50MB. Processing these dense, highly technical publications requires a structured 5-stage pipeline:
 
 ```
-Stage 1: Direct R2 Upload  ──► Client streams raw PDF directly to Cloudflare R2 via presigned URL
-Stage 2: Client/Edge Chunk ──► PDF.js parses structure; splits into semantic sections (1,500 words)
-Stage 3: Metadata Extract  ──► Rule-based extraction of Chapter headings, survey definitions, tables
-Stage 4: Batched AI Call   ──► Chunks dispatched to AI Gateway with FRAC competency prompt
-Stage 5: Review & Sanity   ──► Questions enter Trainer Review Queue; low-confidence flagged first
+Stage 1: Direct R2 Upload  ──► Client streams raw MoSPI/NSSTA PDF directly to Cloudflare R2 via presigned URL
+Stage 2: Client/Edge Chunk ──► PDF.js parses structure; splits into semantic sections (1,500 words per chapter/para)
+Stage 3: Metadata Extract  ──► Rule-based extraction of Chapter headings (Schedule 0.0, FSU/USU, Sampling frames)
+Stage 4: Batched AI Call   ──► Chunks dispatched to AI Gateway with strict FRAC competency prompt & JSON schema
+Stage 5: Review & Sanity   ──► Questions enter Trainer Review Queue; low-confidence flagged first, citing source para
 ```
 
 ```

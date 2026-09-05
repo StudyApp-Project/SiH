@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Primary Institutional Palette */
+  --color-primary: oklch(0.45 0.12 220);
+  --color-primary-hover: oklch(0.38 0.12 220);
+  --color-primary-light: oklch(0.94 0.03 220);
+  
+  /* Saffron Accent */
+  --color-secondary: oklch(0.62 0.16 55);
+  --color-secondary-hover: oklch(0.52 0.16 55);
+  --color-secondary-light: oklch(0.96 0.04 55);
+  
+  /* Green Success */
+  --color-tertiary: oklch(0.52 0.14 145);
+  --color-tertiary-light: oklch(0.95 0.03 145);
+
+  /* Functional Semantics */
+  --color-success: oklch(0.52 0.14 145);
+  --color-warning: oklch(0.65 0.17 75);
+  --color-error: oklch(0.42 0.18 25);
+  --color-info: oklch(0.45 0.14 250);
+
+  /* Severity Tokens */
+  --color-severity-high: var(--color-error);
+  --color-severity-moderate: var(--color-warning);
+  --color-severity-proficient: var(--color-success);
+
+  /* Typography */
+  --font-sans: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Component Radii */
+  --radius-card: 12px;
+  --radius-btn: 8px;
+  --radius-badge: 6px;
+  --radius-input: 8px;
+}
+
+@layer base {
+  :root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --muted: oklch(0.965 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --border: oklch(0.922 0 0);
+  }
+
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.178 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --border: oklch(0.269 0 0);
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
