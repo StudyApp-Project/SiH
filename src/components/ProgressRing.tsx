@@ -31,9 +31,9 @@ export function ProgressRing({
   // Determine color based on value if not provided
   const getRingColor = (val: number) => {
     if (color) return color;
-    if (val >= 80) return 'text-emerald-600 dark:text-emerald-500';
-    if (val >= 50) return 'text-amber-500 dark:text-amber-400';
-    return 'text-rose-600 dark:text-rose-500';
+    if (val >= 80) return 'text-emerald-600';
+    if (val >= 50) return 'text-amber-500';
+    return 'text-rose-600';
   };
 
   return (
@@ -55,7 +55,7 @@ export function ProgressRing({
           strokeWidth={strokeWidth}
           stroke="currentColor"
           fill="transparent"
-          className="text-slate-100 dark:text-zinc-800"
+          className="text-slate-100"
         />
         {/* Progress stroke */}
         <circle
@@ -75,19 +75,19 @@ export function ProgressRing({
       {/* Center content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
         {showPercentage && (
-          <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-100 font-mono">
+          <span className="text-2xl font-bold tracking-tight text-[#1a1a1a] font-mono">
             {Math.round(normalizedValue)}%
           </span>
         )}
         {label && (
-          <span className="text-xs font-medium text-slate-500 dark:text-zinc-400 mt-0.5">
+          <span className="text-xs font-medium text-stone-500 mt-0.5">
             {label}
           </span>
         )}
       </div>
 
       {sublabel && (
-        <span className="mt-2 text-xs text-slate-500 dark:text-zinc-400 text-center">
+        <span className="mt-2 text-xs text-stone-500 text-center">
           {sublabel}
         </span>
       )}

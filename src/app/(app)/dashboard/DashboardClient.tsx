@@ -123,9 +123,9 @@ export default function DashboardPage({ user }: DashboardProps) {
   }, [user.id, user.user_metadata?.organization_id, supabase]);
 
   const severityColors = {
-    HIGH: 'text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950 border-rose-200 dark:border-rose-800',
-    MODERATE: 'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800',
-    PROFICIENT: 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800',
+    HIGH: 'text-rose-700 text-rose-600 bg-rose-50 bg-rose-50 border-rose-200 border-rose-200',
+    MODERATE: 'text-amber-700 text-amber-600 bg-amber-50 bg-amber-50 border-amber-200 border-amber-200',
+    PROFICIENT: 'text-emerald-700 text-emerald-600 bg-emerald-50 bg-emerald-50 border-emerald-200 border-emerald-200',
   };
 
   if (loading) {
@@ -133,7 +133,7 @@ export default function DashboardPage({ user }: DashboardProps) {
       <div className="flex items-center justify-center h-64">
         <div className="text-center space-y-4">
           <div className="w-8 h-8 border-3 border-blue-700/30 border-t-blue-700 rounded-full animate-spin mx-auto"></div>
-          <p className="text-sm text-slate-500 dark:text-zinc-400">{t('common.loading')}</p>
+          <p className="text-sm text-slate-500 text-gray-500">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -143,10 +143,10 @@ export default function DashboardPage({ user }: DashboardProps) {
     <div className="space-y-8">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-zinc-100">
+        <h1 className="text-3xl font-bold text-slate-900 text-gray-900">
           {t('dashboard.readinessIndex')}
         </h1>
-        <p className="text-slate-600 dark:text-zinc-400">
+        <p className="text-slate-600 text-gray-500">
           Welcome back, {user.user_metadata?.name || user.email}. {userRole && `Role: ${userRole}`}
         </p>
       </div>
@@ -154,8 +154,8 @@ export default function DashboardPage({ user }: DashboardProps) {
       {/* Main Readiness Card */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Readiness Ring */}
-        <div className="lg:col-span-1 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-zinc-100 mb-6 text-center">
+        <div className="lg:col-span-1 rounded-2xl border border-slate-200 border-gray-200 bg-white bg-white p-8 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900 text-gray-900 mb-6 text-center">
             {t('dashboard.readinessIndex')}
           </h2>
           {readinessIndex !== null && (
@@ -167,10 +167,10 @@ export default function DashboardPage({ user }: DashboardProps) {
                 sublabel="Competencies at target"
                 color={
                   readinessIndex >= 80
-                    ? 'text-emerald-600 dark:text-emerald-500'
+                    ? 'text-emerald-600 text-emerald-600'
                     : readinessIndex >= 50
-                    ? 'text-amber-500 dark:text-amber-400'
-                    : 'text-rose-600 dark:text-rose-500'
+                    ? 'text-amber-500 text-amber-600'
+                    : 'text-rose-600 text-rose-600'
                 }
               />
             </div>
@@ -178,8 +178,8 @@ export default function DashboardPage({ user }: DashboardProps) {
         </div>
 
         {/* Radar Chart */}
-        <div className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-zinc-100 mb-6">
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200 border-gray-200 bg-white bg-white p-8 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900 text-gray-900 mb-6">
             {t('profile.competencyRadar')}
           </h2>
           {radarData.length > 0 && <RadarChart data={radarData} size={300} showLegend />}
@@ -187,14 +187,14 @@ export default function DashboardPage({ user }: DashboardProps) {
       </div>
 
       {/* Top Gaps Section */}
-      <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 border-gray-200 bg-white bg-white p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-zinc-100">
+          <h2 className="text-lg font-semibold text-slate-900 text-gray-900">
             {t('dashboard.topGaps')}
           </h2>
           <a
             href="/skill-gap"
-            className="text-sm font-medium text-blue-700 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+            className="text-sm font-medium text-blue-700 hover:text-blue-800 text-blue-600 hover:text-blue-800"
           >
             {t('dashboard.viewAllGaps')} →
           </a>
@@ -230,48 +230,48 @@ export default function DashboardPage({ user }: DashboardProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 text-slate-500 dark:text-zinc-400">
+          <div className="text-center py-8 text-slate-500 text-gray-500">
             <p className="text-sm">🎉 All competencies are at or above target levels!</p>
           </div>
         )}
       </div>
 
       {/* Recommended Actions */}
-      <div className="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-linear-to-br from-blue-50 to-indigo-50 dark:from-zinc-800/50 dark:to-blue-900/20 p-8 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-zinc-100 mb-4">
+      <div className="rounded-2xl border border-slate-200 border-gray-200 bg-linear-to-br from-blue-50 to-indigo-50 from-blue-50 to-indigo-50 p-8 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900 text-gray-900 mb-4">
           {t('dashboard.nextActions')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <a
             href="/pathways"
-            className="rounded-lg border border-blue-200 dark:border-blue-800 bg-white dark:bg-zinc-800 p-4 transition-colors hover:bg-blue-50 dark:hover:bg-blue-900/20"
+            className="rounded-lg border border-blue-200 border-blue-200 bg-white bg-white p-4 transition-colors hover:bg-blue-50 hover:bg-blue-50"
           >
-            <h3 className="font-semibold text-slate-900 dark:text-zinc-100 mb-2">📚 {t('dashboard.viewPathways')}</h3>
-            <p className="text-xs text-slate-600 dark:text-zinc-400">Discover recommended courses</p>
+            <h3 className="font-semibold text-slate-900 text-gray-900 mb-2">📚 {t('dashboard.viewPathways')}</h3>
+            <p className="text-xs text-slate-600 text-gray-500">Discover recommended courses</p>
           </a>
 
           <a
             href="/skill-gap"
-            className="rounded-lg border border-blue-200 dark:border-blue-800 bg-white dark:bg-zinc-800 p-4 transition-colors hover:bg-blue-50 dark:hover:bg-blue-900/20"
+            className="rounded-lg border border-blue-200 border-blue-200 bg-white bg-white p-4 transition-colors hover:bg-blue-50 hover:bg-blue-50"
           >
-            <h3 className="font-semibold text-slate-900 dark:text-zinc-100 mb-2">📊 {t('skillGap.title')}</h3>
-            <p className="text-xs text-slate-600 dark:text-zinc-400">View detailed gap analysis</p>
+            <h3 className="font-semibold text-slate-900 text-gray-900 mb-2">📊 {t('skillGap.title')}</h3>
+            <p className="text-xs text-slate-600 text-gray-500">View detailed gap analysis</p>
           </a>
 
           <a
             href="/profile"
-            className="rounded-lg border border-blue-200 dark:border-blue-800 bg-white dark:bg-zinc-800 p-4 transition-colors hover:bg-blue-50 dark:hover:bg-blue-900/20"
+            className="rounded-lg border border-blue-200 border-blue-200 bg-white bg-white p-4 transition-colors hover:bg-blue-50 hover:bg-blue-50"
           >
-            <h3 className="font-semibold text-slate-900 dark:text-zinc-100 mb-2">👤 {t('profile.title')}</h3>
-            <p className="text-xs text-slate-600 dark:text-zinc-400">View your progress</p>
+            <h3 className="font-semibold text-slate-900 text-gray-900 mb-2">👤 {t('profile.title')}</h3>
+            <p className="text-xs text-slate-600 text-gray-500">View your progress</p>
           </a>
         </div>
       </div>
 
       {/* Data Provenance Footer */}
-      <div className="rounded-lg bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-800 p-4 flex items-start gap-3">
+      <div className="rounded-lg bg-slate-50 bg-white/50 border border-slate-200 border-gray-200 p-4 flex items-start gap-3">
         <span className="text-lg">ℹ️</span>
-        <div className="text-xs text-slate-600 dark:text-zinc-400 space-y-1">
+        <div className="text-xs text-slate-600 text-gray-500 space-y-1">
           <p>
             <strong>Demo Data:</strong> This dashboard displays synthetic competency records for demonstration.
             In production, data is tied to real assessment results and marked with{' '}

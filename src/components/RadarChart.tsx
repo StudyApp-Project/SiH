@@ -85,7 +85,7 @@ export function RadarChart({
               fill={lvl === maxLevel ? 'oklch(0.98 0.01 220)' : 'none'}
               stroke="currentColor"
               strokeWidth={1}
-              className="text-slate-200 dark:text-zinc-800"
+              className="text-slate-200 text-white"
             />
           );
         })}
@@ -103,7 +103,7 @@ export function RadarChart({
               stroke="currentColor"
               strokeWidth={1}
               strokeDasharray="2,2"
-              className="text-slate-200 dark:text-zinc-800"
+              className="text-slate-200 text-white"
             />
           );
         })}
@@ -181,8 +181,8 @@ export function RadarChart({
               textAnchor={textAnchor}
               className={`text-xs font-medium cursor-pointer transition-colors ${
                 isHovered
-                  ? 'fill-blue-700 dark:fill-blue-400 font-semibold'
-                  : 'fill-slate-700 dark:fill-zinc-300'
+                  ? 'fill-blue-700 fill-blue-600 font-semibold'
+                  : 'fill-slate-700 fill-gray-600'
               }`}
               onMouseEnter={() => setHoveredIndex(idx)}
               onMouseLeave={() => setHoveredIndex(null)}
@@ -195,17 +195,17 @@ export function RadarChart({
 
       {/* Tooltip Overlay */}
       {hoveredIndex !== null && data[hoveredIndex] && (
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900 px-3 py-1.5 rounded-lg text-xs shadow-lg pointer-events-none z-10 flex items-center gap-2 font-mono">
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white bg-gray-900 text-gray-900 px-3 py-1.5 rounded-lg text-xs shadow-lg pointer-events-none z-10 flex items-center gap-2 font-mono">
           <span className="font-sans font-medium">{data[hoveredIndex].label}:</span>
           <span>Current: L{data[hoveredIndex].current}</span>
           <span>/</span>
-          <span className="text-amber-400 dark:text-amber-600">Target: L{data[hoveredIndex].target}</span>
+          <span className="text-amber-400 text-amber-500">Target: L{data[hoveredIndex].target}</span>
         </div>
       )}
 
       {/* Legend */}
       {showLegend && (
-        <div className="mt-4 flex items-center justify-center gap-6 text-xs text-slate-600 dark:text-zinc-400">
+        <div className="mt-4 flex items-center justify-center gap-6 text-xs text-slate-600 text-gray-500">
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-[#1B5E7B]"></span>
             <span>Current Proficiency</span>

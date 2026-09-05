@@ -1,299 +1,337 @@
-# Design.md
-
-## StatVidya — Visual Design System & UI Specifications
+# Design.md — StatVidya v2.1 (Minimal, Light-Only, Institutional)
 
 | Field | Value |
 |---|---|
-| Companion docs | PRD.md, Architecture.md, rules.md, Phases.md, memory.md |
-| Purpose | Define the color palette (OKLCH), typography, spacing, shadcn/ui component styling, and visual language for StatVidya |
-| Status | **Active v2.0 — Tailwind CSS v4 & shadcn/ui Design System** |
-
-> **Design Direction**: Modern, institutional, and approachable — not sterile-government. StatVidya balances the dignity and authority required by MoSPI and Mission Karmayogi leadership with the ergonomic clarity and tactile usability needed by a Field Investigator holding an Android tablet in rural Bihar under harsh sunlight.
-
----
-
-## Table of Contents
-
-1. [Design Principles](#1-design-principles)
-2. [Color System (OKLCH & Tailwind v4)](#2-color-system-oklch--tailwind-v4)
-3. [Typography (Bilingual English/Hindi)](#3-typography-bilingual-englishhindi)
-4. [Spacing & 4px Layout Grid](#4-spacing--4px-layout-grid)
-5. [Component Design Tokens (shadcn/ui)](#5-component-design-tokens-shadcnui)
-6. [Iconography](#6-iconography)
-7. [Motion & Micro-Interactions](#7-motion--micro-interactions)
-8. [Dark Mode Architecture](#8-dark-mode-architecture)
-9. [Provenance Badges (Visual Trust Spec)](#9-provenance-badges-visual-trust-spec)
-10. [Field-First Responsive Breakpoints](#10-field-first-responsive-breakpoints)
-11. [Accessibility & WCAG 2.1 AA Compliance](#11-accessibility--wcag-21-aa-compliance)
-12. [Tailwind CSS v4 Configuration (`app/globals.css`)](#12-tailwind-css-v4-configuration-appglobalscss)
+| Version | v2.1 — Minimal Redesign (2026-09-05) |
+| Status | Active — Light only, dark mode out of scope |
+| Companion | PRD.md, Architecture.md |
+| Design Direction | Calm, editorial, "clean paper" institutional. Linear / Notion-level restraint applied to government product. Generous whitespace, single accent, 1px borders, near-zero shadow. |
 
 ---
 
 ## 1. Design Principles
 
-1. **Clarity Over Decoration**:
-   - Every visual element must serve comprehension of competencies, assessment progression, or regulatory data. Superfluous ornamental graphics are strictly avoided.
-2. **Trust Through Transparency**:
-   - Provenance badges, simulation disclaimers, and data sourcing watermarks are prominent, first-class UI citizens.
-3. **Field-First Ergonomics**:
-   - Sizing, touch targets (minimum 48px), and high contrast are designed primarily for outdoor readability on mid-range Android tablets. Desktop adapts upward from this baseline.
-4. **Bilingual Parity**:
-   - Hindi (Devanagari) typography expands 20–40% compared to Latin English. Every card, container, and button dynamically accommodates this expansion without truncation or awkward overflow.
+1. **Clarity Over Decoration** — Every element serves comprehension. No ornamental graphics.
+2. **Trust Through Transparency** — Provenance badges visible at all data surfaces.
+3. **Field-First Ergonomics** — Touch targets 48px on `lg` and below; 44px desktop. High contrast for outdoor tablet use.
+4. **Bilingual Parity** — Hindi (Devanagari) expands 20–40% over Latin; containers use `min-height`, no fixed widths on labels, `text-wrap: balance` on headings, `line-height: 1.65` minimum.
+5. **Restraint** — One accent color, one shadow level, unified radii. No gradients, glows, glass, or colored shadows.
 
 ---
 
-## 2. Color System (OKLCH & Tailwind v4)
+## 2. Locked Color Palette (Hex, Non-Negotiable)
 
-StatVidya employs the **OKLCH** color space in Tailwind CSS v4, delivering uniform perceptual lightness across light and dark themes. The palette is inspired by India's national tricolor, calibrated for modern institutional software.
+Source: https://colorhunt.co/palette/8b9a6ef7f2ebeae2d6eeeeee
 
-### 2.1 Primary & Accent Palette
+| Token | Hex | Role | Usage | Contrast vs #fff | Contrast vs #f7f2eb |
+|---|---|---|---|---|---|
+| `--primary` | `#8b9a6e` | Sage Green | CTAs, active nav, progress fill, links, focus ring | 3.1:1 (not for text) | 2.4:1 (not for text) |
+| `--primary-hover` | `#728056` | Darker sage | Hover/active states | — | — |
+| `--primary-light` | `#d6ddc9` | Light tint | Active selection fill, subtle highlights | — | — |
+| `--background` | `#f7f2eb` | Warm Cream | Page canvas | — | — |
+| `--card` | `#ffffff` | Pure white | Elevated surfaces | — | — |
+| `--secondary` / `--muted` | `#eae2d6` | Soft Taupe | Section bg, hover fills, disabled, dividers | — | — |
+| `--secondary-hover` | `#d2c5b3` | Taupe dark | Hover fills | — | — |
+| `--accent` / subtle | `#eeeeee` | Light gray | Internal dividers, stripes, skeleton loaders | — | — |
+| `--foreground` | `#1a1a1a` | Near-black | Primary text | **14.3:1** ✅ | **13.2:1** ✅ |
+| `--muted-foreground` | `#5a5a5a` | Gray | Secondary text, captions | **6.5:1** ✅ | **6.0:1** ✅ |
 
-| Token | Light Mode (OKLCH) | Dark Mode (OKLCH) | Hex Approx | Semantic Usage |
+**Border strategy** (documented, fixed):
+- `--border`: `#e3dbcf` (warm gray derived from taupe). Used for card outlines (visible on white cards).
+- `#eeeeee`: kept ONLY for internal dividers / table stripes inside white surfaces.
+
+**Functional / severity** (muted, never decorative):
+- `error` (severity-high): `#c0574a` (muted brick red)
+- `warning` (severity-moderate): `#c9963a` (muted ochre)
+- `success` (proficient): `#8b9a6e` (reuse primary — no `#10b981`)
+- `info`: reuse `--primary` or `--foreground`; no separate info token.
+
+**Text contrast verification** (verified):
+- `#1a1a1a` on `#ffffff` = 14.3:1 (AA / AAA)
+- `#1a1a1a` on `#f7f2eb` = 13.2:1 (AA / AAA)
+- `#5a5a5a` on `#ffffff` = 6.5:1 (AA)
+- `#5a5a5a` on `#f7f2eb` = 6.0:1 (AA)
+
+---
+
+## 3. Direction Statement — Minimal & Light-Only
+
+- **Light only.** Dark mode is out of scope. Remove all `.dark` selectors, `dark:` Tailwind prefixes, and theme-toggling UI. State clearly once (see §8).
+- **Paper-like.** Background `#f7f2eb`; cards `#ffffff`; elevation by border + background contrast, never by shadow.
+- **Shadow rule**: max `0 1px 2px rgba(26,26,26,0.04)`; hover lift optional and subtle (≤ `0 2px 8px rgba(26,26,26,0.06)`). No glows, gradients, glassmorphism.
+- **Single accent**: `#8b9a6e` only. No blues, purples, or secondary brand hues.
+
+---
+
+## 4. Typography (Bilingual)
+
+- **Latin / English**: `Inter`, 400/500/600/700.
+- **Devanagari / Hindi**: `Noto Sans Devanagari`, min 14px (`text-sm`), `line-height: 1.65`.
+- **Monospace / IDs**: `JetBrains Mono`, `font-feature-settings: "tnum"` for all scores/percentages/IDs.
+- **Type scale**:
+
+| Token | Size | Weight | Line-height | Usage |
 |---|---|---|---|---|
-| `--color-primary` | `oklch(0.45 0.12 220)` | `oklch(0.75 0.12 220)` | `#1B5E7B` / `#4FC3F7` | Brand anchor, primary CTAs, active navigation |
-| `--color-primary-hover` | `oklch(0.38 0.12 220)` | `oklch(0.82 0.10 220)` | `#14475E` / `#81D4FA` | Hover state on primary elements |
-| `--color-primary-light` | `oklch(0.94 0.03 220)` | `oklch(0.25 0.05 220)` | `#E0F2F8` / `#0D2B3E` | Primary tint background, active selection fills |
-| `--color-secondary` | `oklch(0.62 0.16 55)` | `oklch(0.78 0.14 55)` | `#E67E22` / `#FFB74D` | Saffron-inspired accent, alert callouts, focus highlights |
-| `--color-secondary-hover` | `oklch(0.52 0.16 55)` | `oklch(0.85 0.12 55)` | `#D35400` / `#FFCC80` | Hover on accent elements |
-| `--color-secondary-light` | `oklch(0.96 0.04 55)` | `oklch(0.28 0.06 55)` | `#FEF3E2` / `#3E2200` | Saffron tint backgrounds |
-| `--color-tertiary` | `oklch(0.52 0.14 145)` | `oklch(0.74 0.12 145)` | `#2E7D32` / `#66BB6A` | Green-inspired success, verified badges, target achievement |
-| `--color-tertiary-light` | `oklch(0.95 0.03 145)` | `oklch(0.24 0.05 145)` | `#E8F5E9` / `#1B3B1E` | Success tint backgrounds |
+| `text-display` | 2.25rem (36px) | 700 | 1.20 | Hero (landing only) |
+| `text-h1` | 1.875rem (30px) | 700 | 1.30 | Page headers |
+| `text-h2` | 1.5rem (24px) | 600 | 1.35 | Section headers |
+| `text-h3` | 1.25rem (20px) | 600 | 1.40 | Card headers |
+| `text-body` | 1.0rem (16px) | 400 | 1.60 | Primary body, assessment text |
+| `text-sm` | 0.875rem (14px) | 500 | 1.50 | Subtext, labels, table cells |
+| `text-xs` | 0.75rem (12px) | 600 | 1.40 | Badges, provenance |
 
-### 2.2 Functional & Severity Colors
-
-| Severity Level | Light Mode (OKLCH) | Dark Mode (OKLCH) | UI Meaning |
-|---|---|---|---|
-| **High Gap ($\ge 6$)** | `oklch(0.42 0.18 25)` | `oklch(0.70 0.18 25)` | Critical gap requiring immediate training intervention |
-| **Moderate Gap ($3-5$)** | `oklch(0.65 0.17 75)` | `oklch(0.80 0.15 75)` | Growth area requiring scheduled coursework |
-| **Proficient ($\le 2$)** | `oklch(0.52 0.14 145)` | `oklch(0.74 0.12 145)` | Meets or exceeds FRAC role requirements |
-
-### 2.3 Neutral Palette
-
-| Token | Light Mode (OKLCH) | Dark Mode (OKLCH) | Usage |
-|---|---|---|---|
-| `--background` | `oklch(1 0 0)` | `oklch(0.145 0 0)` | Main application viewport |
-| `--foreground` | `oklch(0.145 0 0)` | `oklch(0.985 0 0)` | Primary body text |
-| `--card` | `oklch(1 0 0)` | `oklch(0.178 0 0)` | Elevated surfaces and containers |
-| `--card-foreground` | `oklch(0.145 0 0)` | `oklch(0.985 0 0)` | Text inside cards |
-| `--muted` | `oklch(0.965 0 0)` | `oklch(0.269 0 0)` | Disabled states, subtle section backgrounds |
-| `--muted-foreground`| `oklch(0.556 0 0)` | `oklch(0.708 0 0)` | Secondary labels, captions, metadata |
-| `--border` | `oklch(0.922 0 0)` | `oklch(0.269 0 0)` | Dividers, card borders, subtle gridlines |
+**Hindi expansion handling** (concrete CSS):
+- Use `min-height` on buttons/labels instead of fixed `h-` where Hindi may expand.
+- No `w-` fixed widths on labels; allow wrap.
+- Headings: `text-wrap: balance`.
+- Containers: `line-height: 1.65` minimum for Devanagari content.
 
 ---
 
-## 3. Typography (Bilingual English/Hindi)
+## 5. Spacing & Radii — Unified
 
-### 3.1 Font Stack
+**Grid**: 4px rhythm (`4, 8, 12, 16, 20, 24, 32, 48`).
 
-- **Latin / English**: `Inter` (geometric, legible at micro-sizes).
-- **Devanagari / Hindi**: `Noto Sans Devanagari` (harmonized optical heights with Inter).
-- **Monospace / Numerical**: `JetBrains Mono` (tabular numbers for scores, percentages, and IDs).
+**Radii (single scale, fixed)**:
+- Inputs / buttons / badges: `6px` (`--radius-btn`, `--radius-input`, `--radius-badge`)
+- Cards: `10px` (`--radius-card`)
+- Pills / tags: `999px`
+
+**Shadow (restricted)**:
+- Default card: `0 1px 2px rgba(26,26,26,0.04)`
+- Hover lift (optional): `0 2px 8px rgba(26,26,26,0.06)` with `-1px` translate
+
+---
+
+## 6. shadcn/ui Token Mapping (`globals.css` — exact)
 
 ```css
---font-sans: 'Inter', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
---font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-```
-
-### 3.2 Type Scale
-
-| Scale Token | Size (rem / px) | Weight | Line Height | Usage |
-|---|---|---|---|---|
-| `text-display` | `2.25rem` (36px) | 700 (Bold) | 1.2 | Hero title (Landing page only) |
-| `text-h1` | `1.875rem` (30px) | 700 (Bold) | 1.3 | Page headers (`Dashboard`, `Skill Gap`) |
-| `text-h2` | `1.5rem` (24px) | 600 (Semibold) | 1.35 | Section headers |
-| `text-h3` | `1.25rem` (20px) | 600 (Semibold) | 1.4 | Card headers |
-| `text-body` | `1.0rem` (16px) | 400 (Regular) | 1.6 | Primary body copy, assessment questions |
-| `text-sm` | `0.875rem` (14px) | 500 (Medium) | 1.5 | Subtext, table cells, form labels |
-| `text-xs` | `0.75rem` (12px) | 600 (Semibold) | 1.4 | Provenance badges, status indicators |
-
-### 3.3 Devanagari Specifics
-- Minimum font size for Devanagari text is **14px** (`text-sm`) to preserve ligature readability.
-- Text containers containing Hindi content use `line-height: 1.65` to prevent diacritic clipping.
-
----
-
-## 4. Spacing & 4px Layout Grid
-
-The interface is constructed strictly on a 4px layout rhythm:
-
-| Spacing Token | Pixels | Application |
-|---|---|---|
-| `--spacing-1` | 4px | Tight internal badge padding |
-| `--spacing-2` | 8px | Button inline gap, icon-to-text spacing |
-| `--spacing-3` | 12px | Compact input field padding |
-| `--spacing-4` | 16px | Standard card interior padding, mobile container margins |
-| `--spacing-5` | 20px | Section gap on tablet |
-| `--spacing-6` | 24px | Desktop card padding, grid gaps |
-| `--spacing-8` | 32px | Major section breaks |
-| `--spacing-12`| 48px | Minimum touch target height for buttons |
-
----
-
-## 5. Component Design Tokens (shadcn/ui)
-
-StatVidya uses [shadcn/ui](https://ui.shadcn.com/) primitives styled via Tailwind CSS v4 variables:
-
-### 5.1 Card Specifications
-- **Border Radius**: `--radius-card: 12px;`
-- **Border**: `1px solid var(--border)`
-- **Shadow**: `0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04)`
-- **Interactive Hover**: `0 4px 12px rgba(0, 0, 0, 0.08)` with a `-1px` transform lift.
-
-### 5.2 Button Specifications
-- **Height (Standard)**: `40px` (Desktop)
-- **Height (Field / Tablet)**: `48px` (Ensures WCAG touch compliance for field enumerators)
-- **Border Radius**: `--radius-btn: 8px;`
-- **Font Weight**: `600 (Semibold)`
-
-### 5.3 Input & Form Elements
-- **Height**: `44px`
-- **Border Radius**: `--radius-input: 8px;`
-- **Focus Ring**: `2px solid var(--color-primary)` with `2px offset`.
-
----
-
-## 6. Iconography
-
-- **Library**: `lucide-react`.
-- **Sizes**:
-  - Small / Inline: `16px`
-  - Standard / Button: `20px`
-  - Navigation / Hero: `24px`
-- Icons inherit text color dynamically (`currentColor`).
-
----
-
-## 7. Motion & Micro-Interactions
-
-Used purposefully to communicate state changes without causing cognitive fatigue:
-
-| Interaction | Duration | Easing | Context |
-|---|---|---|---|
-| **Page Transition** | 180ms | `ease-out` | View changes |
-| **Assessment Card Progression** | 220ms | `ease-in-out` | Next question load |
-| **Progress Ring Fill** | 700ms | `cubic-bezier(0.16, 1, 0.3, 1)` | Dashboard readiness gauge |
-| **Sync Pulse** | 1500ms | `infinite` | 🟠 Offline queue syncing banner |
-
-> **Strict Rule**: No animations are permitted during active assessment taking to ensure zero distraction. All motion respects `prefers-reduced-motion: reduce`.
-
----
-
-## 8. Dark Mode Architecture
-
-- Implemented via the `dark` class on `<html>` using Next.js `next-themes`.
-- Persisted to browser `localStorage` and synchronized with user profile in Supabase.
-- Charts (Radar, Scatter, Progress Rings) read theme CSS variables dynamically.
-
----
-
-## 9. Provenance Badges (Visual Trust Spec)
-
-Every domain object rendered in the UI carries an authoritative, non-collapsible badge:
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│  [✅ VERIFIED_OFFICIAL]    Green Border | #2E7D32 | Government Source │
-│  [⚠️ PROPOSED_FRAMEWORK]   Amber Border | #F57F17 | Proposed by Team  │
-│  [🟡 SYNTHETIC_DEMO_DATA]  Yellow Border| #F9A825 | Simulated for SIH │
-└────────────────────────────────────────────────────────────────────────┘
-```
-
-- **Font Size**: `0.75rem` (12px), Semibold.
-- **Border**: `1.5px solid <Color>`.
-- **Interactive State**: Hover reveals an explanatory tooltip defining the exact data origin and verification methodology.
-
----
-
-## 10. Field-First Responsive Breakpoints
-
-| Breakpoint | Minimum Width | Target Environment | Navigation Pattern |
-|---|---|---|---|
-| `sm` | 640px | Mobile phones | Bottom sheet / Hamburger menu |
-| `md` | 768px | Small tablets | Collapsed icon rail |
-| `lg` | 1024px | **NSSO Field Tablets (Primary)** | Full sidebar, 48px touch targets |
-| `xl` | 1280px | Headquarters desktop | Two-column analytics grid |
-| `2xl` | 1536px | Large command center monitors | Three-column comprehensive dashboard |
-
----
-
-## 11. Accessibility & WCAG 2.1 AA Compliance
-
-1. **Color Contrast**:
-   - Normal text maintains $\ge 4.5:1$ contrast against card and page backgrounds.
-   - Large text ($\ge 18$px) maintains $\ge 3:1$ contrast.
-2. **Keyboard Navigation**:
-   - Every interactive control has an unambiguous `:focus-visible` outline (`2px solid var(--color-primary)`).
-3. **Screen Reader Live Regions**:
-   - The offline status banner uses `aria-live="assertive"` so field investigators are immediately notified of connectivity transitions.
-
----
-
-## 12. Tailwind CSS v4 Configuration (`app/globals.css`)
-
-```css
-/* app/globals.css */
-@import "tailwindcss";
-
 @theme inline {
-  /* Primary Institutional Palette */
-  --color-primary: oklch(0.45 0.12 220);
-  --color-primary-hover: oklch(0.38 0.12 220);
-  --color-primary-light: oklch(0.94 0.03 220);
-  
-  /* Saffron Accent */
-  --color-secondary: oklch(0.62 0.16 55);
-  --color-secondary-hover: oklch(0.52 0.16 55);
-  --color-secondary-light: oklch(0.96 0.04 55);
-  
-  /* Green Success */
-  --color-tertiary: oklch(0.52 0.14 145);
-  --color-tertiary-light: oklch(0.95 0.03 145);
+  --color-primary: #8b9a6e;
+  --color-primary-foreground: #ffffff;
+  --color-primary-light: #d6ddc9;
+  --color-primary-dark: #728056;
 
-  /* Functional Semantics */
-  --color-success: oklch(0.52 0.14 145);
-  --color-warning: oklch(0.65 0.17 75);
-  --color-error: oklch(0.42 0.18 25);
-  --color-info: oklch(0.45 0.14 250);
+  --color-secondary: #eae2d6;
+  --color-secondary-foreground: #1a1a1a;
+  --color-secondary-hover: #d2c5b3;
 
-  /* Severity Tokens */
-  --color-severity-high: var(--color-error);
-  --color-severity-moderate: var(--color-warning);
-  --color-severity-proficient: var(--color-success);
+  --color-background: #f7f2eb;
+  --color-foreground: #1a1a1a;
+  --color-card: #ffffff;
+  --color-card-foreground: #1a1a1a;
 
-  /* Typography */
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1a1a1a;
+
+  --color-muted: #eae2d6;
+  --color-muted-foreground: #5a5a5a;
+
+  --color-accent: #eeeeee;        /* light gray — subtle surfaces */
+  --color-accent-foreground: #1a1a1a;
+
+  --color-destructive: #c0574a;   /* muted brick red */
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #e3dbcf;        /* warm gray for card outlines */
+  --color-input: #e3dbcf;
+  --color-ring: #8b9a6e;          /* focus ring = primary */
+
+  /* Severity / chart */
+  --color-chart-1: #8b9a6e;       /* sage — primary / proficient */
+  --color-chart-2: #c9963a;       /* ochre — moderate */
+  --color-chart-3: #c0574a;       /* brick — high */
+  --color-chart-4: #eae2d6;       /* taupe — neutral */
+  --color-chart-5: #1a1a1a;       /* near-black — axis / labels */
+
   --font-sans: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Component Radii */
-  --radius-card: 12px;
-  --radius-btn: 8px;
+  --radius-card: 10px;
+  --radius-btn: 6px;
   --radius-badge: 6px;
-  --radius-input: 8px;
+  --radius-input: 6px;
 }
 
 @layer base {
   :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --muted: oklch(0.965 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --border: oklch(0.922 0 0);
-  }
-
-  .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.178 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --border: oklch(0.269 0 0);
+    --background: #f7f2eb;
+    --foreground: #1a1a1a;
+    --card: #ffffff;
+    --card-foreground: #1a1a1a;
+    --popover: #ffffff;
+    --popover-foreground: #1a1a1a;
+    --primary: #8b9a6e;
+    --primary-foreground: #ffffff;
+    --secondary: #eae2d6;
+    --secondary-foreground: #1a1a1a;
+    --muted: #eae2d6;
+    --muted-foreground: #5a5a5a;
+    --accent: #eeeeee;
+    --accent-foreground: #1a1a1a;
+    --destructive: #c0574a;
+    --destructive-foreground: #ffffff;
+    --border: #e3dbcf;
+    --input: #e3dbcf;
+    --ring: #8b9a6e;
+    --radius: 6px;
   }
 }
 ```
 
 ---
 
-*End of Design.md. Companion document: Architecture.md.*
+## 7. Component Specs
+
+### Button (shadcn/ui)
+- Primary: `bg-primary text-primary-foreground` (sage fill, white text), `h-10` desktop / `h-12` `lg` tablet.
+- Secondary: `bg-white border border-border text-foreground`, hover `bg-secondary`.
+- Ghost: `bg-transparent hover:bg-secondary`.
+- Radius: `6px`. Font: 600, 14px.
+- Focus: `ring-2 ring-primary ring-offset-2 ring-offset-background`.
+- Disabled: `opacity-50 cursor-not-allowed`, no color change.
+
+### Card
+- Background `#ffffff`, border `1px solid #e3dbcf`, radius `10px`, padding `24px` desktop / `16px` mobile.
+- Shadow: only if needed — `0 1px 2px rgba(26,26,26,0.04)`.
+- No colored shadows, no gradients.
+
+### Input
+- Height `44px`, radius `6px`, border `#e3dbcf`, focus `ring-primary`.
+- Placeholder `text-muted-foreground`.
+
+### Badge / Provenance
+- **VERIFIED_OFFICIAL**: `bg-primary/10 text-primary border-primary/20`; icon `ShieldCheck` (lucide).
+- **PROPOSED_FRAMEWORK**: `bg-[#c9963a]/10 text-[#c9963a] border-[#c9963a]/20`; icon `FileEdit`.
+- **SYNTHETIC_DEMO_DATA**: `bg-secondary text-foreground border-border`; icon `FlaskConical`.
+- No emojis. Font `text-xs`, `font-semibold`, `py-0.5 px-2`, radius `999px`.
+- Tooltip: `bg-[#1a1a1a] text-white`, rounded `6px`, arrow with `border-t-[#1a1a1a]`.
+
+### Severity Chip (Gap Cards)
+- HIGH: `bg-[#c0574a]/10 text-[#c0574a] border-[#c0574a]/20` — chip label + icon.
+- MODERATE: `bg-[#c9963a]/10 text-[#c9963a] border-[#c9963a]/20`.
+- PROFICIENT: `bg-[#8b9a6e]/10 text-[#8b9a6e] border-[#8b9a6e]/20`.
+
+### Progress Ring (custom SVG)
+- Track: `text-[#eae2d6]`.
+- Fill: single hue scale — `#8b9a6e` (proficient), `#c9963a` (moderate), `#c0574a` (high).
+- Center text: `font-mono`, tabular numbers (`font-feature-settings: "tnum"`).
+
+### Offline Banner
+- Background `#f7f2eb`, border-top `#eeeeee`, text `text-amber-700`, icon `WifiOff` / `RefreshCw` / `Wifi`.
+- `aria-live="assertive"`.
+
+### Sidebar / Navigation
+- Background `#ffffff`, border-right `#eeeeee` (internal divider), active item `bg-primary text-white`.
+- Hover `bg-secondary`.
+- Collapsed: `w-16`; expanded: `w-56`. Transition 200ms ease-out.
+
+---
+
+## 8. Dark Mode — Explicitly Out of Scope
+
+Dark mode is **deliberately disabled**. No `.dark` selectors, no `dark:` Tailwind variants, no theme toggle in LanguageSwitcher or settings. The UI is light-only to maintain institutional consistency, outdoor readability (paper-like interface preferred by field staff), and to avoid introducing decorative dark surfaces that conflict with the minimal palette.
+
+---
+
+## 9. Provenance Badges (Re-tokenized)
+
+Every domain object carries a non-collapsible badge derived from `provenance`:
+
+| Value | Token | Color Treatment | Icon (lucide) |
+|---|---|---|---|
+| `VERIFIED_OFFICIAL` | `primary` | Sage fill / white text | `ShieldCheck` |
+| `PROPOSED_FRAMEWORK` | `warning` (ochre) | Muted ochre / dark text | `FileEdit` |
+| `PROPOSED_METHODOLOGY` | `warning` (ochre) | Same | `FileEdit` |
+| `SYNTHETIC_DEMO_DATA` | `secondary` (taupe) | Taupe / foreground text | `FlaskConical` |
+
+Old off-palette hexes (`#2E7D32`, `#F57F17`, `#F9A825`) removed. Badges use `border-1.5px` equivalent via `border` token, `rounded-md`, `text-xs`, `font-semibold`.
+
+---
+
+## 10. Data Visualization
+
+- **Neutral charts**: single-hue sage scale (`#8b9a6e` → `#d6ddc9`) for non-severity data.
+- **Severity only when value = gap**: red (`#c0574a`) / amber (`#c9963a`) for gap indicators.
+- **Grid lines**: `#eeeeee`. **Axis text**: `muted-foreground`.
+- No gradients, no drop shadows on charts.
+
+---
+
+## 11. Motion & Micro-Interactions (Reduced)
+
+| Interaction | Duration | Easing | Context |
+|---|---|---|---|
+| Hover / Focus | 150ms | `ease-out` | Buttons, cards, nav |
+| Page Transition | 200ms | `ease-out` | View changes |
+| Progress Ring | 600ms | `cubic-bezier(0.16, 1, 0.3, 1)` | Dashboard readiness |
+| Offline Pulse | 1500ms | `infinite` | Banner sync |
+
+Rule: **No animation during active assessment** to prevent distraction. `prefers-reduced-motion: reduce` respected.
+
+---
+
+## 12. Iconography
+
+- Library: `lucide-react`
+- Stroke: 1.5px
+- Sizes: 16 / 20 / 24px
+- Always `currentColor`; no filled/duotone; no emoji in production UI (replaced in badges above).
+
+---
+
+## 13. Field-First Responsive Breakpoints
+
+| Breakpoint | Target | Nav Pattern | Touch Target |
+|---|---|---|---|
+| `sm` (640px) | Phone | Bottom sheet / hamburger | 44px |
+| `md` (768px) | Small tablet | Collapsed icon rail | 48px |
+| `lg` (1024px) | **NSSO Field Tablet (Primary)** | Full sidebar, 48px targets | 48px |
+| `xl` (1280px) | HQ desktop | Two-column analytics | 44px |
+| `2xl` (1536px) | Large monitors | Three-column comprehensive | 44px |
+
+---
+
+## 14. Accessibility & WCAG 2.1 AA
+
+- Contrast: all normal text ≥ 4.5:1 verified against `#fff` and `#f7f2eb`; large text ≥ 3:1.
+- Focus: `2px solid #8b9a6e` with 2px offset (`ring-primary`).
+- Screen reader: offline banner `aria-live="assertive"`; badges with `title` attributes.
+- Keyboard: all interactive elements focus-visible.
+- Motion: respects `prefers-reduced-motion`.
+
+---
+
+## 15. Do / Don't (Minimalism Checklist)
+
+**Do:**
+- Whitespace, borders, weight/size contrast for hierarchy.
+- One accent (`#8b9a6e`), one shadow level.
+- Provenance badges on every domain surface.
+- `font-feature-settings: "tnum"` for scores.
+
+**Don't:**
+- Multiple accent colors; decorative illustrations.
+- Drop shadows > 4px blur; colored shadows.
+- Emoji in production UI (use lucide icons).
+- Dark mode tokens, `.dark` selectors, theme toggles.
+- Off-palette hexes in badges or charts.
+
+---
+
+## 16. Changelog — v2.0 → v2.1
+
+- **Locked palette to 4 hues** from colorhunt; removed blues/purples/greens outside the family.
+- **Added contrast verification table** for `#1a1a1a` and `#5a5a5a` on both backgrounds.
+- **Fixed border inconsistency**: `--border` = `#e3dbcf` for cards; `#eeeeee` only for internal dividers.
+- **Replaced functional colors** with muted brick (`#c0574a`) and ochre (`#c9963a`); success = primary.
+- **Re-tokenized provenance badges** with lucide icons; removed old hexes.
+- **Removed dark mode** entirely — section renamed, `.dark` selectors removed from spec, theme-toggle removed.
+- **Unified radii** to 6px / 10px / 999px; shadow restricted to `0 1px 2px rgba(26,26,26,0.04)`.
+- **Documented Hindi expansion** with concrete CSS rules (`min-height`, `text-wrap: balance`, `line-height: 1.65`).
+- **Fixed TOC / section alignment**; renamed "OKLCH" to consistent Hex / Tailwind v4 labeling.
+- **Added full shadcn/ui token mapping** (`--popover`, `--accent`, `--destructive`, `--chart-*`, `--sidebar-*` not needed in minimal spec — kept to core set).
+
+---
+
+*End of Design.md v2.1. Light-only, minimal, institutional. No dark mode. No off-palette accents.*

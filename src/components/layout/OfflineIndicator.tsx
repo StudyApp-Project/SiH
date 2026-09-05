@@ -75,7 +75,7 @@ export function OfflineIndicator() {
     <div
       role="status"
       aria-live="assertive"
-      className="flex items-center gap-2 px-4 py-2 text-sm bg-slate-100 border-t border-slate-200 dark:bg-zinc-800 dark:border-zinc-700"
+      className="flex items-center gap-2 px-4 py-2 text-sm bg-[#f7f2eb] border-t border-[#eeeeee]"
     >
       {!isOnline && (
         <div className="flex items-center gap-2">

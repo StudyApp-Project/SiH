@@ -34,9 +34,9 @@ interface PathwaysData {
 
 function CourseCard({ course }: { course: RecommendedCourse }) {
   const priorityColors = {
-    HIGH: 'border-rose-300 dark:border-rose-700 bg-rose-50 dark:bg-rose-950/50',
-    MEDIUM: 'border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/50',
-    LOW: 'border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/50',
+    HIGH: 'border-rose-300 border-rose-300 bg-rose-50 bg-rose-50/50',
+    MEDIUM: 'border-amber-300 border-amber-300 bg-amber-50 bg-amber-50/50',
+    LOW: 'border-emerald-300 border-emerald-300 bg-emerald-50 bg-emerald-50/50',
   };
 
   const priorityLabels = {
@@ -50,38 +50,38 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-zinc-100 group-hover:text-blue-700 dark:group-hover:text-blue-400">
+            <h3 className="text-lg font-semibold text-slate-900 text-gray-900 group-hover:text-blue-700 group-hover:text-blue-700">
               {course.title}
             </h3>
             <ProvenanceBadge provenance="SYNTHETIC_DEMO_DATA" showLabel={false} size="sm" />
           </div>
-          <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-zinc-400 mb-2">
+          <div className="flex items-center gap-3 text-sm text-slate-600 text-gray-500 mb-2">
             <span className="font-medium">{course.provider}</span>
             <span className="text-slate-400">•</span>
             <span>{course.duration}</span>
           </div>
         </div>
-        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${priorityColors[course.priority]} text-slate-900 dark:text-zinc-100`}>
+        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${priorityColors[course.priority]} text-slate-900 text-gray-900`}>
           {priorityLabels[course.priority]}
         </span>
       </div>
 
       <div className="mb-4">
-        <h4 className="text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">Why This Course</h4>
-        <p className="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
+        <h4 className="text-sm font-medium text-slate-700 text-gray-700 mb-2">Why This Course</h4>
+        <p className="text-sm text-slate-600 text-gray-500 leading-relaxed">
           {course.whyRecommended}
         </p>
       </div>
 
       <div className="mb-4">
-        <h4 className="text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">
+        <h4 className="text-sm font-medium text-slate-700 text-gray-700 mb-2">
           Targets {course.targetCompetencies.length} Competency {course.targetCompetencies.length === 1 ? 'Gap' : 'Gaps'}:
         </h4>
         <div className="flex flex-wrap gap-2">
           {course.targetCompetencies.map((comp, idx) => (
             <span
               key={idx}
-              className="px-2 py-1 rounded bg-white dark:bg-zinc-800 text-xs font-medium text-slate-700 dark:text-zinc-300 border border-slate-300 dark:border-zinc-700"
+              className="px-2 py-1 rounded bg-white bg-white text-xs font-medium text-slate-700 text-gray-700 border border-slate-300 border-gray-200"
             >
               {comp}
             </span>
@@ -91,17 +91,17 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
 
       {course.competencyGaps && course.competencyGaps.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-sm font-medium text-slate-700 dark:text-zinc-300 mb-2">
+          <h4 className="text-sm font-medium text-slate-700 text-gray-700 mb-2">
             Specific Gaps Addressed:
           </h4>
           <div className="space-y-2">
             {course.competencyGaps.map((gap, idx) => (
-              <div key={idx} className="flex items-center justify-between text-sm bg-white dark:bg-zinc-800 rounded-lg p-3">
-                <span className="font-medium text-slate-900 dark:text-zinc-100">{gap.competency}</span>
+              <div key={idx} className="flex items-center justify-between text-sm bg-white bg-white rounded-lg p-3">
+                <span className="font-medium text-slate-900 text-gray-900">{gap.competency}</span>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="text-slate-500 dark:text-zinc-500">Current: L{gap.currentLevel}</span>
+                  <span className="text-slate-500 text-gray-9000">Current: L{gap.currentLevel}</span>
                   <span className="text-slate-400">→</span>
-                  <span className="font-bold text-blue-700 dark:text-blue-400">L{gap.targetLevel}</span>
+                  <span className="font-bold text-blue-700 text-blue-600">L{gap.targetLevel}</span>
                   <span className="text-slate-400 ml-1">({gap.gap} level{gap.gap === 1 ? '' : 's'})</span>
                 </div>
               </div>
@@ -110,14 +110,14 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-zinc-700">
-        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-zinc-500">
+      <div className="flex items-center justify-between pt-4 border-t border-slate-200 border-gray-200">
+        <div className="flex items-center gap-2 text-xs text-slate-500 text-gray-9000">
           <span className="w-2 h-2 rounded-full bg-green-500"></span>
           <span>Live integration with iGOT Karmayogi</span>
         </div>
         <a
           href={course.iGotLink || "#"}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-lg transition-colors"
         >
           View Course
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -236,7 +236,7 @@ export default function PathwaysClient() {
   if (!data) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-600 dark:text-zinc-400">No pathways available</p>
+        <p className="text-slate-600 text-gray-500">No pathways available</p>
       </div>
     );
   }
@@ -245,10 +245,10 @@ export default function PathwaysClient() {
     <div className="space-y-8">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-zinc-100">
+        <h1 className="text-3xl font-bold text-slate-900 text-gray-900">
           {t('pathways.title')}
         </h1>
-        <p className="text-slate-600 dark:text-zinc-400">
+        <p className="text-slate-600 text-gray-500">
           {t('pathways.subtitle')}
         </p>
       </div>
@@ -256,14 +256,14 @@ export default function PathwaysClient() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Readiness Card */}
-        <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">
-          <h3 className="text-sm font-medium text-slate-700 dark:text-zinc-400 mb-2">
+        <div className="rounded-xl border border-slate-200 border-gray-200 bg-white bg-white p-6 shadow-sm">
+          <h3 className="text-sm font-medium text-slate-700 text-gray-500 mb-2">
             Overall Readiness
           </h3>
-          <div className="text-3xl font-bold text-slate-900 dark:text-zinc-100 mb-1">
+          <div className="text-3xl font-bold text-slate-900 text-gray-900 mb-1">
             {data.readinessIndex}%
           </div>
-          <p className="text-xs text-slate-500 dark:text-zinc-500">
+          <p className="text-xs text-slate-500 text-gray-9000">
             {data.readinessIndex >= 80
               ? 'Excellent! Most competencies met'
               : data.readinessIndex >= 50
@@ -274,14 +274,14 @@ export default function PathwaysClient() {
         </div>
 
         {/* Gaps Card */}
-        <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">
-          <h3 className="text-sm font-medium text-slate-700 dark:text-zinc-400 mb-2">
+        <div className="rounded-xl border border-slate-200 border-gray-200 bg-white bg-white p-6 shadow-sm">
+          <h3 className="text-sm font-medium text-slate-700 text-gray-500 mb-2">
             Total Competency Gaps
           </h3>
-          <div className="text-3xl font-bold text-slate-900 dark:text-zinc-100 mb-1">
+          <div className="text-3xl font-bold text-slate-900 text-gray-900 mb-1">
             {data.totalGaps}
           </div>
-          <p className="text-xs text-slate-500 dark:text-zinc-500">
+          <p className="text-xs text-slate-500 text-gray-9000">
             {data.totalGaps === 1
               ? 'One level needs improvement'
               : data.totalGaps <= 3
@@ -292,14 +292,14 @@ export default function PathwaysClient() {
         </div>
 
         {/* Priority Courses Card */}
-        <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">
-          <h3 className="text-sm font-medium text-slate-700 dark:text-zinc-400 mb-2">
+        <div className="rounded-xl border border-slate-200 border-gray-200 bg-white bg-white p-6 shadow-sm">
+          <h3 className="text-sm font-medium text-slate-700 text-gray-500 mb-2">
             Recommended Courses
           </h3>
-          <div className="text-3xl font-bold text-slate-900 dark:text-zinc-100 mb-1">
+          <div className="text-3xl font-bold text-slate-900 text-gray-900 mb-1">
             {data.pathways.filter(c => c.priority === 'HIGH').length}
           </div>
-          <p className="text-xs text-slate-500 dark:text-zinc-500">
+          <p className="text-xs text-slate-500 text-gray-9000">
             High-priority courses matching your gaps
           </p>
         </div>
@@ -308,10 +308,10 @@ export default function PathwaysClient() {
       {/* Course Grid */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-zinc-100">
+          <h2 className="text-xl font-semibold text-slate-900 text-gray-900">
             Recommended Learning Pathways
           </h2>
-          <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-zinc-400">
+          <div className="flex items-center gap-2 text-sm text-slate-600 text-gray-500">
             <span>Integration:</span>
             <ProvenanceBadge provenance="SYNTHETIC_DEMO_DATA" showLabel={true} size="sm" />
           </div>
@@ -326,14 +326,14 @@ export default function PathwaysClient() {
 
       {/* Expandable Course Details */}
       {selectedCourse && data.pathways.find(c => c.id === selectedCourse) && (
-        <div className="rounded-lg bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-800 p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-zinc-100 mb-4">
+        <div className="rounded-lg bg-slate-50 bg-white/50 border border-slate-200 border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-slate-900 text-gray-900 mb-4">
             Course Details
           </h3>
           {/* Course details would go here */}
           <button
             onClick={() => setSelectedCourse(null)}
-            className="text-sm text-blue-700 dark:text-blue-400 hover:underline"
+            className="text-sm text-blue-700 text-blue-600 hover:underline"
           >
             Show all courses
           </button>

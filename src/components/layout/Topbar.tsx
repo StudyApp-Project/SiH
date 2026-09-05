@@ -23,15 +23,15 @@ export function Topbar() {
   }, []);
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 dark:border-zinc-800 dark:bg-zinc-900">
+    <header className="flex h-16 items-center justify-between border-b border-[#eeeeee] bg-white px-6">
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold text-slate-900 dark:text-zinc-50">
+        <h1 className="text-lg font-semibold text-[#1a1a1a]">
           {t('dashboard')}
         </h1>
       </div>
 
       <div className="flex items-center gap-4">
-        <button className="relative flex items-center gap-2 rounded-lg hover:bg-slate-100 px-2 py-1.5 text-slate-600 transition-colors dark:hover:bg-zinc-800">
+        <button className="relative flex items-center gap-2 rounded-lg hover:bg-[#f7f2eb] px-2 py-1.5 text-stone-600 transition-colors">
           <Bell className="h-5 w-5" />
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white">
             3
@@ -41,41 +41,41 @@ export function Topbar() {
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 rounded-lg hover:bg-slate-100 px-2 py-1.5 text-slate-600 transition-colors dark:hover:bg-zinc-800"
+            className="flex items-center gap-2 rounded-lg hover:bg-[#f7f2eb] px-2 py-1.5 text-stone-600 transition-colors"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-700">
-              <User className="h-4 w-4" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#eae2d6] text-[#8b9a6e] font-bold">
+              <User className="h-4 w-4 text-[#8b9a6e]" />
             </div>
-            <span className="text-sm font-medium text-slate-900 dark:text-zinc-50 hidden sm:inline">
+            <span className="text-sm font-medium text-[#1a1a1a] hidden sm:inline">
               Amit Sharma
             </span>
-            <ChevronDown className="h-4 w-4 text-slate-400" />
+            <ChevronDown className="h-4 w-4 text-stone-400" />
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-48 rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900 z-50">
-              <div className="px-4 py-2 border-b border-slate-100 dark:border-zinc-800">
-                <p className="text-sm font-medium text-slate-900 dark:text-zinc-100">
+            <div className="absolute right-0 mt-2 w-48 rounded-lg border border-[#eeeeee] bg-white py-1 shadow-lg z-50">
+              <div className="px-4 py-2 border-b border-[#eeeeee]">
+                <p className="text-sm font-medium text-[#1a1a1a]">
                   Amit Sharma
                 </p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 truncate">
+                <p className="text-xs text-stone-500 truncate">
                   amit.sharma@mospi.gov.in
                 </p>
               </div>
 
               <a
                 href="/profile"
-                className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-stone-700 hover:bg-[#f7f2eb]"
               >
-                <User className="h-4 w-4" />
+                <User className="h-4 w-4 text-[#8b9a6e]" />
                 {t('profile')}
               </a>
 
               <a
                 href="/settings"
-                className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-stone-700 hover:bg-[#f7f2eb]"
               >
-                <Settings className="h-4 w-4" />
+                <Settings className="h-4 w-4 text-[#8b9a6e]" />
                 Settings
               </a>
 
@@ -83,7 +83,7 @@ export function Topbar() {
                 onClick={() => {
                   router.push('/auth/login');
                 }}
-                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-rose-600 hover:bg-slate-50 dark:hover:bg-zinc-800"
+                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-rose-600 hover:bg-[#f7f2eb]"
               >
                 <LogOut className="h-4 w-4" />
                 {t('logout')}
