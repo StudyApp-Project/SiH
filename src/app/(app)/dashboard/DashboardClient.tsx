@@ -17,6 +17,13 @@ interface DashboardProps {
     user_metadata?: {
       name?: string;
       organization_id?: string;
+      cadre?: string;
+      designation?: string;
+      preferred_language?: string;
+    };
+    app_metadata?: {
+      role?: string;
+      [key: string]: unknown;
     };
   };
 }
@@ -36,33 +43,44 @@ export default function DashboardPage({ user }: DashboardProps) {
   const t = useTranslations();
   const supabase = getSupabaseBrowserClient();
 
-  const [readinessIndex, setReadinessIndex] = useState<number | null>(null);
+  const fallbackRole =
+    user.user_metadata?.designation ||
+    (user.app_metadata?.role
+      ? user.app_metadata.role.charAt(0).toUpperCase() + user.app_metadata.role.slice(1)
+      : 'Learner');
+
+  const [readinessIndex, setReadinessIndex] = useState<number | null>(40);
   const [topGaps, setTopGaps] = useState<CompetencyGapCard[]>([]);
   const [radarData, setRadarData] = useState<RadarDataPoint[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [userRole, setUserRole] = useState<string>(fallbackRole);
 
   useEffect(() => {
     const loadDashboard = async () => {
       try {
-        // Fetch user's role assignment
-        const { data: roleData, error: roleError } = await supabase
-          .from('users')
-          .select('role_id, role:roles(id, name, name_hi)')
-          .eq('id', user.id)
-          .single();
+        const fastQuery = async <T,>(promise: Promise<T>, timeoutMs = 150): Promise<T | null> => {
+          return Promise.race([
+            promise,
+            new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
+          ]);
+        };
 
-        if (roleError) throw roleError;
-        setUserRole(roleData?.role?.name || 'Learner');
+        // Fetch user's role assignment if exists in database
+        try {
+          const res = await fastQuery(
+            supabase
+              .from('users')
+              .select('role_id, role:roles(id, name, name_hi)')
+              .eq('id', user.id)
+              .maybeSingle()
+          );
 
-        // Fetch competency records
-        const { error: recordsError } = await supabase
-          .from('competency_records')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('organization_id', user.user_metadata?.organization_id || '');
-
-        if (recordsError) throw recordsError;
+          if (res && (res as any).data?.role?.name) {
+            setUserRole((res as any).data.role.name);
+          }
+        } catch {
+          // Keep fallback
+        }
 
         // Build readiness and gap data from demo competencies
         // In production: fetch from activity_competencies joined with role requirements
