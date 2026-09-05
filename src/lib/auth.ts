@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { getSupabaseServerClient } from './supabase';
-import { DEMO_PERSONAS, getDemoPersonaByEmail } from './demoPersonas';
+import { DEMO_PERSONAS } from './demoPersonas';
 
 export interface AppUser {
   id: string;
@@ -14,6 +14,7 @@ export interface AppUser {
   };
   app_metadata?: {
     role?: string;
+    [key: string]: unknown;
   };
 }
 

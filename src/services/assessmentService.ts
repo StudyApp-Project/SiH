@@ -280,7 +280,7 @@ export function generateUUID(): string {
  * EXPORTS FOR TESTING
  * =========================================================================
  */
-export default {
+const assessmentService = {
   nextStage,
   determineFinalLevel,
   initializeAssessment,
@@ -288,3 +288,5 @@ export default {
   getCompletionPercentage,
   generateUUID,
 };
+
+export default assessmentService;

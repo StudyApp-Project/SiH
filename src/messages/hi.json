@@ -265,7 +265,8 @@
     "admin": "प्रशासक",
     "fieldInvestigator": "क्षेत्र अन्वेषक",
     "statisticalOfficer": "सांख्यिकी अधिकारी",
-    "deputyDirector": "उप-निदेशक"
+    "deputyDirector": "उप-निदेशक",
+    "nsstaFaculty": "NSSTA संकाय"
   },
   "cadres": {
     "iss": "भारतीय सांख्यिकी सेवा (ISS)",

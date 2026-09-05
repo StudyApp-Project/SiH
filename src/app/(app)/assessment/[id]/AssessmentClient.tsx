@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   initializeAssessment,
@@ -59,11 +59,13 @@ export default function AssessmentClient({
   const [assessmentState, setAssessmentState] = useState<AssessmentState>(
     initializeAssessment(competencyId, userId, firstQuestion.id)
   );
-  const [currentQuestion, setCurrentQuestion] = useState<Question>(firstQuestion);
+  const [currentQuestion] = useState<Question>(firstQuestion);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [timeRemaining, setTimeRemaining] = useState(30 * 60); // 30 minutes in seconds
   const [isAnimating, setIsAnimating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleSubmitAssessmentRef = useRef<(() => void) | null>(null);
 
   // Timer effect
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function AssessmentClient({
       setTimeRemaining((prev) => {
         if (prev <= 0) {
           // Time's up: auto-submit with current answer
-          handleSubmitAssessment();
+          handleSubmitAssessmentRef.current?.();
           return 0;
         }
         return prev - 1;
@@ -166,6 +168,10 @@ export default function AssessmentClient({
       setUiState('ERROR');
     }
   }, [assessmentState, competencyId, userId, router]);
+
+  useEffect(() => {
+    handleSubmitAssessmentRef.current = handleSubmitAssessment;
+  }, [handleSubmitAssessment]);
 
   const handlePrevious = useCallback(() => {
     // In real implementation, could allow review of previous answers

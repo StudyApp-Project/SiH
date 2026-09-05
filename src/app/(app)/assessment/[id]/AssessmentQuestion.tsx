@@ -4,7 +4,6 @@
  * Question display component: Bilingual, accessible, touch-friendly
  */
 
-import { Card } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 

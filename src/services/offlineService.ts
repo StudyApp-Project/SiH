@@ -8,7 +8,6 @@
  */
 
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
-import type { AssessmentResult } from './assessmentService';
 
 // =========================================================================
 // TYPES & INTERFACES

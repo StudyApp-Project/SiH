@@ -18,7 +18,6 @@ import {
   getCompletionPercentage,
   generateUUID,
   type ProficiencyLevel,
-  type BranchPath,
 } from './assessmentService';
 
 describe('assessmentService — Adaptive Branching State Machine', () => {

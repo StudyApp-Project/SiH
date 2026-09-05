@@ -8,7 +8,7 @@ import { RadarChart, type RadarDataPoint } from '@/components/RadarChart';
 import { ProvenanceBadge } from '@/components/ProvenanceBadge';
 import { useEffect, useState } from 'react';
 import { CompetencyService } from '@/services/competencyService';
-import { PlayCircle, Target, Sparkles } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
 
 interface DashboardProps {
   user: {
