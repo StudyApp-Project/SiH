@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Next.js build output
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment files
+.env
+.env*.local
+!.env.example
+
+# Debug and Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+*.sublime-workspace
+
+# IDE & Editor files
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Serwist / PWA generated service worker files
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
+
+# Supabase Local Development
+supabase/.branches/
+supabase/.temp/
+
+# Vitest / Coverage
+coverage/
+.nyc_output/
