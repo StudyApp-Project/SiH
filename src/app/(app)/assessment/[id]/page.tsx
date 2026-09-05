@@ -4,7 +4,7 @@
  * Assessment page: Server component that fetches assessment and passes to client
  */
 
-import { redirect } from 'next/navigation';
+import { getAuthenticatedUser } from '@/lib/auth';
 import { getSupabaseServerClient } from '@/lib/supabase';
 import AssessmentClient from './AssessmentClient';
 
@@ -14,17 +14,10 @@ interface PageProps {
 
 export default async function AssessmentPage({ params }: PageProps) {
   const { id: competencyId } = await params;
-  const supabase = await getSupabaseServerClient();
 
   // Get user session
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    redirect('/auth/login');
-  }
+  const user = await getAuthenticatedUser();
+  const supabase = await getSupabaseServerClient();
 
   // Demo/fallback competencies lookup
   const DEMO_COMPETENCIES: Record<string, { name: string; name_hi: string }> = {
@@ -39,14 +32,21 @@ export default async function AssessmentPage({ params }: PageProps) {
   let competencyName = DEMO_COMPETENCIES[competencyId]?.name || 'Statistical Competency';
   let competencyNameHi = DEMO_COMPETENCIES[competencyId]?.name_hi || 'सांख्यिकीय योग्यता';
 
-  try {
-    const { data: competency } = await supabase
-      .from('competencies')
-      .select('*')
-      .eq('id', competencyId)
-      .single();
+  // Helper for fast-timeout Supabase query to prevent slow page loads
+  const fastQuery = async <T,>(promise: PromiseLike<T>, timeoutMs = 250): Promise<T | null> => {
+    return Promise.race([
+      Promise.resolve(promise),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
+    ]);
+  };
 
-    if (competency) {
+  try {
+    const res = await fastQuery(
+      supabase.from('competencies').select('*').eq('id', competencyId).single()
+    );
+
+    if (res && (res as any).data) {
+      const competency = (res as any).data;
       competencyName = competency.name;
       competencyNameHi = competency.name_hi || competency.name;
     }
@@ -58,15 +58,17 @@ export default async function AssessmentPage({ params }: PageProps) {
   let firstQuestion = null;
 
   try {
-    const { data: questions } = await supabase
-      .from('questions')
-      .select('*')
-      .eq('competency_id', competencyId)
-      .eq('difficulty', 'medium')
-      .limit(1);
+    const res = await fastQuery(
+      supabase
+        .from('questions')
+        .select('*')
+        .eq('competency_id', competencyId)
+        .eq('difficulty', 'medium')
+        .limit(1)
+    );
 
-    if (questions && questions.length > 0) {
-      const q = questions[0];
+    if (res && (res as any).data && (res as any).data.length > 0) {
+      const q = (res as any).data[0];
       const optionsEn = Array.isArray(q.options?.en) ? q.options.en : ['Option A', 'Option B', 'Option C', 'Option D'];
       const optionsHi = Array.isArray(q.options?.hi) ? q.options.hi : optionsEn;
 

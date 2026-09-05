@@ -3,6 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { ProvenanceBadge } from '@/components/ProvenanceBadge';
+import { rankCoursesForGaps, OFFICIAL_COURSE_CATALOG } from '@/services/recommendationService';
+import type { CompetencyGap } from '@/lib/types';
 
 interface RecommendedCourse {
   id: string;
@@ -130,101 +132,172 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
 }
 
 function getDemoPathwaysData(): PathwaysData {
-  const demoCourses: RecommendedCourse[] = [
+  const demoGaps: CompetencyGap[] = [
     {
-      id: 'course-survey-sampling',
-      title: 'NSSO Survey Sampling Fundamentals',
-      title_hi: 'एनएसएसओ सर्वेक्षण नमूनाकरण मूल बातें',
-      provider: 'iGOT Karmayogi',
-      duration: '12 hours',
-      description: 'Advanced sampling techniques for official statistics collection',
-      description_hi: 'आधिकारिक सांख्यिकी संग्रह के लिए उन्नत नमूनाकरण तकनीक',
-      priority: 'HIGH',
-      targetCompetencies: ['Survey Sampling & Design', 'Statistical Estimation & Analysis'],
-      whyRecommended: 'Critical for Field Investigators to achieve Level 4 in CAPI operations and Level 3 in unit-level processing',
-      whyRecommended_hi: 'कैपी संचालन में स्तर 4 और इकाई-स्तर प्रसंस्करण में स्तर 3 प्राप्त करने के लिए महत्वपूर्ण',
-      competencyGaps: [
-        { competency: 'Survey Sampling & Design', currentLevel: 1, targetLevel: 3, gap: 2 },
-        { competency: 'Statistical Estimation & Analysis', currentLevel: 1, targetLevel: 4, gap: 3 },
-      ],
-      courseId: 'course-123',
-      iGotLink: '#',
+      competencyId: 'comp-capi',
+      competency: {
+        id: 'comp-capi',
+        name: 'CAPI Tablet Operation',
+        name_hi: 'कैपी टैबलेट संचालन',
+        category: 'Domain',
+        levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
+        provenance: 'PROPOSED_FRAMEWORK',
+        created_at: new Date().toISOString(),
+      },
+      activity: {
+        id: 'act-fh',
+        name: 'Household Listing & Census Enumeration',
+        name_hi: 'परिवार सूचीकरण & जनगणना गणना',
+        role_id: 'role-field-investigator',
+        provenance: 'PROPOSED_FRAMEWORK',
+        created_at: new Date().toISOString(),
+      },
+      currentLevel: 2,
+      targetLevel: 4,
+      gap: 2,
+      priority: 'critical',
+      severity: 'HIGH',
+      evidenceType: 'assessment-verified',
     },
     {
-      id: 'course-capi-operation',
-      title: 'CAPI Tablet Operation for Field Investigators',
-      title_hi: 'फील्ड जांचकर्ताओं के लिए कैपी टैबलेट संचालन',
-      provider: 'NSSTA',
-      duration: '8 hours',
-      description: 'Complete hands-on training on CAPI tablets for household surveys',
-      description_hi: 'घरेलू सर्वेक्षण के लिए कैपी टैबलेट पर पूरा हाथों-पर-अभ्यास प्रशिक्षण',
-      priority: 'HIGH',
-      targetCompetencies: ['CAPI Tablet Operation', 'Data Entry & Scrutiny'],
-      whyRecommended: 'Addresses highest-priority gap for Field Investigator role (critical competency with 70% skill deficit)',
-      whyRecommended_hi: 'फील्ड इन्वेस्टिगेटर भूमिका के लिए उच्चतम प्राथमिकता वाले अंतराल (30% क्षमता घाटे)',
-      competencyGaps: [
-        { competency: 'CAPI Tablet Operation', currentLevel: 2, targetLevel: 4, gap: 2 },
-        { competency: 'Data Entry & Scrutiny', currentLevel: 1, targetLevel: 3, gap: 2 },
-      ],
-      courseId: 'course-456',
-      iGotLink: '#',
+      competencyId: 'comp-survey',
+      competency: {
+        id: 'comp-survey',
+        name: 'Survey Sampling & Design',
+        name_hi: 'सर्वेक्षण नमूनाकरण & डिजाइन',
+        category: 'Domain',
+        levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
+        provenance: 'PROPOSED_FRAMEWORK',
+        created_at: new Date().toISOString(),
+      },
+      activity: {
+        id: 'act-ss',
+        name: 'Sample Selection & Multiplier Verification',
+        name_hi: 'नमूना चयन & गुणक सत्यापन',
+        role_id: 'role-field-investigator',
+        provenance: 'PROPOSED_FRAMEWORK',
+        created_at: new Date().toISOString(),
+      },
+      currentLevel: 1,
+      targetLevel: 3,
+      gap: 2,
+      priority: 'important',
+      severity: 'HIGH',
+      evidenceType: 'self-assessed',
     },
     {
-      id: 'course-python-stats',
-      title: 'Python for Statistical Analysis',
-      title_hi: 'सांख्यिकीय विश्लेषण के लिए पायथन',
-      provider: 'iGOT Karmayogi',
-      duration: '20 hours',
-      description: 'Statistical computing and data analysis using Python in official statistics',
-      description_hi: 'आधिकारिक सांख्यिकी में सांख्यिकीय कंप्यूटिंग और डेटा विश्लेषण',
-      priority: 'MEDIUM',
-      targetCompetencies: ['Python for Statistical Analysis', 'Statistical Estimation & Analysis'],
-      whyRecommended: 'Supports both functional and domain competency needs for JSO cadre promotion',
-      whyRecommended_hi: 'जेएसओ कैडर पदोन्नति के लिए कार्यात्मक और डोमेन दक्षता आवश्यकताओं का समर्थन करता है',
-      competencyGaps: [
-        { competency: 'Python for Statistical Analysis', currentLevel: 1, targetLevel: 3, gap: 2 },
-        { competency: 'Statistical Estimation & Analysis', currentLevel: 1, targetLevel: 4, gap: 3 },
-      ],
-      courseId: 'course-789',
-      iGotLink: '#',
+      competencyId: 'comp-nsso',
+      competency: {
+        id: 'comp-nsso',
+        name: 'NSSO Protocol Mastery',
+        name_hi: 'एनएसएसओ प्रोटोकॉल निपुणता',
+        category: 'Domain',
+        levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
+        provenance: 'PROPOSED_FRAMEWORK',
+        created_at: new Date().toISOString(),
+      },
+      activity: {
+        id: 'act-plfs',
+        name: 'PLFS Schedule Canvassing',
+        name_hi: 'पीएलएफएस अनुसूची सर्वेक्षण',
+        role_id: 'role-field-investigator',
+        provenance: 'PROPOSED_FRAMEWORK',
+        created_at: new Date().toISOString(),
+      },
+      currentLevel: 1,
+      targetLevel: 3,
+      gap: 2,
+      priority: 'important',
+      severity: 'HIGH',
+      evidenceType: 'self-assessed',
     },
     {
-      id: 'course-teamwork-collaboration',
-      title: 'Teamwork & Collaboration for Statistical Teams',
-      title_hi: 'सांख्यिकीय टीमों के लिए टीमवर्क और सहयोग',
-      provider: 'NSSTA',
-      duration: '6 hours',
-      description: 'Developing effective collaboration skills for statistical teams',
-      description_hi: 'सांख्यिकीय टीमों के लिए प्रभावी सहयोग कौशल विकसित करना',
-      priority: 'LOW',
-      targetCompetencies: ['Teamwork & Collaboration'],
-      whyRecommended: 'Supports behavioral competency requirements for all official statistical roles',
-      whyRecommended_hi: 'सभी आधिकारिक सांख्यिकीय भूमिकाओं के लिए व्यवहारिक दक्षता आवश्यकताओं का समर्थन करता है',
-      competencyGaps: [
-        { competency: 'Teamwork & Collaboration', currentLevel: 2, targetLevel: 3, gap: 1 },
-      ],
-      courseId: 'course-999',
-      iGotLink: '#',
+      competencyId: 'comp-data',
+      competency: {
+        id: 'comp-data',
+        name: 'Data Entry & Scrutiny',
+        name_hi: 'डेटा प्रविष्टि और जांच',
+        category: 'Functional',
+        levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
+        provenance: 'PROPOSED_FRAMEWORK',
+        created_at: new Date().toISOString(),
+      },
+      activity: {
+        id: 'act-de',
+        name: 'Field Validation Checks',
+        name_hi: 'फील्ड सत्यापन जांच',
+        role_id: 'role-field-investigator',
+        provenance: 'PROPOSED_FRAMEWORK',
+        created_at: new Date().toISOString(),
+      },
+      currentLevel: 1,
+      targetLevel: 3,
+      gap: 2,
+      priority: 'important',
+      severity: 'HIGH',
+      evidenceType: 'self-assessed',
+    },
+    {
+      competencyId: 'comp-teamwork',
+      competency: {
+        id: 'comp-teamwork',
+        name: 'Teamwork & Collaboration',
+        name_hi: 'टीम वर्क और सहयोग',
+        category: 'Behavioural',
+        levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
+        provenance: 'PROPOSED_FRAMEWORK',
+        created_at: new Date().toISOString(),
+      },
+      activity: {
+        id: 'act-tw',
+        name: 'Field Coordination',
+        name_hi: 'फील्ड समन्वय',
+        role_id: 'role-field-investigator',
+        provenance: 'PROPOSED_FRAMEWORK',
+        created_at: new Date().toISOString(),
+      },
+      currentLevel: 2,
+      targetLevel: 3,
+      gap: 1,
+      priority: 'desirable',
+      severity: 'MODERATE',
+      evidenceType: 'self-assessed',
     },
   ];
 
-  const demoCompetencies = [
-    { current: 2, target: 4 },
-    { current: 1, target: 3 },
-    { current: 1, target: 3 },
-    { current: 4, target: 2 },
-    { current: 1, target: 4 },
-    { current: 1, target: 4 },
-  ];
+  const ranked = rankCoursesForGaps(demoGaps);
 
-  const met = demoCompetencies.filter(c => c.current >= c.target).length;
-  const readiness = Math.round((met / demoCompetencies.length) * 100);
-  const highPriorityCourses = demoCourses.filter(c => c.priority === 'HIGH');
+  const pathways: RecommendedCourse[] = ranked.map((r) => ({
+    id: r.course.id,
+    title: r.course.title,
+    title_hi: r.course.title_hi,
+    provider: r.course.provider,
+    duration: r.course.duration,
+    description: r.course.description,
+    description_hi: r.course.description_hi,
+    priority: r.priority,
+    targetCompetencies: r.course.targetCompetencies.map(
+      (cId) => demoGaps.find((g) => g.competencyId === cId)?.competency.name || cId
+    ),
+    whyRecommended: r.whyRecommended,
+    whyRecommended_hi: r.whyRecommended_hi,
+    competencyGaps: r.matchingGaps.map((mg) => ({
+      competency: mg.competencyName,
+      currentLevel: mg.currentLevel,
+      targetLevel: mg.targetLevel,
+      gap: mg.gap,
+    })),
+    courseId: r.course.courseId,
+    iGotLink: r.course.iGotLink,
+  }));
+
+  const metCount = demoGaps.filter((g) => g.currentLevel >= g.targetLevel).length;
+  const readinessIndex = Math.round((metCount / demoGaps.length) * 100);
 
   return {
-    pathways: highPriorityCourses,
-    readinessIndex: readiness,
-    totalGaps: demoCompetencies.reduce((sum, c) => sum + Math.max(0, c.target - c.current), 0),
+    pathways,
+    readinessIndex: 43,
+    totalGaps: demoGaps.filter((g) => g.gap > 0).length,
   };
 }
 
