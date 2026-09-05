@@ -34,11 +34,11 @@ export default function LandingPage() {
         </div>
 
         <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight" style={{ color: 'var(--foreground)', textWrap: 'balance' }}>
-          Adaptive Competency Framework for India's Statistical Workforce
+          Adaptive Competency Framework for India&apos;s Statistical Workforce
         </h2>
 
         <p className="text-lg md:text-xl mb-10 leading-relaxed max-w-2xl" style={{ color: 'var(--muted-foreground)', textWrap: 'balance' }}>
-          A unified platform for assessing, tracking, and enhancing the professional skills of government officials from Field Investigators to Senior Directors, aligned strictly with the National Statistical Commission's guidelines.
+          A unified platform for assessing, tracking, and enhancing the professional skills of government officials from Field Investigators to Senior Directors, aligned strictly with the National Statistical Commission&apos;s guidelines.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center gap-4">

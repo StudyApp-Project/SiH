@@ -19,7 +19,7 @@ const DEFAULT_ONBOARDING_COMPETENCIES: CompetencyRating[] = [
   { id: 'comp-teamwork', name: 'Teamwork & Collaboration', name_hi: 'टीम वर्क और सहयोग', level: 3 },
 ];
 
-export default function OnboardingWizard(props: { userId: string; orgId: string }) {
+export default function OnboardingWizard({ userId, orgId }: { userId?: string; orgId?: string }) {
   const t = useTranslations();
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -50,7 +50,8 @@ export default function OnboardingWizard(props: { userId: string; orgId: string 
         document.cookie = 'locale=hi; path=/; max-age=604800';
       }
       // Save completed baseline state in localStorage as backup
-      localStorage.setItem('statvidya_onboarding_ratings', JSON.stringify(ratings));
+      const storageKey = userId ? `statvidya_onboarding_ratings_${userId}` : 'statvidya_onboarding_ratings';
+      localStorage.setItem(storageKey, JSON.stringify({ ratings, orgId }));
     } catch {}
 
     setTimeout(() => {
