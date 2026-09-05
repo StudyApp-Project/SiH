@@ -1,0 +1,60 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { Home } from 'lucide-react';
+
+const routeLabels: Record<string, string> = {
+  '/dashboard': 'nav.dashboard',
+  '/skill-gap': 'nav.skillGap',
+  '/pathways': 'nav.pathways',
+  '/profile': 'nav.profile',
+  '/documents': 'nav.documents',
+  '/assessment': 'nav.assessment',
+  '/mcq-generator': 'nav.mcqGenerator',
+  '/review-queue': 'nav.reviewQueue',
+  '/admin': 'nav.adminAnalytics',
+  '/onboarding': 'breadcrumb.onboarding',
+};
+
+export function Breadcrumb() {
+  const pathname = usePathname();
+  const t = useTranslations('breadcrumb');
+
+  const segments = pathname.split('/').filter(Boolean);
+
+  if (segments.length === 0 || segments[0] === 'auth') {
+    return null;
+  }
+
+  const crumbs = segments.map((seg, i) => {
+    const routeKey = routeLabels[`/${seg}`];
+    const label = routeKey ? t(routeKey) : seg;
+    const href = i === 0 ? '/' : `/${segments.slice(0, i + 1).join('/')}`;
+    return { label, href };
+  });
+
+  return (
+    <nav aria-label="Breadcrumb" className="flex items-center text-sm text-slate-500">
+      <ol className="flex items-center gap-1">
+        <li>
+          <a
+            href="/"
+            className="flex items-center gap-1 hover:text-slate-700 transition-colors"
+          >
+            <Home className="h-4 w-4" />
+            <span className="hidden sm:inline">{crumbs[0]?.label}</span>
+          </a>
+        </li>
+        {crumbs.slice(1).map((crumb, i) => (
+          <li key={crumb.href} className="flex items-center gap-1">
+            <span className="text-slate-300" aria-hidden="true">/</span>
+            <span className="font-medium text-slate-700">
+              {crumb.label}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+}
