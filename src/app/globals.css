@@ -1,66 +1,400 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Primary Institutional Palette */
-  --color-primary: oklch(0.45 0.12 220);
-  --color-primary-hover: oklch(0.38 0.12 220);
-  --color-primary-light: oklch(0.94 0.03 220);
-  
-  /* Saffron Accent */
-  --color-secondary: oklch(0.62 0.16 55);
-  --color-secondary-hover: oklch(0.52 0.16 55);
-  --color-secondary-light: oklch(0.96 0.04 55);
-  
-  /* Green Success */
-  --color-tertiary: oklch(0.52 0.14 145);
-  --color-tertiary-light: oklch(0.95 0.03 145);
+  /* ════════════════════════════════════════════════════════════════
+     LOCKED COLOR PALETTE (Design.md v2.1 — Non-negotiable)
+     Source: https://colorhunt.co/palette/8b9a6ef7f2ebeae2d6eeeeee
+     ════════════════════════════════════════════════════════════════ */
 
-  /* Functional Semantics */
-  --color-success: oklch(0.52 0.14 145);
-  --color-warning: oklch(0.65 0.17 75);
-  --color-error: oklch(0.42 0.18 25);
-  --color-info: oklch(0.45 0.14 250);
+  /* Primary Brand Color — Sage Green */
+  --color-primary: #8b9a6e;
+  --color-primary-foreground: #ffffff;
+  --color-primary-dark: #728056;      /* hover / active state */
+  --color-primary-light: #d6ddc9;     /* active selection, subtle highlights */
 
-  /* Severity Tokens */
-  --color-severity-high: var(--color-error);
-  --color-severity-moderate: var(--color-warning);
-  --color-severity-proficient: var(--color-success);
+  /* Secondary / Muted — Soft Taupe */
+  --color-secondary: #eae2d6;
+  --color-secondary-foreground: #1a1a1a;
+  --color-secondary-hover: #d2c5b3;   /* taupe dark for hover fills */
 
-  /* Typography */
+  /* Page & Surface Backgrounds */
+  --color-background: #f7f2eb;        /* page canvas — warm cream */
+  --color-foreground: #1a1a1a;        /* primary text — near-black */
+  --color-card: #ffffff;              /* elevated surfaces */
+  --color-card-foreground: #1a1a1a;
+
+  /* Popover & Dropdowns */
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1a1a1a;
+
+  /* Muted / Secondary Text */
+  --color-muted: #eae2d6;             /* soft taupe */
+  --color-muted-foreground: #5a5a5a;  /* gray — captions, secondary text */
+
+  /* Accent — Light Gray (internal dividers, stripes, skeleton loaders) */
+  --color-accent: #eeeeee;
+  --color-accent-foreground: #1a1a1a;
+
+  /* Destructive / Error — Muted Brick Red (severity-high) */
+  --color-destructive: #c0574a;
+  --color-destructive-foreground: #ffffff;
+
+  /* Border Strategy */
+  --color-border: #e3dbcf;            /* warm gray for card outlines */
+  --color-input: #e3dbcf;             /* input borders */
+  --color-ring: #8b9a6e;              /* focus ring = primary */
+
+  /* ════════════════════════════════════════════════════════════════
+     SEVERITY & CHART COLORS (Muted, Never Decorative)
+     ════════════════════════════════════════════════════════════════ */
+
+  --color-severity-high: #c0574a;     /* muted brick red */
+  --color-severity-moderate: #c9963a; /* muted ochre */
+  --color-severity-proficient: #8b9a6e; /* sage green = primary */
+
+  --color-chart-1: #8b9a6e;           /* sage — primary / proficient */
+  --color-chart-2: #c9963a;           /* ochre — moderate */
+  --color-chart-3: #c0574a;           /* brick — high */
+  --color-chart-4: #eae2d6;           /* taupe — neutral */
+  --color-chart-5: #1a1a1a;           /* near-black — axis / labels */
+
+  /* ════════════════════════════════════════════════════════════════
+     TYPOGRAPHY
+     ════════════════════════════════════════════════════════════════ */
+
   --font-sans: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Component Radii */
-  --radius-card: 12px;
-  --radius-btn: 8px;
-  --radius-badge: 6px;
-  --radius-input: 8px;
+  /* ════════════════════════════════════════════════════════════════
+     COMPONENT RADII — Unified Scale
+     ════════════════════════════════════════════════════════════════ */
+
+  --radius-card: 10px;                /* cards */
+  --radius-btn: 6px;                  /* buttons */
+  --radius-badge: 6px;                /* badges, pills, tags */
+  --radius-input: 6px;                /* inputs, selects */
 }
 
 @layer base {
   :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --muted: oklch(0.965 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --border: oklch(0.922 0 0);
+    /* CSS Custom Properties for shadcn/ui compatibility */
+    --background: #f7f2eb;
+    --foreground: #1a1a1a;
+    --card: #ffffff;
+    --card-foreground: #1a1a1a;
+    --popover: #ffffff;
+    --popover-foreground: #1a1a1a;
+    --primary: #8b9a6e;
+    --primary-foreground: #ffffff;
+    --secondary: #eae2d6;
+    --secondary-foreground: #1a1a1a;
+    --muted: #eae2d6;
+    --muted-foreground: #5a5a5a;
+    --accent: #eeeeee;
+    --accent-foreground: #1a1a1a;
+    --destructive: #c0574a;
+    --destructive-foreground: #ffffff;
+    --border: #e3dbcf;
+    --input: #e3dbcf;
+    --ring: #8b9a6e;
+    --radius: 6px;
   }
 
-  .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.178 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --border: oklch(0.269 0 0);
+  /* ════════════════════════════════════════════════════════════════
+     BASE TYPOGRAPHY & TEXT STYLES
+     ════════════════════════════════════════════════════════════════ */
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+  }
+
+  /* Tabular numbers for all numeric scores, percentages, IDs */
+  [data-numeric],
+  .numeric,
+  .score,
+  .percentage,
+  .id {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Monospace with tabular numbers for all display of competency levels, progress */
+  .font-mono {
+    font-feature-settings: "tnum";
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     HEADINGS & TYPE HIERARCHY
+     ════════════════════════════════════════════════════════════════ */
+
+  h1, .text-h1 {
+    font-size: 1.875rem; /* 30px */
+    font-weight: 700;
+    line-height: 1.30;
+  }
+
+  h2, .text-h2 {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  h3, .text-h3 {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 600;
+    line-height: 1.40;
+  }
+
+  p, .text-body {
+    font-size: 1rem; /* 16px */
+    font-weight: 400;
+    line-height: 1.60;
+  }
+
+  .text-sm {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    line-height: 1.50;
+  }
+
+  .text-xs {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 600;
+    line-height: 1.40;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     BILINGUAL SUPPORT: Hindi Expansion Handling
+     ════════════════════════════════════════════════════════════════ */
+
+  /* Headings: use text-wrap balance to prevent orphans */
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+
+  /* Labels and form text: allow wrapping, no fixed widths */
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Containers with Devanagari content: minimum line-height for spacing */
+  [lang="hi"],
+  .hindi,
+  .devanagari {
+    line-height: 1.65;
+  }
+
+  /* Buttons with text: use min-height instead of fixed h- to allow Hindi expansion */
+  button, [role="button"], .button {
+    min-height: 2.75rem; /* 44px desktop */
+  }
+
+  @media (max-width: 1024px) {
+    button, [role="button"], .button {
+      min-height: 3rem; /* 48px tablet */
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     SHADOWS — Minimal, Restrained
+     ════════════════════════════════════════════════════════════════ */
+
+  .shadow-card {
+    box-shadow: 0 1px 2px rgba(26, 26, 26, 0.04);
+  }
+
+  .shadow-card-hover {
+    box-shadow: 0 2px 8px rgba(26, 26, 26, 0.06);
+    transform: translateY(-1px);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     FOCUS & KEYBOARD NAVIGATION
+     ════════════════════════════════════════════════════════════════ */
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     MOTION & TRANSITIONS (Reduced, Accessible)
+     ════════════════════════════════════════════════════════════════ */
+
+  /* Default hover / focus transitions */
+  button,
+  [role="button"],
+  a,
+  input,
+  select,
+  textarea {
+    transition: all 150ms ease-out;
+  }
+
+  /* Page / view transitions */
+  .page-transition {
+    transition: opacity 200ms ease-out;
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     CARDS & SURFACES
+     ════════════════════════════════════════════════════════════════ */
+
+  .card {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 1.5rem; /* 24px desktop */
+    box-shadow: 0 1px 2px rgba(26, 26, 26, 0.04);
+  }
+
+  @media (max-width: 768px) {
+    .card {
+      padding: 1rem; /* 16px mobile */
+    }
+  }
+
+  .card:hover {
+    box-shadow: 0 2px 8px rgba(26, 26, 26, 0.06);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     INPUTS & FORM CONTROLS
+     ════════════════════════════════════════════════════════════════ */
+
+  input,
+  select,
+  textarea {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    padding: 0.75rem;
+    font-family: var(--font-sans);
+    color: var(--foreground);
+    background-color: var(--card);
+    min-height: 2.75rem; /* 44px */
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: inset 0 0 0 2px rgba(139, 154, 110, 0.1);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     OFFLINE BANNER (Minimal)
+     ════════════════════════════════════════════════════════════════ */
+
+  .offline-banner {
+    background-color: var(--background);
+    border-top: 1px solid var(--accent);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #92400e; /* amber-900 */
+    font-size: 0.875rem;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     TABLES (Minimal Stripes)
+     ════════════════════════════════════════════════════════════════ */
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    background-color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--foreground);
+  }
+
+  td {
+    border-bottom: 1px solid var(--accent);
+    padding: 0.75rem;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: var(--accent);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     LINKS & FOCUS STATES
+     ════════════════════════════════════════════════════════════════ */
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 150ms ease-out;
+  }
+
+  a:hover {
+    border-bottom-color: var(--primary);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     RESPONSIVE BREAKPOINTS (Field-First)
+     ════════════════════════════════════════════════════════════════ */
+
+  @media (min-width: 640px) {
+    /* sm: phone, 44px touch targets */
+  }
+
+  @media (min-width: 768px) {
+    /* md: small tablet, 48px targets */
+  }
+
+  @media (min-width: 1024px) {
+    /* lg: NSSO field tablet (primary), 48px targets */
+  }
+
+  @media (min-width: 1280px) {
+    /* xl: HQ desktop, 44px targets */
+  }
+
+  @media (min-width: 1536px) {
+    /* 2xl: large monitors */
   }
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-}

@@ -1,0 +1,278 @@
+{
+  "app": {
+    "title": "StatVidya — Workforce Competency Intelligence",
+    "tagline": "Competency Intelligence Platform for India's Official Statistical System"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "skillGap": "Skill Gap",
+    "pathways": "Learning Pathways",
+    "profile": "Profile",
+    "documents": "Documents",
+    "assessment": "Assessment",
+    "mcqGenerator": "MCQ Generator",
+    "reviewQueue": "Review Queue",
+    "adminAnalytics": "Admin Analytics",
+    "logout": "Logout",
+    "login": "Login",
+    "signup": "Sign Up",
+    "language": "Language",
+    "offline": "Offline",
+    "online": "Online",
+    "pendingSync": "Pending Sync"
+  },
+  "home": {
+    "hero": {
+      "title": "Empowering India's Official Statistical Workforce",
+      "subtitle": "Role-based competency mapping, localized training recommendations, and continuous proficiency tracking for ISS Officers, SSS personnel, and Field Investigators under Mission Karmayogi."
+    },
+    "explore": "Explore Modules",
+    "phaseActive": "Phase 1 Core Engine Active"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "login": "Login",
+    "signup": "Sign Up",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "google": "Continue with Google",
+    "demoPersona": "Demo Persona Login",
+    "demoSubtitle": "Select a pre-configured persona to experience the platform",
+    "demoAmit": "Amit Sharma — Junior Statistical Officer (SSS)",
+    "demoSunita": "Sunita Devi — Field Investigator (NSSO FOD)",
+    "demoPriya": "Dr. Priya Verma — NSSTA Faculty (Trainer)",
+    "demoRajesh": "Rajesh Kumar — Additional Director General (Admin)",
+    "error": "Authentication failed. Please try again."
+  },
+  "onboarding": {
+    "title": "Get Started with StatVidya",
+    "step1": {
+      "title": "Select Your Cadre",
+      "subtitle": "Choose your official cadre designation"
+    },
+    "step2": {
+      "title": "Official Details",
+      "subtitle": "Enter your official information"
+    },
+    "step3": {
+      "title": "Role Selection",
+      "subtitle": "Select your government role from the catalog"
+    },
+    "step4": {
+      "title": "Initial Self-Assessment",
+      "subtitle": "Rate your current proficiency for each competency"
+    },
+    "complete": "Onboarding Complete",
+    "completeSubtitle": "Your competency profile has been created",
+    "startAssessment": "Start Self-Assessment",
+    "continue": "Continue",
+    "back": "Back",
+    "name": "Full Name",
+    "department": "Department",
+    "designation": "Designation",
+    "cadre": "Cadre",
+    "role": "Government Role",
+    "languageNote": "Note: Hindi interface will be enabled for Field Investigator persona"
+  },
+  "dashboard": {
+    "readinessIndex": "Workforce Readiness Index",
+    "topGaps": "Top Competency Gaps",
+    "nextActions": "Recommended Actions",
+    "viewAllGaps": "View All Gaps",
+    "viewPathways": "View Learning Pathways",
+    "assessmentHistory": "Assessment History",
+    "lastUpdated": "Last updated"
+  },
+  "skillGap": {
+    "title": "Skill Gap Analysis",
+    "subtitle": "Current vs. Required Competency Levels",
+    "highSeverity": "High Severity",
+    "moderateSeverity": "Moderate",
+    "lowSeverity": "Proficient",
+    "activity": "Activity",
+    "currentLevel": "Current Level",
+    "targetLevel": "Target Level",
+    "gap": "Gap",
+    "explanation": "Why this matters",
+    "assessmentVerified": "Assessment Verified",
+    "selfAssessed": "Self-Assessed"
+  },
+  "pathways": {
+    "title": "Learning Pathways",
+    "subtitle": "Recommended Courses to Close Your Competency Gaps",
+    "whyRecommended": "Why this was recommended",
+    "viewCourse": "View Course",
+    "foundational": "Foundational",
+    "applied": "Applied",
+    "capstone": "Capstone",
+    "demoMode": "Integration: Demo Mode"
+  },
+  "profile": {
+    "title": "Official Profile",
+    "competencyRadar": "Competency Radar",
+    "karmaPoints": "Karma Points",
+    "aparMilestone": "APAR Milestone",
+    "growthHistory": "Competency Growth History",
+    "verifiedBadge": "Assessment-Verified",
+    "selfAssessedBadge": "Self-Assessed",
+    "provenanceOfficial": "Verified Official",
+    "provenanceProposed": "Proposed Framework",
+    "provenanceSynthetic": "Synthetic Demo Data"
+  },
+  "assessment": {
+    "title": "Adaptive Assessment",
+    "timer": "Time Remaining",
+    "question": "Question",
+    "of": "of",
+    "flag": "Flag this question",
+    "flagged": "Flagged",
+    "submit": "Submit Assessment",
+    "results": "Assessment Results",
+    "score": "Score",
+    "questionsCorrect": "Questions Correct",
+    "competencyUpdate": "Competency Update",
+    "offlineBanner": "You are offline. Results will sync when connectivity is restored.",
+    "pendingSync": "1 Assessment Pending Sync",
+    "synced": "Results synced successfully"
+  },
+  "admin": {
+    "title": "Workforce Intelligence",
+    "overview": "Organization Overview",
+    "totalOfficials": "Total Officials",
+    "avgReadiness": "Average Readiness",
+    "readinessTrend": "Readiness Trend",
+    "departmentBreakdown": "Department Breakdown",
+    "priorityTraining": "Priority Training",
+    "flagDepartment": "Flag Department for Priority Training",
+    "outcomeCorrelation": "Training → Outcome Correlation",
+    "outcomeSubtitle": "Competency Level vs. Simulated Survey Quality Metric",
+    "simulatedWatermark": "Simulated Data — Not Real Outcomes",
+    "narrativeSummary": "AI Narrative Summary",
+    "writeBackSuccess": "Department flagged successfully"
+  },
+  "documents": {
+    "title": "Document Manager",
+    "upload": "Upload Document",
+    "dropzone": "Drag and drop a training document here, or click to browse",
+    "pdfOnly": "PDF or DOCX files only",
+    "uploading": "Uploading...",
+    "processing": "Processing document",
+    "generation": "Generating MCQs"
+  },
+  "mcq": {
+    "title": "MCQ Generator",
+    "generationConfig": "Generation Configuration",
+    "questionCount": "Number of Questions",
+    "difficulty": "Difficulty",
+    "targetCompetency": "Target Competency",
+    "generate": "Generate Questions",
+    "generating": "Generating...",
+    "reviewQueue": "Review Queue",
+    "confidenceHigh": "High Confidence",
+    "confidenceMedium": "Medium Confidence",
+    "confidenceLow": "Low Confidence",
+    "approve": "Approve",
+    "edit": "Edit",
+    "reject": "Reject",
+    "bulkApprove": "Bulk Approve High Confidence",
+    "sanityCheck": "Competency Alignment Check",
+    "sourceDocument": "Source Document",
+    "pageReference": "Reference"
+  },
+  "provenance": {
+    "verifiedOfficial": "Verified Official",
+    "proposedFramework": "Proposed Framework",
+    "proposedMethodology": "Proposed Methodology",
+    "syntheticDemo": "Synthetic Demo Data",
+    "verifiedOfficialDesc": "Matches a real, checkable government fact or structure",
+    "proposedFrameworkDesc": "Structurally grounded in something official, but the specific content is the product team's proposal",
+    "proposedMethodologyDesc": "Mathematical formulas and algorithms created by StatVidya",
+    "syntheticDemoDesc": "Fabricated for demonstration; no claim to real-world accuracy"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "all": "All",
+    "apply": "Apply",
+    "reset": "Reset",
+    "clear": "Clear",
+    "noResults": "No results found",
+    "required": "Required",
+    "charactersRemaining": "characters remaining",
+    "yes": "Yes",
+    "no": "No",
+    "acknowledged": "Acknowledged",
+    "later": "Later"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "skillGap": "Skill Gap",
+    "pathways": "Learning Pathways",
+    "profile": "Profile",
+    "onboarding": "Onboarding",
+    "assessment": "Assessment",
+    "documents": "Documents",
+    "admin": "Admin",
+    "adminAnalytics": "Analytics",
+    "mcqGenerator": "MCQ Generator",
+    "reviewQueue": "Review Queue"
+  },
+  "offline": {
+    "offline": "You are currently offline",
+    "online": "You are back online",
+    "syncing": "Syncing...",
+    "synced": "All changes synced",
+    "pending": "changes pending",
+    "queueEmpty": "Queue empty"
+  },
+  "severity": {
+    "high": "High",
+    "moderate": "Moderate",
+    "proficient": "Proficient"
+  },
+  "level": {
+    "l1": "L1 — Awareness",
+    "l2": "L2 — Basic Understanding",
+    "l3": "L3 — Working Knowledge",
+    "l4": "L4 — Advanced Application",
+    "l5": "L5 — Expert Mastery"
+  },
+  "priority": {
+    "critical": "Critical",
+    "important": "Important",
+    "desirable": "Desirable"
+  },
+  "roles": {
+    "learner": "Learner",
+    "trainer": "Trainer",
+    "admin": "Administrator",
+    "fieldInvestigator": "Field Investigator",
+    "statisticalOfficer": "Statistical Officer",
+    "deputyDirector": "Deputy Director",
+    "nsstaFaculty": "NSSTA Faculty"
+  },
+  "cadres": {
+    "iss": "Indian Statistical Service (ISS)",
+    "sss": "Subordinate Statistical Service (SSS)",
+    "nssoFOD": "NSSO Field Operations Division",
+    "nsstaFaculty": "NSSTA Faculty",
+    "mospiHQ": "MoSPI Headquarters"
+  }
+}
