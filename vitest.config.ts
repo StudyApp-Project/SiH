@@ -8,5 +8,6 @@ export default defineConfig({
   test: {
     environment: 'jsdom', // Use jsdom for browser APIs (IndexedDB, etc.)
     globals: true,
+    setupFiles: ['./vitest.setup.ts'],
   },
 });
