@@ -134,7 +134,7 @@ export default async function LoginPage() {
               </div>
 
               <div className="pt-2 text-xs text-slate-500 dark:text-zinc-400 flex items-center gap-1.5 border-t border-slate-100 dark:border-zinc-800/80">
-                <ShieldCheck className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                <ShieldCheck className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
                 <span>Simulated sessions load realistic FRAC competency records and assessment histories.</span>
               </div>
             </div>
@@ -215,10 +215,10 @@ function DemoPersonaCard({
       </div>
 
       <div className="pt-3 mt-3 border-t border-slate-200/60 dark:border-zinc-700/60 flex items-center justify-between text-xs text-blue-700 dark:text-blue-400 font-medium">
-        <span className="text-[11px] font-mono text-slate-400 dark:text-zinc-500 truncate max-w-[130px]">
+        <span className="text-[11px] font-mono text-slate-400 dark:text-zinc-500 truncate max-w-32.5">
           {email}
         </span>
-        <span className="flex items-center gap-1 group-hover:translate-x-0.5 transition-transform flex-shrink-0">
+        <span className="flex items-center gap-1 group-hover:translate-x-0.5 transition-transform shrink-0">
           <span>Enter</span>
           <ArrowRight className="h-3 w-3" />
         </span>

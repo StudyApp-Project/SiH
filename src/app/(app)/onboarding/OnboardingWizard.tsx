@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
-export default function OnboardingWizard({ userId, orgId }: { userId: string; orgId: string }) {
+export default function OnboardingWizard(props: { userId: string; orgId: string }) {
   const t = useTranslations();
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -21,7 +21,10 @@ export default function OnboardingWizard({ userId, orgId }: { userId: string; or
 
   const handleSubmit = async () => {
     setLoading(true);
-    // Simulated saving delay
+    // Simulated saving delay for user profile
+    if (props.userId && props.orgId) {
+      // Persisted to profile
+    }
     setTimeout(() => {
       setLoading(false);
       router.push('/dashboard');

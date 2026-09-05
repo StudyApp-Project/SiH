@@ -3,8 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Inter, Noto_Sans_Devanagari, JetBrains_Mono } from 'next/font/google';
-import { OfflineIndicator } from '@/components/layout/OfflineIndicator';
-import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { OfflineIndicator, LanguageSwitcher } from '@/components/layout';
 import './globals.css';
 
 export const dynamic = 'force-dynamic';

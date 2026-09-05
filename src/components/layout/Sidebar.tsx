@@ -9,7 +9,6 @@ import {
   Flag,
   UserCircle,
   FileText,
-  ClipboardList,
   Brain,
   ClipboardCheck,
   BarChart3,
@@ -96,7 +95,7 @@ export function Sidebar() {
                     : 'text-slate-700 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
                 }`}
               >
-                <Icon className="h-5 w-5 flex-shrink-0" />
+                <Icon className="h-5 w-5 shrink-0" />
                 {!collapsed && <span className="truncate">{t(item.label)}</span>}
               </Link>
             );
@@ -121,7 +120,7 @@ export function Sidebar() {
                     : 'text-slate-700 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
                 }`}
               >
-                <Icon className="h-5 w-5 flex-shrink-0" />
+                <Icon className="h-5 w-5 shrink-0" />
                 {!collapsed && <span className="truncate">{t(item.label)}</span>}
               </Link>
             );
@@ -146,7 +145,7 @@ export function Sidebar() {
                     : 'text-slate-700 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800'
                 }`}
               >
-                <Icon className="h-5 w-5 flex-shrink-0" />
+                <Icon className="h-5 w-5 shrink-0" />
                 {!collapsed && <span className="truncate">{t(item.label)}</span>}
               </Link>
             );

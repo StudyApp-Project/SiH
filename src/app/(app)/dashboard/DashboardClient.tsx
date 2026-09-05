@@ -5,8 +5,7 @@ import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { ProgressRing } from '@/components/ProgressRing';
 import { RadarChart, type RadarDataPoint } from '@/components/RadarChart';
 import { ProvenanceBadge } from '@/components/ProvenanceBadge';
-import { use, useEffect, useState } from 'react';
-import type { CompetencyRecord, Role, Activity, Competency } from '@/lib/types';
+import { useEffect, useState } from 'react';
 import { CompetencyService } from '@/services/competencyService';
 
 interface DashboardProps {
@@ -55,7 +54,7 @@ export default function DashboardPage({ user }: DashboardProps) {
         setUserRole(roleData?.role?.name || 'Learner');
 
         // Fetch competency records
-        const { data: records, error: recordsError } = await supabase
+        const { error: recordsError } = await supabase
           .from('competency_records')
           .select('*')
           .eq('user_id', user.id)
