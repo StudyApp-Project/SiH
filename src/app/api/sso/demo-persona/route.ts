@@ -8,29 +8,39 @@ export async function GET(request: NextRequest) {
   const lang = request.nextUrl.searchParams.get('lang') as 'en' | 'hi' | null;
 
   if (!email) {
-    return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
   const persona = getDemoPersonaByEmail(email);
 
   if (!persona) {
-    return NextResponse.json({ error: 'Unknown demo persona' }, { status: 404 });
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
-  return NextResponse.json({
-    success: true,
-    persona: {
-      id: persona.id,
-      name: persona.name,
-      email: persona.email,
-      role: persona.role,
-      organization_id: persona.organization_id,
-      cadre: persona.cadre,
-      designation: persona.designation,
-      preferred_language: lang || persona.preferred_language,
-      department: persona.department,
-    },
+  const userObj = {
+    id: persona.id,
+    name: persona.name,
+    email: persona.email,
+    role: persona.role,
+    organization_id: persona.organization_id,
+    cadre: persona.cadre,
+    designation: persona.designation,
+    preferred_language: lang || persona.preferred_language,
+    department: persona.department,
+  };
+
+  const response = NextResponse.redirect(new URL('/dashboard', request.url));
+  response.cookies.set('demo_user', encodeURIComponent(JSON.stringify(userObj)), {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    httpOnly: false,
   });
+  response.cookies.set('locale', lang || persona.preferred_language || 'en', {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7,
+  });
+
+  return response;
 }
 
 export async function POST(request: NextRequest) {

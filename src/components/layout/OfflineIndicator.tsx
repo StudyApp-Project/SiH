@@ -1,107 +1,200 @@
+/**
+ * src/components/layout/OfflineIndicator.tsx
+ *
+ * Real-time connectivity + sync status banner.
+ *
+ * States:
+ *  1. ONLINE, queue empty, not syncing → hidden (null)
+ *  2. OFFLINE, queue has items → amber bar: "Offline · N pending"
+ *  3. OFFLINE, queue empty → amber bar: "Offline"
+ *  4. ONLINE, syncing → blue bar: "Syncing N assessments…"
+ *  5. ONLINE, just synced, queue empty → green bar (auto-hides after 4s)
+ *  6. ONLINE, some failed → red bar: "N failed to sync – tap to retry"
+ *
+ * Uses useQueueSync for real flush + backoff logic.
+ * Fully accessible: aria-live="assertive", role="status".
+ */
+
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import { WifiOff, Wifi, RefreshCw, Check } from 'lucide-react';
+import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
+import { WifiOff, RefreshCw, Wifi, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { useQueueSync } from '@/hooks/useQueueSync';
+
+// ─── Online store (no hydration mismatch) ────────────────────────────────────
+
+function subscribeOnline(callback: () => void) {
+  window.addEventListener('online', callback);
+  window.addEventListener('offline', callback);
+  return () => {
+    window.removeEventListener('online', callback);
+    window.removeEventListener('offline', callback);
+  };
+}
+const getOnlineSnapshot = () => (typeof navigator !== 'undefined' ? navigator.onLine : true);
+const getOnlineServerSnapshot = () => true;
+const emptySubscribe = () => () => {};
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export function OfflineIndicator() {
-  const t = useTranslations('offline');
-  const [isOnline, setIsOnline] = useState(true);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [pendingCount, setPendingCount] = useState(0);
+  // Hydration guard — never render on server
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  const isOnline = useSyncExternalStore(subscribeOnline, getOnlineSnapshot, getOnlineServerSnapshot);
 
-  const loadPendingCount = useCallback(async () => {
-    return new Promise<number>((resolve) => {
-      try {
-        const openReq = indexedDB.open('statvidya-offline', 1);
-        openReq.onsuccess = () => {
-          const db = openReq.result;
-          if (!db) { resolve(0); return; }
-          const txn = db.transaction('pending_assessments', 'readonly');
-          const store = txn.objectStore('pending_assessments');
-          const countReq = store.count();
-          countReq.onsuccess = () => resolve(countReq.result);
-          countReq.onerror = () => resolve(0);
-          txn.oncomplete = () => {};
-          txn.onerror = () => resolve(0);
-        };
-        openReq.onerror = () => resolve(0);
-      } catch {
-        resolve(0);
-      }
-    });
-  }, []);
+  const { isSyncing, pendingCount, failedCount, lastSyncAt, lastError, flush } = useQueueSync();
+
+  // Auto-hide the "Synced ✓" confirmation after 4 seconds
+  const [showSyncedConfirm, setShowSyncedConfirm] = useState(false);
 
   useEffect(() => {
-    const handleOnline = async () => {
-      setIsOnline(true);
-      if (pendingCount > 0) {
-        setIsSyncing(true);
-        await syncPending();
-        setIsSyncing(false);
-        setPendingCount(0);
-      }
-    };
+    if (lastSyncAt && !isSyncing && pendingCount === 0 && isOnline) {
+      setShowSyncedConfirm(true);
+      const t = setTimeout(() => setShowSyncedConfirm(false), 4_000);
+      return () => clearTimeout(t);
+    }
+  }, [lastSyncAt, isSyncing, pendingCount, isOnline]);
 
-    const handleOffline = () => {
-      setIsOnline(false);
-    };
+  const handleRetry = useCallback(() => {
+    flush();
+  }, [flush]);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+  // ── Derive display state ──────────────────────────────────────────────────
 
-    setIsOnline(navigator.onLine);
+  if (!mounted) return null;
 
-    loadPendingCount().then(setPendingCount);
+  // Completely hidden: online, nothing pending, not syncing, no confirmation
+  const fullyIdle = isOnline && pendingCount === 0 && !isSyncing && !showSyncedConfirm && failedCount === 0;
+  if (fullyIdle) return null;
 
-    const interval = setInterval(() => {
-      loadPendingCount().then(setPendingCount);
-    }, 30_000);
+  // ── Determine bar variant ─────────────────────────────────────────────────
 
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-      clearInterval(interval);
-    };
-  }, [pendingCount, loadPendingCount]);
+  type Variant = 'offline' | 'syncing' | 'synced' | 'failed';
+  let variant: Variant = 'offline';
 
-  const syncPending = async () => {
-    return Promise.resolve();
+  if (!isOnline) {
+    variant = 'offline';
+  } else if (isSyncing) {
+    variant = 'syncing';
+  } else if (failedCount > 0 && pendingCount > 0) {
+    variant = 'failed';
+  } else if (showSyncedConfirm) {
+    variant = 'synced';
+  } else {
+    variant = 'offline';
+  }
+
+  // ── Styling map ───────────────────────────────────────────────────────────
+
+  const styles: Record<Variant, { bar: string; icon: string; text: string }> = {
+    offline: {
+      bar: 'bg-amber-50 border-amber-200',
+      icon: 'text-amber-600',
+      text: 'text-amber-800',
+    },
+    syncing: {
+      bar: 'bg-blue-50 border-blue-200',
+      icon: 'text-blue-600',
+      text: 'text-blue-800',
+    },
+    synced: {
+      bar: 'bg-emerald-50 border-emerald-200',
+      icon: 'text-emerald-600',
+      text: 'text-emerald-800',
+    },
+    failed: {
+      bar: 'bg-red-50 border-red-200',
+      icon: 'text-red-600',
+      text: 'text-red-800',
+    },
   };
 
-  if (isOnline && pendingCount === 0 && !isSyncing) {
-    return null;
-  }
+  const s = styles[variant];
 
   return (
     <div
       role="status"
       aria-live="assertive"
-      className="flex items-center gap-2 px-4 py-2 text-sm bg-slate-100 border-t border-slate-200 dark:bg-zinc-800 dark:border-zinc-700"
+      aria-atomic="true"
+      className={`
+        flex items-center justify-between gap-3 px-4 py-2 text-sm
+        border-t transition-colors
+        ${s.bar}
+      `}
     >
-      {!isOnline && (
-        <div className="flex items-center gap-2">
-          <WifiOff className="h-4 w-4 text-amber-600" />
-          <span className="text-amber-700 font-medium">{t('offline')}</span>
-          {pendingCount > 0 && (
-            <span className="text-amber-600">
-              {' '}({pendingCount} {t('pending')})
+      {/* Left: icon + message */}
+      <div className="flex items-center gap-2">
+        {variant === 'offline' && (
+          <>
+            <WifiOff className={`h-4 w-4 flex-shrink-0 ${s.icon}`} aria-hidden="true" />
+            <span className={`font-medium ${s.text}`}>Offline</span>
+            {pendingCount > 0 && (
+              <span className="text-amber-700">
+                · {pendingCount} assessment{pendingCount !== 1 ? 's' : ''} pending
+              </span>
+            )}
+          </>
+        )}
+
+        {variant === 'syncing' && (
+          <>
+            <RefreshCw className={`h-4 w-4 flex-shrink-0 animate-spin ${s.icon}`} aria-hidden="true" />
+            <span className={`font-medium ${s.text}`}>
+              Syncing {pendingCount} assessment{pendingCount !== 1 ? 's' : ''}…
             </span>
-          )}
-        </div>
+          </>
+        )}
+
+        {variant === 'synced' && (
+          <>
+            <CheckCircle2 className={`h-4 w-4 flex-shrink-0 ${s.icon}`} aria-hidden="true" />
+            <span className={`font-medium ${s.text}`}>All assessments synced</span>
+          </>
+        )}
+
+        {variant === 'failed' && (
+          <>
+            <AlertTriangle className={`h-4 w-4 flex-shrink-0 ${s.icon}`} aria-hidden="true" />
+            <span className={`font-medium ${s.text}`}>
+              {failedCount} failed to sync
+            </span>
+            {lastError && (
+              <span className="text-red-600 truncate max-w-xs hidden sm:inline" title={lastError}>
+                · {lastError}
+              </span>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Right: retry button (only on failed) */}
+      {variant === 'failed' && isOnline && (
+        <button
+          onClick={handleRetry}
+          className="
+            flex items-center gap-1.5 px-3 py-1 text-xs font-semibold
+            bg-red-100 text-red-700 rounded-full border border-red-200
+            hover:bg-red-200 transition-colors focus-visible:outline-none
+            focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1
+          "
+          aria-label="Retry syncing failed assessments"
+        >
+          <RefreshCw className="h-3 w-3" aria-hidden="true" />
+          Retry
+        </button>
       )}
-      {isOnline && isSyncing && (
-        <div className="flex items-center gap-2">
-          <RefreshCw className="h-4 w-4 text-blue-600 animate-spin" />
-          <span className="text-blue-700">{t('syncing')}</span>
-        </div>
-      )}
-      {isOnline && pendingCount === 0 && !isSyncing && (
-        <div className="flex items-center gap-2">
-          <Wifi className="h-4 w-4 text-emerald-600" />
-          <span className="text-emerald-700">{t('synced')}</span>
-        </div>
+
+      {/* Pending count chip when offline */}
+      {variant === 'offline' && pendingCount > 0 && (
+        <span
+          className="
+            flex items-center justify-center px-2 py-0.5 text-xs font-bold
+            bg-amber-200 text-amber-800 rounded-full min-w-[1.5rem]
+          "
+          aria-label={`${pendingCount} assessments will sync when online`}
+        >
+          {pendingCount}
+        </span>
       )}
     </div>
   );

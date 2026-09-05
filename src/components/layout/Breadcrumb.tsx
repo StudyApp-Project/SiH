@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Home } from 'lucide-react';
@@ -38,15 +39,15 @@ export function Breadcrumb() {
     <nav aria-label="Breadcrumb" className="flex items-center text-sm text-slate-500">
       <ol className="flex items-center gap-1">
         <li>
-          <a
+          <Link
             href="/"
             className="flex items-center gap-1 hover:text-slate-700 transition-colors"
           >
             <Home className="h-4 w-4" />
             <span className="hidden sm:inline">{crumbs[0]?.label}</span>
-          </a>
+          </Link>
         </li>
-        {crumbs.slice(1).map((crumb, i) => (
+        {crumbs.slice(1).map((crumb) => (
           <li key={crumb.href} className="flex items-center gap-1">
             <span className="text-slate-300" aria-hidden="true">/</span>
             <span className="font-medium text-slate-700">

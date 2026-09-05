@@ -20,7 +20,7 @@ export default function SignupForm() {
     setError('');
 
     if (!email.endsWith('@mospi.gov.in') && !email.endsWith('@nssta.gov.in') && !email.endsWith('@gov.in')) {
-      setError('Please use your official government email address.');
+      setError('Please use your official government email address (@mospi.gov.in, @nssta.gov.in, @gov.in).');
       setLoading(false);
       return;
     }
@@ -56,8 +56,8 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={handleSignup} className="space-y-4">
-      <div className="space-y-2">
-        <label htmlFor="name" className="text-sm font-medium text-slate-700">
+      <div className="space-y-1.5">
+        <label htmlFor="name" className="text-sm font-medium text-slate-700 text-gray-700">
           Full Name
         </label>
         <input
@@ -66,13 +66,13 @@ export default function SignupForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Your full name"
+          className="w-full h-11 rounded-lg border border-slate-300 border-gray-200 bg-white bg-white px-3.5 text-sm text-slate-900 text-gray-900 placeholder:text-slate-400 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-blue-600 focus:border-transparent transition"
+          placeholder="e.g. Rajesh Kumar"
         />
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium text-slate-700">
+      <div className="space-y-1.5">
+        <label htmlFor="email" className="text-sm font-medium text-slate-700 text-gray-700">
           {t('email')}
         </label>
         <input
@@ -81,14 +81,14 @@ export default function SignupForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full h-11 rounded-lg border border-slate-300 border-gray-200 bg-white bg-white px-3.5 text-sm text-slate-900 text-gray-900 placeholder:text-slate-400 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-blue-600 focus:border-transparent transition"
           placeholder="you@mospi.gov.in"
         />
-        <p className="text-xs text-slate-500">Use your official government email address</p>
+        <p className="text-xs text-slate-500 text-gray-500">Official government email address required</p>
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="password" className="text-sm font-medium text-slate-700">
+      <div className="space-y-1.5">
+        <label htmlFor="password" className="text-sm font-medium text-slate-700 text-gray-700">
           {t('password')}
         </label>
         <input
@@ -98,21 +98,21 @@ export default function SignupForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={8}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full h-11 rounded-lg border border-slate-300 border-gray-200 bg-white bg-white px-3.5 text-sm text-slate-900 text-gray-900 placeholder:text-slate-400 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-blue-600 focus:border-transparent transition"
           placeholder="Minimum 8 characters"
         />
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+        <div className="text-xs text-rose-700 text-rose-600 bg-rose-50 bg-rose-50/60 border border-rose-200 border-rose-200 rounded-lg px-3 py-2">
           {error}
-        </p>
+        </div>
       )}
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full h-11 rounded-lg bg-blue-700 hover:bg-blue-800 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold shadow-sm transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? (
           <span className="flex items-center gap-2">
@@ -120,7 +120,7 @@ export default function SignupForm() {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            {t('loading')}
+            <span>Creating account...</span>
           </span>
         ) : (
           t('signup')

@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 import LoginForm from './LoginForm';
+import { Building2, Search, GraduationCap, BarChart3, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,146 +9,220 @@ export default async function LoginPage() {
   const t = await getTranslations('auth');
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <div className="flex-1 flex flex-col">
+      {/* Institutional Header */}
+      <header className="border-b border-slate-200 border-gray-200 bg-white bg-white sticky top-0 z-30 shadow-xs">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3.5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-700 text-white shadow-sm">
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m16 0h3m-3-3v3m-6-6h.01M13 16h2m-2-2h.01M16 13.5v3M8 13.5v3M11.5 18h.01M16.5 18h.01M7.5 18h.05M12 18h.05M16.5 13.5H16.51M12 13.5H12.01" />
-              </svg>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-700 bg-blue-700 text-white shadow-sm">
+              <BarChart3 className="h-5 w-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold tracking-tight text-lg">StatVidya</span>
-                <span className="rounded bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800">
+                <span className="font-bold tracking-tight text-lg text-slate-900 text-gray-900">
+                  StatVidya
+                </span>
+                <span className="rounded-md bg-blue-50 bg-blue-50 border border-blue-200 border-blue-200 px-2 py-0.5 text-xs font-semibold text-blue-800 text-blue-700">
                   MoSPI • NSSTA
                 </span>
               </div>
+              <p className="text-xs text-slate-500 text-gray-500 hidden sm:block">
+                National Statistical Systems Training Academy
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-1.5 text-xs text-slate-600 text-gray-500 bg-slate-100 bg-white px-3 py-1.5 rounded-full">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 text-emerald-600" />
+              <span>Mission Karmayogi FRAC Aligned</span>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-4xl">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-slate-900">{t('demoPersona')}</h1>
-            <p className="mt-2 text-sm text-slate-600">{t('demoSubtitle')}</p>
+      {/* Main Container */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
+        <div className="w-full max-w-6xl mx-auto space-y-8">
+          {/* Hero Heading */}
+          <div className="text-center space-y-2.5 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 bg-blue-50 border border-blue-200 border-blue-200 text-xs font-semibold text-blue-800 text-blue-700">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Official Statistical Workforce Competency Platform</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 text-gray-900">
+              StatVidya Portal Login
+            </h1>
+            <p className="text-sm sm:text-base text-slate-600 text-gray-500 leading-relaxed">
+              Role-based competency mapping, localized training recommendations, and continuous assessment for ISS Officers, SSS personnel, and Field Investigators.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">
-                {t('login')}
-              </h2>
+          {/* 2-Column Responsive Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left Column: Official Login Form */}
+            <div className="lg:col-span-5 bg-white bg-white rounded-2xl border border-slate-200 border-gray-200 p-6 sm:p-7 shadow-sm">
+              <div className="mb-5">
+                <h2 className="text-lg font-bold text-slate-900 text-gray-900">
+                  {t('login')}
+                </h2>
+                <p className="text-xs text-slate-500 text-gray-500 mt-1">
+                  Sign in with your official government email address or Parichay SSO.
+                </p>
+              </div>
               <Suspense>
                 <LoginForm />
               </Suspense>
             </div>
 
-            <div className="space-y-4">
-              <p className="text-sm font-medium text-slate-700">{t('demoPersona')}</p>
-              <DemoPersonaCard
-                icon="building"
-                name="Amit Sharma"
-                role="Junior Statistical Officer (SSS)"
-                dept="MoSPI Headquarters"
-                email="amit.sharma@mospi.gov.in"
-                lang="en"
-                t={t}
-              />
-              <DemoPersonaCard
-                icon="search"
-                name="Sunita Devi"
-                role="Field Investigator (NSSO FOD)"
-                dept="NSSO Field Operations Division"
-                email="sunita.devi@nssO.gov.in"
-                lang="hi"
-                t={t}
-              />
-              <DemoPersonaCard
-                icon="graduation-cap"
-                name="Dr. Priya Verma"
-                role="NSSTA Faculty (Trainer)"
-                dept="NSSTA"
-                email="priya.verma@nssta.gov.in"
-                lang="en"
-                t={t}
-              />
-              <DemoPersonaCard
-                icon="bar-chart"
-                name="Rajesh Kumar"
-                role="Additional Director General (Admin)"
-                dept="MoSPI"
-                email="rajesh.kumar@mospi.gov.in"
-                lang="en"
-                t={t}
-              />
+            {/* Right Column: Demo Persona Evaluation Grid */}
+            <div className="lg:col-span-7 bg-white bg-white rounded-2xl border border-slate-200 border-gray-200 p-6 sm:p-7 shadow-sm space-y-4">
+              <div>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-slate-900 text-gray-900">
+                    {t('demoPersona')}
+                  </h2>
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 bg-amber-50/60 text-amber-700 text-amber-600 border border-amber-200 border-amber-200">
+                    1-Click Simulation
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 text-gray-500 mt-1">
+                  Click any official cadre persona to evaluate role-specific competencies, adaptive assessments, and learning pathways:
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                <DemoPersonaCard
+                  icon="building"
+                  badge="SSS Cadre"
+                  badgeColor="blue"
+                  name="Amit Sharma"
+                  role="Junior Statistical Officer (SSS)"
+                  dept="MoSPI Headquarters, New Delhi"
+                  email="amit.sharma@mospi.gov.in"
+                  lang="en"
+                />
+                <DemoPersonaCard
+                  icon="search"
+                  badge="FOD Cadre"
+                  badgeColor="emerald"
+                  name="Sunita Devi"
+                  role="Field Investigator (NSSO FOD)"
+                  dept="Field Operations Division, Bihar"
+                  email="sunita.devi@nsso.gov.in"
+                  lang="hi"
+                />
+                <DemoPersonaCard
+                  icon="graduation-cap"
+                  badge="Trainer / Faculty"
+                  badgeColor="purple"
+                  name="Dr. Priya Verma"
+                  role="NSSTA Faculty (Trainer)"
+                  dept="NSSTA, Greater Noida"
+                  email="priya.verma@nssta.gov.in"
+                  lang="en"
+                />
+                <DemoPersonaCard
+                  icon="bar-chart"
+                  badge="Administration"
+                  badgeColor="amber"
+                  name="Rajesh Kumar"
+                  role="Additional Director General (Admin)"
+                  dept="MoSPI Executive Leadership"
+                  email="rajesh.kumar@mospi.gov.in"
+                  lang="en"
+                />
+              </div>
+
+              <div className="pt-2 text-xs text-slate-500 text-gray-500 flex items-center gap-1.5 border-t border-slate-100 border-gray-200/80">
+                <ShieldCheck className="h-3.5 w-3.5 text-blue-600 text-blue-600 shrink-0" />
+                <span>Simulated sessions load realistic FRAC competency records and assessment histories.</span>
+              </div>
             </div>
           </div>
         </div>
       </main>
+
+      {/* Institutional Footer */}
+      <footer className="border-t border-slate-200 border-gray-200 bg-white bg-white py-4 text-center text-xs text-slate-500 text-gray-500">
+        <p>Ministry of Statistics and Programme Implementation (MoSPI) • National Statistical Systems Training Academy (NSSTA)</p>
+      </footer>
     </div>
   );
 }
 
 function DemoPersonaCard({
   icon,
+  badge,
+  badgeColor,
   name,
   role,
   dept,
   email,
   lang,
-  t,
 }: {
-  icon: string;
+  icon: 'building' | 'search' | 'graduation-cap' | 'bar-chart';
+  badge: string;
+  badgeColor: 'blue' | 'emerald' | 'purple' | 'amber';
   name: string;
   role: string;
   dept: string;
   email: string;
   lang: 'en' | 'hi';
-  t: (key: string) => string;
 }) {
-  return (
-    <button
-      type="button"
-      onClick={() => selectDemoPersona(email, lang)}
-      className="w-full flex items-start gap-4 p-4 rounded-xl border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-200 transition-colors text-left"
-    >
-      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
-        {icon === 'building' && (
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-18v18" />
-          </svg>
-        )}
-        {icon === 'search' && (
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-          </svg>
-        )}
-        {icon === 'graduation-cap' && (
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.5 3.5-6.5 3.5" />
-          </svg>
-        )}
-        {icon === 'bar-chart' && (
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 13.125c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-6.75zM16.5 13.125c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-6.75z" />
-          </svg>
-        )}
-      </div>
-      <div>
-        <p className="font-semibold text-slate-900">{name}</p>
-        <p className="text-sm text-slate-600">{role}</p>
-        <p className="text-xs text-slate-500 mt-0.5">{dept}</p>
-        <p className="text-xs text-slate-400 mt-1 font-mono">{email}</p>
-      </div>
-    </button>
-  );
-}
+  const badgeStyles = {
+    blue: 'bg-blue-50 bg-blue-50 text-blue-700 text-blue-700 border-blue-200 border-blue-200',
+    emerald: 'bg-emerald-50 bg-emerald-50/60 text-emerald-700 text-emerald-700 border-emerald-200 border-emerald-200',
+    purple: 'bg-purple-50 bg-purple-50 text-purple-700 text-purple-700 border-purple-200 border-purple-300',
+    amber: 'bg-amber-50 bg-amber-50/60 text-amber-700 text-amber-700 border-amber-200 border-amber-200',
+  };
 
-function selectDemoPersona(email: string, lang: 'en' | 'hi') {
-  window.location.href = `/api/sso/demo-persona?email=${encodeURIComponent(email)}&lang=${lang}`;
+  const iconStyles = {
+    blue: 'bg-blue-100 text-blue-700 bg-blue-50 text-blue-700',
+    emerald: 'bg-emerald-100 text-emerald-700 bg-emerald-50/80 text-emerald-700',
+    purple: 'bg-purple-100 text-purple-700 bg-purple-100 text-purple-700',
+    amber: 'bg-amber-100 text-amber-700 bg-amber-50/80 text-amber-700',
+  };
+
+  return (
+    <a
+      href={`/api/sso/demo-persona?email=${encodeURIComponent(email)}&lang=${lang}`}
+      className="group flex flex-col justify-between p-4 rounded-xl border border-slate-200 border-gray-200 bg-slate-50/50 bg-white/40 hover:bg-blue-50/60 hover:bg-gray-100 hover:border-blue-300 hover:border-blue-400 transition-all text-left"
+    >
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${iconStyles[badgeColor]}`}>
+            {icon === 'building' && <Building2 className="h-4 w-4" />}
+            {icon === 'search' && <Search className="h-4 w-4" />}
+            {icon === 'graduation-cap' && <GraduationCap className="h-4 w-4" />}
+            {icon === 'bar-chart' && <BarChart3 className="h-4 w-4" />}
+          </div>
+          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${badgeStyles[badgeColor]}`}>
+            {badge}
+          </span>
+        </div>
+
+        <div>
+          <p className="font-semibold text-slate-900 text-gray-900 group-hover:text-blue-700 group-hover:text-blue-700 transition-colors text-sm">
+            {name}
+          </p>
+          <p className="text-xs font-medium text-slate-700 text-gray-700 mt-0.5 line-clamp-1">
+            {role}
+          </p>
+          <p className="text-[11px] text-slate-500 text-gray-500 mt-0.5 line-clamp-1">
+            {dept}
+          </p>
+        </div>
+      </div>
+
+      <div className="pt-3 mt-3 border-t border-slate-200/60 border-gray-200/60 flex items-center justify-between text-xs text-blue-700 text-blue-600 font-medium">
+        <span className="text-[11px] font-mono text-slate-400 text-gray-9000 truncate max-w-32.5">
+          {email}
+        </span>
+        <span className="flex items-center gap-1 group-hover:translate-x-0.5 transition-transform shrink-0">
+          <span>Enter</span>
+          <ArrowRight className="h-3 w-3" />
+        </span>
+      </div>
+    </a>
+  );
 }

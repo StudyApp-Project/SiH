@@ -1,16 +1,9 @@
-import { redirect } from 'next/navigation';
-import { getSupabaseServerClient } from '@/lib/supabase';
+import { getAuthenticatedUser } from '@/lib/auth';
 import DashboardClient from './DashboardClient';
 
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user || !user.email) {
-    redirect('/auth/login');
-  }
-
+  const user = await getAuthenticatedUser();
   return <DashboardClient user={{ ...user, email: user.email }} />;
 }
