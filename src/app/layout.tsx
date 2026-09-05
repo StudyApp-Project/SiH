@@ -1,34 +1,85 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { NextIntlClientProvider } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+import { getLocale } from 'next-intl/server';
+import { ThemeProvider } from 'next-themes';
+import { Inter, Noto_Sans_Devanagari, JetBrains_Mono } from 'next/font/google';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { OfflineIndicator } from '@/components/layout/OfflineIndicator';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import './globals.css';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const notoDevanagari = Noto_Sans_Devanagari({
+  variable: '--font-noto-devanagari',
+  subsets: ['devanagari'],
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: '--font-jetbrains-mono',
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: "StatVidya — Workforce Competency Intelligence Platform",
-  description: "Competency Intelligence Platform for India's Official Statistical System (MoSPI / NSSTA)",
+  title: 'StatVidya — Workforce Competency Intelligence',
+  description: 'Competency Intelligence Platform for India\'s Official Statistical System (MoSPI / NSSTA)',
+  manifest: '/manifest.json',
+  icons: {
+    icon: '/icons/icon-192x192.png',
+    apple: '/icons/apple-touch-icon.png',
+  },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const locale = await getLocale();
+  const t = await getTranslations('app');
+
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang={locale}
+      className="h-full antialiased"
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const theme = localStorage.getItem('theme');
+                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col">
+        <NextIntlClientProvider locale={locale}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className="flex flex-col min-h-full">
+              <AppLayout>
+                {children}
+              </AppLayout>
+              <OfflineIndicator />
+              <LanguageSwitcher />
+            </div>
+          </ThemeProvider>
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }
