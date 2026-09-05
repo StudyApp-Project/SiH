@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { ProgressRing } from '@/components/ProgressRing';
@@ -7,6 +8,7 @@ import { RadarChart, type RadarDataPoint } from '@/components/RadarChart';
 import { ProvenanceBadge } from '@/components/ProvenanceBadge';
 import { useEffect, useState } from 'react';
 import { CompetencyService } from '@/services/competencyService';
+import { PlayCircle, Target, Sparkles } from 'lucide-react';
 
 interface DashboardProps {
   user: {
@@ -222,8 +224,15 @@ export default function DashboardPage({ user }: DashboardProps) {
                       <span>Target: <strong>L{gap.targetLevel}</strong></span>
                     </div>
                   </div>
-                  <div className="text-right text-sm font-semibold">
-                    {gap.gap} {gap.gap === 1 ? 'level' : 'levels'}
+                  <div className="text-right text-sm font-semibold flex flex-col items-end gap-2">
+                    <span>{gap.gap} {gap.gap === 1 ? 'level' : 'levels'}</span>
+                    <Link
+                      href={`/assessment/${gap.competencyId}`}
+                      className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 bg-white/50 px-2 py-1 rounded-md hover:bg-white"
+                    >
+                      <PlayCircle className="h-3 w-3" />
+                      Assess
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -265,6 +274,14 @@ export default function DashboardPage({ user }: DashboardProps) {
             <h3 className="font-semibold text-slate-900 text-gray-900 mb-2">👤 {t('profile.title')}</h3>
             <p className="text-xs text-slate-600 text-gray-500">View your progress</p>
           </a>
+
+          <Link
+            href="/assessment/comp-capi"
+            className="rounded-lg border border-purple-200 border-purple-200 bg-white bg-white p-4 transition-colors hover:bg-purple-50 hover:bg-purple-50"
+          >
+            <h3 className="font-semibold text-slate-900 text-gray-900 mb-2">🎯 {t('nav.assessment')}</h3>
+            <p className="text-xs text-slate-600 text-gray-500">Take a new assessment</p>
+          </Link>
         </div>
       </div>
 

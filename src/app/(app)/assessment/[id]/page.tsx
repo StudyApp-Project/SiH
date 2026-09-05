@@ -26,59 +26,81 @@ export default async function AssessmentPage({ params }: PageProps) {
     redirect('/auth/login');
   }
 
-  // Fetch competency details
-  const { data: competency, error: compError } = await supabase
-    .from('competencies')
-    .select('*')
-    .eq('id', competencyId)
-    .single();
+  // Demo/fallback competencies lookup
+  const DEMO_COMPETENCIES: Record<string, { name: string; name_hi: string }> = {
+    'comp-capi': { name: 'CAPI Tablet Operation', name_hi: 'कैपी टैबलेट संचालन' },
+    'comp-nsso': { name: 'NSSO Protocol Mastery', name_hi: 'एनएसएसओ प्रोटोकॉल निपुणता' },
+    'comp-survey': { name: 'Survey Sampling & Design', name_hi: 'सर्वेक्षण नमूनाकरण और डिज़ाइन' },
+    'comp-data': { name: 'Data Entry & Scrutiny', name_hi: 'डेटा प्रविष्टि और जांच' },
+    'comp-teamwork': { name: 'Teamwork & Collaboration', name_hi: 'टीम वर्क और सहयोग' },
+  };
 
-  if (compError || !competency) {
-    // If not found in database, fallback to a sensible default if demo
-    redirect('/dashboard');
+  // Fetch competency details
+  let competencyName = DEMO_COMPETENCIES[competencyId]?.name || 'Statistical Competency';
+  let competencyNameHi = DEMO_COMPETENCIES[competencyId]?.name_hi || 'सांख्यिकीय योग्यता';
+
+  try {
+    const { data: competency } = await supabase
+      .from('competencies')
+      .select('*')
+      .eq('id', competencyId)
+      .single();
+
+    if (competency) {
+      competencyName = competency.name;
+      competencyNameHi = competency.name_hi || competency.name;
+    }
+  } catch {
+    // Graceful fallback to demo competency metadata
   }
 
   // Fetch Stage 1 question (Medium difficulty calibration)
-  const { data: questions, error: qError } = await supabase
-    .from('questions')
-    .select('*')
-    .eq('competency_id', competencyId)
-    .eq('difficulty', 'medium')
-    .limit(1);
-
-  // Fallback question if database doesn't have it yet (e.g. offline or unseeded)
   let firstQuestion = null;
 
-  if (questions && questions.length > 0) {
-    const q = questions[0];
-    const optionsEn = Array.isArray(q.options?.en) ? q.options.en : ['Option A', 'Option B', 'Option C', 'Option D'];
-    const optionsHi = Array.isArray(q.options?.hi) ? q.options.hi : optionsEn;
+  try {
+    const { data: questions } = await supabase
+      .from('questions')
+      .select('*')
+      .eq('competency_id', competencyId)
+      .eq('difficulty', 'medium')
+      .limit(1);
 
-    firstQuestion = {
-      id: q.id,
-      question_text: q.stem,
-      question_text_hi: q.stem_hi || q.stem,
-      answer_choices: optionsEn,
-      answer_choices_hi: optionsHi,
-      difficulty: q.difficulty as 'easy' | 'medium' | 'hard',
-      stage: 1,
-    };
-  } else {
+    if (questions && questions.length > 0) {
+      const q = questions[0];
+      const optionsEn = Array.isArray(q.options?.en) ? q.options.en : ['Option A', 'Option B', 'Option C', 'Option D'];
+      const optionsHi = Array.isArray(q.options?.hi) ? q.options.hi : optionsEn;
+
+      firstQuestion = {
+        id: q.id,
+        question_text: q.stem,
+        question_text_hi: q.stem_hi || q.stem,
+        answer_choices: optionsEn,
+        answer_choices_hi: optionsHi,
+        difficulty: q.difficulty as 'easy' | 'medium' | 'hard',
+        stage: 1,
+      };
+    }
+  } catch {
+    // Database query failed, use seeded fallback
+  }
+
+  // Fallback question if database doesn't have it yet (e.g. offline or unseeded)
+  if (!firstQuestion) {
     firstQuestion = {
       id: `q-${competencyId}-1`,
-      question_text: `Initial assessment question for ${competency.name}`,
-      question_text_hi: `${competency.name_hi || competency.name} के लिए प्रारंभिक मूल्यांकन प्रश्न`,
+      question_text: `Initial assessment question for ${competencyName}: How do you ensure accuracy during data collection?`,
+      question_text_hi: `${competencyNameHi} के लिए प्रारंभिक मूल्यांकन प्रश्न: डेटा संग्रह के दौरान आप सटीकता कैसे सुनिश्चित करते हैं?`,
       answer_choices: [
-        'Adhere to standard operational protocols',
-        'Bypass verification to save time',
-        'Submit estimates without raw records',
-        'Delegate critical tasks without supervision',
+        'Adhere strictly to standard operational protocols and double-check discrepancies',
+        'Bypass secondary verification steps to save field time',
+        'Submit estimates without cross-verifying raw primary records',
+        'Delegate critical recording tasks without oversight',
       ],
       answer_choices_hi: [
-        'मानक परिचालन प्रोटोकॉल का पालन करें',
-        'समय बचाने के लिए सत्यापन छोड़ें',
-        'कच्चे रिकॉर्ड के बिना अनुमान प्रस्तुत करें',
-        'बिना पर्यवेक्षण के महत्वपूर्ण कार्य सौंपें',
+        'मानक परिचालन प्रोटोकॉल का कड़ाई से पालन करें और विसंगतियों की दोबारा जांच करें',
+        'फ़ील्ड समय बचाने के लिए द्वितीयक सत्यापन चरणों को छोड़ें',
+        'कच्चे प्राथमिक रिकॉर्ड को सत्यापित किए बिना अनुमान प्रस्तुत करें',
+        'बिना पर्यवेक्षण के महत्वपूर्ण रिकॉर्डिंग कार्य सौंपें',
       ],
       difficulty: 'medium' as const,
       stage: 1,
@@ -89,8 +111,8 @@ export default async function AssessmentPage({ params }: PageProps) {
     <div className="min-h-screen bg-background">
       <AssessmentClient
         competencyId={competencyId}
-        competencyName={competency.name}
-        competencyNameHi={competency.name_hi}
+        competencyName={competencyName}
+        competencyNameHi={competencyNameHi}
         firstQuestion={firstQuestion}
         userId={user.id}
       />

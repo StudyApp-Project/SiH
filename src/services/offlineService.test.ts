@@ -19,7 +19,7 @@ import {
 
 describe('offlineService — IndexedDB Queue Manager', () => {
   const mockAssessment = {
-    local_id: '550e8400-e29b-41d4-a716-446655440000',
+    assessment_id: null, local_id: '550e8400-e29b-41d4-a716-446655440000',
     competency_id: 'comp-nsso-survey',
     user_id: 'user-sunita-devi',
     final_level: 'L3' as const,
@@ -52,11 +52,11 @@ describe('offlineService — IndexedDB Queue Manager', () => {
     it('generates unique local_id for each assessment', async () => {
       const id1 = await queueAssessment({
         ...mockAssessment,
-        local_id: '550e8400-e29b-41d4-a716-446655440001',
+        assessment_id: null, local_id: '550e8400-e29b-41d4-a716-446655440001',
       });
       const id2 = await queueAssessment({
         ...mockAssessment,
-        local_id: '550e8400-e29b-41d4-a716-446655440002',
+        assessment_id: null, local_id: '550e8400-e29b-41d4-a716-446655440002',
       });
 
       expect(id1).not.toBe(id2);
@@ -86,11 +86,11 @@ describe('offlineService — IndexedDB Queue Manager', () => {
     it('counts PENDING assessments', async () => {
       await queueAssessment({
         ...mockAssessment,
-        local_id: 'test-1',
+        assessment_id: null, local_id: 'test-1',
       });
       await queueAssessment({
         ...mockAssessment,
-        local_id: 'test-2',
+        assessment_id: null, local_id: 'test-2',
       });
 
       const count = await getPendingCount();
@@ -117,11 +117,11 @@ describe('offlineService — IndexedDB Queue Manager', () => {
 
       await queueAssessment({
         ...mockAssessment,
-        local_id: local_id_syncing,
+        assessment_id: null, local_id: local_id_syncing,
       });
       await queueAssessment({
         ...mockAssessment,
-        local_id: local_id_failed,
+        assessment_id: null, local_id: local_id_failed,
       });
 
       await markSyncing(local_id_syncing);
@@ -258,11 +258,11 @@ describe('offlineService — IndexedDB Queue Manager', () => {
     it('returns all PENDING assessments', async () => {
       await queueAssessment({
         ...mockAssessment,
-        local_id: 'batch-test-1',
+        assessment_id: null, local_id: 'batch-test-1',
       });
       await queueAssessment({
         ...mockAssessment,
-        local_id: 'batch-test-2',
+        assessment_id: null, local_id: 'batch-test-2',
       });
 
       const pending = await getPendingAssessments();
@@ -276,11 +276,11 @@ describe('offlineService — IndexedDB Queue Manager', () => {
 
       await queueAssessment({
         ...mockAssessment,
-        local_id: local_id_synced,
+        assessment_id: null, local_id: local_id_synced,
       });
       await queueAssessment({
         ...mockAssessment,
-        local_id: local_id_pending,
+        assessment_id: null, local_id: local_id_pending,
       });
 
       await markSynced(local_id_synced, 'server-id', new Date().toISOString());
@@ -296,7 +296,7 @@ describe('offlineService — IndexedDB Queue Manager', () => {
       for (let i = 0; i < 5; i++) {
         await queueAssessment({
           ...mockAssessment,
-          local_id: `batch-limit-${i}`,
+          assessment_id: null, local_id: `batch-limit-${i}`,
         });
       }
 
@@ -308,12 +308,12 @@ describe('offlineService — IndexedDB Queue Manager', () => {
       const now = new Date();
       await queueAssessment({
         ...mockAssessment,
-        local_id: 'batch-order-1',
+        assessment_id: null, local_id: 'batch-order-1',
         created_at: new Date(now.getTime() - 10000).toISOString(),
       });
       await queueAssessment({
         ...mockAssessment,
-        local_id: 'batch-order-2',
+        assessment_id: null, local_id: 'batch-order-2',
         created_at: new Date(now.getTime() - 5000).toISOString(),
       });
 
@@ -403,10 +403,10 @@ describe('offlineService — IndexedDB Queue Manager', () => {
       };
 
       // Create 4 assessments in different states
-      await queueAssessment({ ...mockAssessment, local_id: ids.pending });
-      await queueAssessment({ ...mockAssessment, local_id: ids.syncing });
-      await queueAssessment({ ...mockAssessment, local_id: ids.failed });
-      await queueAssessment({ ...mockAssessment, local_id: ids.synced });
+      await queueAssessment({ ...mockAssessment, assessment_id: null, local_id: ids.pending });
+      await queueAssessment({ ...mockAssessment, assessment_id: null, local_id: ids.syncing });
+      await queueAssessment({ ...mockAssessment, assessment_id: null, local_id: ids.failed });
+      await queueAssessment({ ...mockAssessment, assessment_id: null, local_id: ids.synced });
 
       // Transition to different states
       await markSyncing(ids.syncing);

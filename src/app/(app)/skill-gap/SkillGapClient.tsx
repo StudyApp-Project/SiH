@@ -2,6 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import Link from 'next/link';
+import { PlayCircle } from 'lucide-react';
 import { RadarChart, type RadarDataPoint } from '@/components/RadarChart';
 import { ProvenanceBadge } from '@/components/ProvenanceBadge';
 import { CompetencyService } from '@/services/competencyService';
@@ -72,19 +74,28 @@ function GapCard({ gap }: GapCardProps) {
             : `Based on self-assessment, you need to develop ${gap.competency.name} to meet ${gap.activity.name} requirements at Level ${gap.targetLevel}.`
           }
         </p>
-        <div className="flex items-center gap-2 text-xs text-slate-500 text-gray-9000 mt-2">
-          <span className="px-2 py-1 rounded bg-slate-100 bg-white">
-            Category: {gap.competency.category}
-          </span>
-          {gap.evidenceType === 'assessment-verified' ? (
-            <span className="px-2 py-1 rounded bg-emerald-100 bg-emerald-50 text-emerald-700 text-emerald-600">
-              Verified Assessment
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-black/5">
+          <div className="flex items-center gap-2 text-xs text-slate-500 text-gray-9000">
+            <span className="px-2 py-1 rounded bg-slate-100 bg-white">
+              Category: {gap.competency.category}
             </span>
-          ) : (
-            <span className="px-2 py-1 rounded bg-blue-100 bg-blue-50 text-blue-700 text-blue-600">
-              Self-Assessed
-            </span>
-          )}
+            {gap.evidenceType === 'assessment-verified' ? (
+              <span className="px-2 py-1 rounded bg-emerald-100 bg-emerald-50 text-emerald-700 text-emerald-600">
+                Verified
+              </span>
+            ) : (
+              <span className="px-2 py-1 rounded bg-blue-100 bg-blue-50 text-blue-700 text-blue-600">
+                Self-Assessed
+              </span>
+            )}
+          </div>
+          <Link
+            href={`/assessment/${gap.competencyId}`}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-blue-700 bg-blue-50 hover:bg-blue-100 font-semibold rounded-md transition-colors"
+          >
+            <PlayCircle className="h-3.5 w-3.5" />
+            Take Assessment
+          </Link>
         </div>
       </div>
     </div>

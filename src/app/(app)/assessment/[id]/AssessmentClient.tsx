@@ -136,11 +136,13 @@ export default function AssessmentClient({
         ...assessmentState,
         stage: 'COMPLETE',
         completed_at: new Date().toISOString(),
+        final_level: assessmentState.final_level || 'L1',
       };
 
       // Queue for offline sync
       const local_id = await offlineQueueManager.queueAssessment({
         local_id: assessmentState.assessment_id,
+        assessment_id: null,
         competency_id: competencyId,
         user_id: userId,
         final_level: result.final_level,
