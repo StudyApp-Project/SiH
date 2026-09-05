@@ -3,8 +3,10 @@
 import { useTranslations } from 'next-intl';
 import { Bell, ChevronDown, User, LogOut, Settings } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function Topbar() {
+  const router = useRouter();
   const t = useTranslations('nav');
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -79,7 +81,7 @@ export function Topbar() {
 
               <button
                 onClick={() => {
-                  window.location.href = '/auth/login';
+                  router.push('/auth/login');
                 }}
                 className="flex w-full items-center gap-2 px-4 py-2 text-sm text-rose-600 hover:bg-slate-50 dark:hover:bg-zinc-800"
               >

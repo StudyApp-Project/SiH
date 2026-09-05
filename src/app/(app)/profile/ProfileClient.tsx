@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { RadarChart, type RadarDataPoint } from '@/components/RadarChart';
 import { ProvenanceBadge } from '@/components/ProvenanceBadge';
 import { ProgressRing } from '@/components/ProgressRing';
@@ -40,113 +40,97 @@ interface ProfileData {
   competencyHistory: Record<string, CompetencyHistoryEntry[]>;
 }
 
+function getDemoProfileData(): ProfileData {
+  return {
+    name: 'Sunita Devi',
+    email: 'sunita.devi@mospi.gov.in',
+    designation: 'Field Investigator (Grade II)',
+    cadre: 'FOD - NSSO',
+    department: 'Field Operations Division',
+    organization: 'MoSPI Demo Organization',
+    role: 'Field Investigator',
+    karmaPoints: 1275,
+    aparMilestone: '2025-2026: Exceeded Expectations',
+    readinessIndex: 67,
+    joinedDate: '2023-06-15',
+    assessmentsCompleted: 8,
+    coursesCompleted: 4,
+    competencyRecords: [
+      {
+        competencyId: 'comp-capi',
+        competencyName: 'CAPI Tablet Operation',
+        category: 'Domain',
+        currentLevel: 3,
+        targetLevel: 4,
+        evidenceType: 'assessment-verified',
+        lastUpdated: '2025-08-10',
+      },
+      {
+        competencyId: 'comp-nsso',
+        competencyName: 'NSSO Protocol Mastery',
+        category: 'Domain',
+        currentLevel: 3,
+        targetLevel: 3,
+        evidenceType: 'assessment-verified',
+        lastUpdated: '2025-07-22',
+      },
+      {
+        competencyId: 'comp-survey',
+        competencyName: 'Survey Sampling & Design',
+        category: 'Functional',
+        currentLevel: 2,
+        targetLevel: 3,
+        evidenceType: 'self-assessed',
+        lastUpdated: '2025-06-01',
+      },
+      {
+        competencyId: 'comp-data',
+        competencyName: 'Data Entry & Scrutiny',
+        category: 'Functional',
+        currentLevel: 3,
+        targetLevel: 3,
+        evidenceType: 'assessment-verified',
+        lastUpdated: '2025-08-05',
+      },
+      {
+        competencyId: 'comp-teamwork',
+        competencyName: 'Teamwork & Collaboration',
+        category: 'Behavioural',
+        currentLevel: 3,
+        targetLevel: 2,
+        evidenceType: 'self-assessed',
+        lastUpdated: '2025-05-15',
+      },
+      {
+        competencyId: 'comp-ethics',
+        competencyName: 'Statistical Ethics & Integrity',
+        category: 'Behavioural',
+        currentLevel: 4,
+        targetLevel: 2,
+        evidenceType: 'assessment-verified',
+        lastUpdated: '2025-07-01',
+      },
+    ],
+    competencyHistory: {
+      'comp-capi': [
+        { date: '2025-08-10', level: 3, source: 'assessment-score' },
+        { date: '2025-05-20', level: 2, source: 'assessment-score' },
+        { date: '2025-02-15', level: 2, source: 'self-assessment' },
+        { date: '2024-11-01', level: 1, source: 'self-assessment' },
+      ],
+      'comp-nsso': [
+        { date: '2025-07-22', level: 3, source: 'assessment-score' },
+        { date: '2025-04-10', level: 3, source: 'course-completion' },
+        { date: '2025-01-05', level: 2, source: 'assessment-score' },
+      ],
+    },
+  };
+}
+
 export default function ProfileClient() {
   const t = useTranslations();
-  const [data, setData] = useState<ProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data] = useState<ProfileData>(getDemoProfileData);
   const [activeTab, setActiveTab] = useState<'overview' | 'competencies' | 'history'>('overview');
-
-  useEffect(() => {
-    // Demo data representing a Field Investigator's profile
-    const demoData: ProfileData = {
-      name: 'Sunita Devi',
-      email: 'sunita.devi@mospi.gov.in',
-      designation: 'Field Investigator (Grade II)',
-      cadre: 'FOD - NSSO',
-      department: 'Field Operations Division',
-      organization: 'MoSPI Demo Organization',
-      role: 'Field Investigator',
-      karmaPoints: 1275,
-      aparMilestone: '2025-2026: Exceeded Expectations',
-      readinessIndex: 67,
-      joinedDate: '2023-06-15',
-      assessmentsCompleted: 8,
-      coursesCompleted: 4,
-      competencyRecords: [
-        {
-          competencyId: 'comp-capi',
-          competencyName: 'CAPI Tablet Operation',
-          category: 'Domain',
-          currentLevel: 3,
-          targetLevel: 4,
-          evidenceType: 'assessment-verified',
-          lastUpdated: '2025-08-10',
-        },
-        {
-          competencyId: 'comp-nsso',
-          competencyName: 'NSSO Protocol Mastery',
-          category: 'Domain',
-          currentLevel: 3,
-          targetLevel: 3,
-          evidenceType: 'assessment-verified',
-          lastUpdated: '2025-07-22',
-        },
-        {
-          competencyId: 'comp-survey',
-          competencyName: 'Survey Sampling & Design',
-          category: 'Functional',
-          currentLevel: 2,
-          targetLevel: 3,
-          evidenceType: 'self-assessed',
-          lastUpdated: '2025-06-01',
-        },
-        {
-          competencyId: 'comp-data',
-          competencyName: 'Data Entry & Scrutiny',
-          category: 'Functional',
-          currentLevel: 3,
-          targetLevel: 3,
-          evidenceType: 'assessment-verified',
-          lastUpdated: '2025-08-05',
-        },
-        {
-          competencyId: 'comp-teamwork',
-          competencyName: 'Teamwork & Collaboration',
-          category: 'Behavioural',
-          currentLevel: 3,
-          targetLevel: 2,
-          evidenceType: 'self-assessed',
-          lastUpdated: '2025-05-15',
-        },
-        {
-          competencyId: 'comp-ethics',
-          competencyName: 'Statistical Ethics & Integrity',
-          category: 'Behavioural',
-          currentLevel: 4,
-          targetLevel: 2,
-          evidenceType: 'assessment-verified',
-          lastUpdated: '2025-07-01',
-        },
-      ],
-      competencyHistory: {
-        'comp-capi': [
-          { date: '2025-08-10', level: 3, source: 'assessment-score' },
-          { date: '2025-05-20', level: 2, source: 'assessment-score' },
-          { date: '2025-02-15', level: 2, source: 'self-assessment' },
-          { date: '2024-11-01', level: 1, source: 'self-assessment' },
-        ],
-        'comp-nsso': [
-          { date: '2025-07-22', level: 3, source: 'assessment-score' },
-          { date: '2025-04-10', level: 3, source: 'course-completion' },
-          { date: '2025-01-05', level: 2, source: 'assessment-score' },
-        ],
-      },
-    };
-
-    setData(demoData);
-    setLoading(false);
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-100">
-        <div className="text-center space-y-4">
-          <div className="w-8 h-8 border-3 border-blue-700/30 border-t-blue-700 rounded-full animate-spin mx-auto"></div>
-          <p className="text-sm text-slate-500 dark:text-zinc-400">{t('common.loading')}</p>
-        </div>
-      </div>
-    );
-  }
 
   if (!data) {
     return (

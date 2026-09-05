@@ -1,13 +1,33 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
 import { useTranslations } from 'next-intl';
 import { WifiOff, Wifi, RefreshCw } from 'lucide-react';
+import { getPendingCount } from '@/services/offlineService';
+
+function subscribeOnline(callback: () => void) {
+  window.addEventListener('online', callback);
+  window.addEventListener('offline', callback);
+  return () => {
+    window.removeEventListener('online', callback);
+    window.removeEventListener('offline', callback);
+  };
+}
+
+function getOnlineSnapshot() {
+  return typeof navigator !== 'undefined' ? navigator.onLine : true;
+}
+
+function getOnlineServerSnapshot() {
+  return true;
+}
+
+const emptySubscribe = () => () => {};
 
 export function OfflineIndicator() {
   const t = useTranslations('offline');
-  const [mounted, setMounted] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  const isOnline = useSyncExternalStore(subscribeOnline, getOnlineSnapshot, getOnlineServerSnapshot);
   const [isSyncing, setIsSyncing] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 
@@ -15,67 +35,37 @@ export function OfflineIndicator() {
     return Promise.resolve();
   }, []);
 
-  const loadPendingCount = useCallback(async () => {
-    return new Promise<number>((resolve) => {
-      try {
-        const openReq = indexedDB.open('statvidya-offline', 1);
-        openReq.onupgradeneeded = () => {
-          const db = openReq.result;
-          if (!db.objectStoreNames.contains('pending_assessments')) {
-            db.createObjectStore('pending_assessments', { keyPath: 'id', autoIncrement: true });
-          }
-        };
-        openReq.onsuccess = () => {
-          const db = openReq.result;
-          if (!db || !db.objectStoreNames.contains('pending_assessments')) { resolve(0); return; }
-          const txn = db.transaction('pending_assessments', 'readonly');
-          const store = txn.objectStore('pending_assessments');
-          const countReq = store.count();
-          countReq.onsuccess = () => resolve(countReq.result);
-          countReq.onerror = () => resolve(0);
-          txn.oncomplete = () => {};
-          txn.onerror = () => resolve(0);
-        };
-        openReq.onerror = () => resolve(0);
-      } catch {
-        resolve(0);
-      }
-    });
+  const refreshCount = useCallback(async () => {
+    const count = await getPendingCount();
+    setPendingCount(count);
   }, []);
 
   useEffect(() => {
-    setMounted(true);
-    setIsOnline(navigator.onLine);
+    if (!mounted) return;
+
+    const runInitialSync = async () => {
+      await refreshCount();
+    };
+    runInitialSync();
 
     const handleOnline = async () => {
-      setIsOnline(true);
-      if (pendingCount > 0) {
+      const currentCount = await getPendingCount();
+      if (currentCount > 0) {
         setIsSyncing(true);
         await syncPending();
         setIsSyncing(false);
-        setPendingCount(0);
+        await refreshCount();
       }
     };
 
-    const handleOffline = () => {
-      setIsOnline(false);
-    };
-
     window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    loadPendingCount().then(setPendingCount);
-
-    const interval = setInterval(() => {
-      loadPendingCount().then(setPendingCount);
-    }, 30_000);
+    const interval = setInterval(refreshCount, 30_000);
 
     return () => {
       window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
       clearInterval(interval);
     };
-  }, [pendingCount, loadPendingCount, syncPending]);
+  }, [mounted, refreshCount, syncPending]);
 
   if (!mounted || (isOnline && pendingCount === 0 && !isSyncing)) {
     return null;

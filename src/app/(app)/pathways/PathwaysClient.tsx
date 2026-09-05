@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ProvenanceBadge } from '@/components/ProvenanceBadge';
 
 interface RecommendedCourse {
@@ -33,8 +33,6 @@ interface PathwaysData {
 }
 
 function CourseCard({ course }: { course: RecommendedCourse }) {
-  const t = useTranslations();
-
   const priorityColors = {
     HIGH: 'border-rose-300 dark:border-rose-700 bg-rose-50 dark:bg-rose-950/50',
     MEDIUM: 'border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/50',
@@ -131,126 +129,109 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
   );
 }
 
+function getDemoPathwaysData(): PathwaysData {
+  const demoCourses: RecommendedCourse[] = [
+    {
+      id: 'course-survey-sampling',
+      title: 'NSSO Survey Sampling Fundamentals',
+      title_hi: 'एनएसएसओ सर्वेक्षण नमूनाकरण मूल बातें',
+      provider: 'iGOT Karmayogi',
+      duration: '12 hours',
+      description: 'Advanced sampling techniques for official statistics collection',
+      description_hi: 'आधिकारिक सांख्यिकी संग्रह के लिए उन्नत नमूनाकरण तकनीक',
+      priority: 'HIGH',
+      targetCompetencies: ['Survey Sampling & Design', 'Statistical Estimation & Analysis'],
+      whyRecommended: 'Critical for Field Investigators to achieve Level 4 in CAPI operations and Level 3 in unit-level processing',
+      whyRecommended_hi: 'कैपी संचालन में स्तर 4 और इकाई-स्तर प्रसंस्करण में स्तर 3 प्राप्त करने के लिए महत्वपूर्ण',
+      competencyGaps: [
+        { competency: 'Survey Sampling & Design', currentLevel: 1, targetLevel: 3, gap: 2 },
+        { competency: 'Statistical Estimation & Analysis', currentLevel: 1, targetLevel: 4, gap: 3 },
+      ],
+      courseId: 'course-123',
+      iGotLink: '#',
+    },
+    {
+      id: 'course-capi-operation',
+      title: 'CAPI Tablet Operation for Field Investigators',
+      title_hi: 'फील्ड जांचकर्ताओं के लिए कैपी टैबलेट संचालन',
+      provider: 'NSSTA',
+      duration: '8 hours',
+      description: 'Complete hands-on training on CAPI tablets for household surveys',
+      description_hi: 'घरेलू सर्वेक्षण के लिए कैपी टैबलेट पर पूरा हाथों-पर-अभ्यास प्रशिक्षण',
+      priority: 'HIGH',
+      targetCompetencies: ['CAPI Tablet Operation', 'Data Entry & Scrutiny'],
+      whyRecommended: 'Addresses highest-priority gap for Field Investigator role (critical competency with 70% skill deficit)',
+      whyRecommended_hi: 'फील्ड इन्वेस्टिगेटर भूमिका के लिए उच्चतम प्राथमिकता वाले अंतराल (30% क्षमता घाटे)',
+      competencyGaps: [
+        { competency: 'CAPI Tablet Operation', currentLevel: 2, targetLevel: 4, gap: 2 },
+        { competency: 'Data Entry & Scrutiny', currentLevel: 1, targetLevel: 3, gap: 2 },
+      ],
+      courseId: 'course-456',
+      iGotLink: '#',
+    },
+    {
+      id: 'course-python-stats',
+      title: 'Python for Statistical Analysis',
+      title_hi: 'सांख्यिकीय विश्लेषण के लिए पायथन',
+      provider: 'iGOT Karmayogi',
+      duration: '20 hours',
+      description: 'Statistical computing and data analysis using Python in official statistics',
+      description_hi: 'आधिकारिक सांख्यिकी में सांख्यिकीय कंप्यूटिंग और डेटा विश्लेषण',
+      priority: 'MEDIUM',
+      targetCompetencies: ['Python for Statistical Analysis', 'Statistical Estimation & Analysis'],
+      whyRecommended: 'Supports both functional and domain competency needs for JSO cadre promotion',
+      whyRecommended_hi: 'जेएसओ कैडर पदोन्नति के लिए कार्यात्मक और डोमेन दक्षता आवश्यकताओं का समर्थन करता है',
+      competencyGaps: [
+        { competency: 'Python for Statistical Analysis', currentLevel: 1, targetLevel: 3, gap: 2 },
+        { competency: 'Statistical Estimation & Analysis', currentLevel: 1, targetLevel: 4, gap: 3 },
+      ],
+      courseId: 'course-789',
+      iGotLink: '#',
+    },
+    {
+      id: 'course-teamwork-collaboration',
+      title: 'Teamwork & Collaboration for Statistical Teams',
+      title_hi: 'सांख्यिकीय टीमों के लिए टीमवर्क और सहयोग',
+      provider: 'NSSTA',
+      duration: '6 hours',
+      description: 'Developing effective collaboration skills for statistical teams',
+      description_hi: 'सांख्यिकीय टीमों के लिए प्रभावी सहयोग कौशल विकसित करना',
+      priority: 'LOW',
+      targetCompetencies: ['Teamwork & Collaboration'],
+      whyRecommended: 'Supports behavioral competency requirements for all official statistical roles',
+      whyRecommended_hi: 'सभी आधिकारिक सांख्यिकीय भूमिकाओं के लिए व्यवहारिक दक्षता आवश्यकताओं का समर्थन करता है',
+      competencyGaps: [
+        { competency: 'Teamwork & Collaboration', currentLevel: 2, targetLevel: 3, gap: 1 },
+      ],
+      courseId: 'course-999',
+      iGotLink: '#',
+    },
+  ];
+
+  const demoCompetencies = [
+    { current: 2, target: 4 },
+    { current: 1, target: 3 },
+    { current: 1, target: 3 },
+    { current: 4, target: 2 },
+    { current: 1, target: 4 },
+    { current: 1, target: 4 },
+  ];
+
+  const met = demoCompetencies.filter(c => c.current >= c.target).length;
+  const readiness = Math.round((met / demoCompetencies.length) * 100);
+  const highPriorityCourses = demoCourses.filter(c => c.priority === 'HIGH');
+
+  return {
+    pathways: highPriorityCourses,
+    readinessIndex: readiness,
+    totalGaps: demoCompetencies.reduce((sum, c) => sum + Math.max(0, c.target - c.current), 0),
+  };
+}
+
 export default function PathwaysClient() {
   const t = useTranslations();
-  const [data, setData] = useState<PathwaysData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data] = useState<PathwaysData>(getDemoPathwaysData);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Demo data that matches the FRAC domain model and prioritization logic
-    const demoCourses: RecommendedCourse[] = [
-      {
-        id: 'course-survey-sampling',
-        title: 'NSSO Survey Sampling Fundamentals',
-        title_hi: 'एनएसएसओ सर्वेक्षण नमूनाकरण मूल बातें',
-        provider: 'iGOT Karmayogi',
-        duration: '12 hours',
-        description: 'Advanced sampling techniques for official statistics collection',
-        description_hi: 'आधिकारिक सांख्यिकी संग्रह के लिए उन्नत नमूनाकरण तकनीक',
-        priority: 'HIGH',
-        targetCompetencies: ['Survey Sampling & Design', 'Statistical Estimation & Analysis'],
-        whyRecommended: 'Critical for Field Investigators to achieve Level 4 in CAPI operations and Level 3 in unit-level processing',
-        whyRecommended_hi: 'कैपी संचालन में स्तर 4 और इकाई-स्तर प्रसंस्करण में स्तर 3 प्राप्त करने के लिए महत्वपूर्ण',
-        competencyGaps: [
-          { competency: 'Survey Sampling & Design', currentLevel: 1, targetLevel: 3, gap: 2 },
-          { competency: 'Statistical Estimation & Analysis', currentLevel: 1, targetLevel: 4, gap: 3 },
-        ],
-        courseId: 'course-123',
-        iGotLink: '#',
-      },
-      {
-        id: 'course-capi-operation',
-        title: 'CAPI Tablet Operation for Field Investigators',
-        title_hi: 'फील्ड जांचकर्ताओं के लिए कैपी टैबलेट संचालन',
-        provider: 'NSSTA',
-        duration: '8 hours',
-        description: 'Complete hands-on training on CAPI tablets for household surveys',
-        description_hi: 'घरेलू सर्वेक्षण के लिए कैपी टैबलेट पर पूरा हाथों-पर-अभ्यास प्रशिक्षण',
-        priority: 'HIGH',
-        targetCompetencies: ['CAPI Tablet Operation', 'Data Entry & Scrutiny'],
-        whyRecommended: 'Addresses highest-priority gap for Field Investigator role (critical competency with 70% skill deficit)',
-        whyRecommended_hi: 'फील्ड इन्वेस्टिगेटर भूमिका के लिए उच्चतम प्राथमिकता वाले अंतराल (30% क्षमता घाटे)',
-        competencyGaps: [
-          { competency: 'CAPI Tablet Operation', currentLevel: 2, targetLevel: 4, gap: 2 },
-          { competency: 'Data Entry & Scrutiny', currentLevel: 1, targetLevel: 3, gap: 2 },
-        ],
-        courseId: 'course-456',
-        iGotLink: '#',
-      },
-      {
-        id: 'course-python-stats',
-        title: 'Python for Statistical Analysis',
-        title_hi: 'सांख्यिकीय विश्लेषण के लिए पायथन',
-        provider: 'iGOT Karmayogi',
-        duration: '20 hours',
-        description: 'Statistical computing and data analysis using Python in official statistics',
-        description_hi: 'आधिकारिक सांख्यिकी में सांख्यिकीय कंप्यूटिंग और डेटा विश्लेषण',
-        priority: 'MEDIUM',
-        targetCompetencies: ['Python for Statistical Analysis', 'Statistical Estimation & Analysis'],
-        whyRecommended: 'Supports both functional and domain competency needs for JSO cadre promotion',
-        whyRecommended_hi: 'जेएसओ कैडर पदोन्नति के लिए कार्यात्मक और डोमेन दक्षता आवश्यकताओं का समर्थन करता है',
-        competencyGaps: [
-          { competency: 'Python for Statistical Analysis', currentLevel: 1, targetLevel: 3, gap: 2 },
-          { competency: 'Statistical Estimation & Analysis', currentLevel: 1, targetLevel: 4, gap: 3 },
-        ],
-        courseId: 'course-789',
-        iGotLink: '#',
-      },
-      {
-        id: 'course-teamwork-collaboration',
-        title: 'Teamwork & Collaboration for Statistical Teams',
-        title_hi: 'सांख्यिकीय टीमों के लिए टीमवर्क और सहयोग',
-        provider: 'NSSTA',
-        duration: '6 hours',
-        description: 'Developing effective collaboration skills for statistical teams',
-        description_hi: 'सांख्यिकीय टीमों के लिए प्रभावी सहयोग कौशल विकसित करना',
-        priority: 'LOW',
-        targetCompetencies: ['Teamwork & Collaboration'],
-        whyRecommended: 'Supports behavioral competency requirements for all official statistical roles',
-        whyRecommended_hi: 'सभी आधिकारिक सांख्यिकीय भूमिकाओं के लिए व्यवहारिक दक्षता आवश्यकताओं का समर्थन करता है',
-        competencyGaps: [
-          { competency: 'Teamwork & Collaboration', currentLevel: 2, targetLevel: 3, gap: 1 },
-        ],
-        courseId: 'course-999',
-        iGotLink: '#',
-      },
-    ];
-
-    // Calculate readiness index based on demo competencies
-    const demoCompetencies = [
-      { current: 2, target: 4 }, // CAPI
-      { current: 1, target: 3 }, // Survey
-      { current: 1, target: 3 }, // Data Entry
-      { current: 4, target: 2 }, // Ethics
-      { current: 1, target: 4 }, // Teamwork
-      { current: 1, target: 4 }, // Estimation
-    ];
-
-    const met = demoCompetencies.filter(c => c.current >= c.target).length;
-    const readiness = Math.round((met / demoCompetencies.length) * 100);
-
-    // Filter to show only HIGH priority courses initially
-    const highPriorityCourses = demoCourses.filter(c => c.priority === 'HIGH');
-
-    setData({
-      pathways: highPriorityCourses,
-      readinessIndex: readiness,
-      totalGaps: demoCompetencies.reduce((sum, c) => sum + Math.max(0, c.target - c.current), 0),
-    });
-    setLoading(false);
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-4">
-          <div className="w-8 h-8 border-3 border-blue-700/30 border-t-blue-700 rounded-full animate-spin mx-auto"></div>
-          <p className="text-sm text-slate-500 dark:text-zinc-400">Loading pathways...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (!data) {
     return (
