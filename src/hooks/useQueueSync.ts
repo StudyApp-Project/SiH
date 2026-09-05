@@ -229,8 +229,16 @@ export function useQueueSync(): QueueSyncState {
 
   // Initial count on mount
   useEffect(() => {
-    refreshCount();
-  }, [refreshCount]);
+    let active = true;
+    getPendingCount().then((count) => {
+      if (active) {
+        setPendingCount(count);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Flush when window comes online
   useEffect(() => {

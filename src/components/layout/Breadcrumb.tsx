@@ -6,16 +6,16 @@ import { useTranslations } from 'next-intl';
 import { Home } from 'lucide-react';
 
 const routeLabels: Record<string, string> = {
-  '/dashboard': 'nav.dashboard',
-  '/skill-gap': 'nav.skillGap',
-  '/pathways': 'nav.pathways',
-  '/profile': 'nav.profile',
-  '/documents': 'nav.documents',
-  '/assessment': 'nav.assessment',
-  '/mcq-generator': 'nav.mcqGenerator',
-  '/review-queue': 'nav.reviewQueue',
-  '/admin': 'nav.adminAnalytics',
-  '/onboarding': 'breadcrumb.onboarding',
+  '/dashboard': 'dashboard',
+  '/skill-gap': 'skillGap',
+  '/pathways': 'pathways',
+  '/profile': 'profile',
+  '/documents': 'documents',
+  '/assessment': 'assessment',
+  '/mcq-generator': 'mcqGenerator',
+  '/review-queue': 'reviewQueue',
+  '/admin': 'admin',
+  '/onboarding': 'onboarding',
 };
 
 export function Breadcrumb() {

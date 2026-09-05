@@ -112,7 +112,7 @@ export default function AssessmentReview({
           <li>✓ Your proficiency level will be recorded in your profile</li>
           <li>✓ Recommended learning pathways will be updated</li>
           <li>✓ Your progress will be visible to your organization</li>
-          {!navigator.onLine && <li>⚠️ This assessment will sync once you're online</li>}
+          {!navigator.onLine && <li>⚠️ This assessment will sync once you&apos;re online</li>}
         </ul>
       </div>
 

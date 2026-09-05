@@ -215,7 +215,7 @@ function DemoPersonaCard({
       </div>
 
       <div className="pt-3 mt-3 border-t border-slate-200/60 border-gray-200/60 flex items-center justify-between text-xs text-blue-700 text-blue-600 font-medium">
-        <span className="text-[11px] font-mono text-slate-400 text-gray-9000 truncate max-w-32.5">
+        <span className="text-[11px] font-mono text-slate-400 text-gray-400 truncate max-w-32.5">
           {email}
         </span>
         <span className="flex items-center gap-1 group-hover:translate-x-0.5 transition-transform shrink-0">

@@ -12,7 +12,7 @@ const PROTECTED_ROUTES: Record<string, UserRole[]> = {
   '/mcq-generator': ['trainer', 'admin'],
   '/review-queue': ['trainer', 'admin'],
   '/admin': ['admin'],
-  '/onboarding': [],
+  '/onboarding': ['learner', 'trainer', 'admin'],
 };
 
 export async function middleware(request: NextRequest) {

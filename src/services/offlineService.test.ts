@@ -4,7 +4,7 @@
  * Tests durability, crash recovery, retry logic, and state transitions.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   queueAssessment,
   getPendingCount,
@@ -14,7 +14,6 @@ import {
   markSynced,
   markFailed,
   clearQueue,
-  type PendingAssessment,
 } from './offlineService';
 
 describe('offlineService — IndexedDB Queue Manager', () => {
@@ -232,7 +231,9 @@ describe('offlineService — IndexedDB Queue Manager', () => {
       const after = new Date();
 
       const fetched = await getPendingAssessmentByLocalId(local_id);
-      const retryTime = new Date(fetched?.last_retry_at!);
+      expect(fetched).toBeDefined();
+      expect(fetched?.last_retry_at).toBeTruthy();
+      const retryTime = new Date(fetched!.last_retry_at as string);
 
       expect(retryTime.getTime()).toBeGreaterThanOrEqual(before.getTime());
       expect(retryTime.getTime()).toBeLessThanOrEqual(after.getTime());
@@ -457,8 +458,7 @@ describe('offlineService — IndexedDB Queue Manager', () => {
 
       // Verify queue is now empty or assessment is removed
       const fetched = await getPendingAssessmentByLocalId(local_id);
-      // After clear, should be gone
-      // (In real IDB, this would delete the entry; our mock may vary)
+      expect(fetched).toBeUndefined();
     });
   });
 

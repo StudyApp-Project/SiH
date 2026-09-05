@@ -1,13 +1,12 @@
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
-import { getSupabaseServerClient } from '@/lib/supabase';
+import { getAuthenticatedUser } from '@/lib/auth';
 import OnboardingWizard from './OnboardingWizard';
 
 export const dynamic = 'force-dynamic';
 
 export default async function OnboardingPage() {
-  const supabase = await getSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser();
 
   if (!user) {
     redirect('/auth/login');
@@ -20,12 +19,12 @@ export default async function OnboardingPage() {
 
   return (
     <div className="mx-auto max-w-2xl py-8">
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm border-gray-200 bg-white">
+      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         <div className="text-center mb-8">
-           <h1 className="text-2xl font-bold text-slate-900 text-gray-900">
+           <h1 className="text-2xl font-bold text-slate-900 dark:text-zinc-100">
              {t('title')}
            </h1>
-           <p className="mt-2 text-slate-600 text-gray-500">
+           <p className="mt-2 text-slate-600 dark:text-zinc-400">
              Let&apos;s build your official FRAC competency profile
            </p>
         </div>

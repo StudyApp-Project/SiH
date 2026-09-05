@@ -18,7 +18,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
-import { WifiOff, RefreshCw, Wifi, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { WifiOff, RefreshCw, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useQueueSync } from '@/hooks/useQueueSync';
 
 // ─── Online store (no hydration mismatch) ────────────────────────────────────
@@ -49,9 +49,12 @@ export function OfflineIndicator() {
 
   useEffect(() => {
     if (lastSyncAt && !isSyncing && pendingCount === 0 && isOnline) {
-      setShowSyncedConfirm(true);
-      const t = setTimeout(() => setShowSyncedConfirm(false), 4_000);
-      return () => clearTimeout(t);
+      const showTimer = setTimeout(() => setShowSyncedConfirm(true), 0);
+      const hideTimer = setTimeout(() => setShowSyncedConfirm(false), 4_000);
+      return () => {
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+      };
     }
   }, [lastSyncAt, isSyncing, pendingCount, isOnline]);
 
@@ -126,7 +129,7 @@ export function OfflineIndicator() {
       <div className="flex items-center gap-2">
         {variant === 'offline' && (
           <>
-            <WifiOff className={`h-4 w-4 flex-shrink-0 ${s.icon}`} aria-hidden="true" />
+            <WifiOff className={`h-4 w-4 shrink-0 ${s.icon}`} aria-hidden="true" />
             <span className={`font-medium ${s.text}`}>Offline</span>
             {pendingCount > 0 && (
               <span className="text-amber-700">
@@ -138,7 +141,7 @@ export function OfflineIndicator() {
 
         {variant === 'syncing' && (
           <>
-            <RefreshCw className={`h-4 w-4 flex-shrink-0 animate-spin ${s.icon}`} aria-hidden="true" />
+            <RefreshCw className={`h-4 w-4 shrink-0 animate-spin ${s.icon}`} aria-hidden="true" />
             <span className={`font-medium ${s.text}`}>
               Syncing {pendingCount} assessment{pendingCount !== 1 ? 's' : ''}…
             </span>
@@ -147,14 +150,14 @@ export function OfflineIndicator() {
 
         {variant === 'synced' && (
           <>
-            <CheckCircle2 className={`h-4 w-4 flex-shrink-0 ${s.icon}`} aria-hidden="true" />
+            <CheckCircle2 className={`h-4 w-4 shrink-0 ${s.icon}`} aria-hidden="true" />
             <span className={`font-medium ${s.text}`}>All assessments synced</span>
           </>
         )}
 
         {variant === 'failed' && (
           <>
-            <AlertTriangle className={`h-4 w-4 flex-shrink-0 ${s.icon}`} aria-hidden="true" />
+            <AlertTriangle className={`h-4 w-4 shrink-0 ${s.icon}`} aria-hidden="true" />
             <span className={`font-medium ${s.text}`}>
               {failedCount} failed to sync
             </span>

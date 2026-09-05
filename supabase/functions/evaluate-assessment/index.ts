@@ -168,7 +168,7 @@ Deno.serve(async (req: Request) => {
     let payload: EvaluateAssessmentRequest;
     try {
       payload = await req.json();
-    } catch (_e) {
+    } catch {
       return new Response(
         JSON.stringify({ success: false, error: 'Invalid JSON' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
