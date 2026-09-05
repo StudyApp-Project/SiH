@@ -21,7 +21,7 @@ function GapCard({ gap }: GapCardProps) {
   };
 
   return (
-    <div className="rounded-lg border p-5 transition-all hover:shadow-md ${severityColors[gap.severity]}">
+    <div className={`rounded-lg border p-5 transition-all hover:shadow-md ${severityColors[gap.severity]}`}>
       <div className="flex items-start justify-between gap-4 mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
@@ -71,7 +71,7 @@ function GapCard({ gap }: GapCardProps) {
         <p className="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
           {gap.evidenceType === 'assessment-verified'
             ? `Your ${gap.activity.name} performance assessment showed ${gap.currentLevel}, requiring Level ${gap.targetLevel} for optimal ${gap.activity.name} effectiveness.`
-            : `Based on self-assessment, you need to develop ${gap.competency.name} to meet ${gap.activity.name} requirements at Level ${gap.targetLevel}."
+            : `Based on self-assessment, you need to develop ${gap.competency.name} to meet ${gap.activity.name} requirements at Level ${gap.targetLevel}.`
           }
         </p>
         <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-zinc-500 mt-2">
@@ -110,14 +110,17 @@ export default function SkillGapClient() {
           name: 'CAPI Tablet Operation',
           name_hi: 'कैपी टैबलेट संचालन',
           category: 'Domain',
-          levels: 'L1-L5',
+          levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
           provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         activity: {
           id: 'act-fh',
           name: 'Household Listing & Census Enumeration',
           name_hi: 'परिवार सूचीकरण & जनगणना गणना',
           role_id: 'role-field-investigator',
+          provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         currentLevel: 2,
         targetLevel: 4,
@@ -133,14 +136,17 @@ export default function SkillGapClient() {
           name: 'Survey Sampling & Design',
           name_hi: 'सर्वेक्षण नमूनाकरण & डिजाइन',
           category: 'Functional',
-          levels: 'L1-L5',
+          levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
           provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         activity: {
           id: 'act-fh',
           name: 'Household Listing & Census Enumeration',
           name_hi: 'परिवार सूचीकरण & जनगणना गणना',
           role_id: 'role-field-investigator',
+          provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         currentLevel: 1,
         targetLevel: 3,
@@ -156,14 +162,17 @@ export default function SkillGapClient() {
           name: 'Data Entry & Scrutiny',
           name_hi: 'डेटा प्रविष्टि & छानबीन',
           category: 'Functional',
-          levels: 'L1-L5',
+          levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
           provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         activity: {
           id: 'act-capi',
           name: 'CAPI Data Entry & Field Validation',
           name_hi: 'कैपी डेटा प्रविष्टि & फील्ड सत्यापन',
           role_id: 'role-field-investigator',
+          provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         currentLevel: 3,
         targetLevel: 5,
@@ -179,14 +188,17 @@ export default function SkillGapClient() {
           name: 'Statistical Ethics & Integrity',
           name_hi: 'सांख्यिकीय नैतिकता & अखंडता',
           category: 'Behavioural',
-          levels: 'L1-L5',
+          levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
           provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         activity: {
           id: 'act-capi',
           name: 'CAPI Data Entry & Field Validation',
           name_hi: 'कैपी डेटा प्रविष्टि & फील्ड सत्यापन',
           role_id: 'role-field-investigator',
+          provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         currentLevel: 4,
         targetLevel: 2,
@@ -202,14 +214,17 @@ export default function SkillGapClient() {
           name: 'Teamwork & Collaboration',
           name_hi: 'टीमवर्क & सहयोग',
           category: 'Behavioural',
-          levels: 'L1-L5',
+          levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
           provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         activity: {
           id: 'act-scrutiny',
           name: 'Schedule Scrutiny & Anomaly Detection',
           name_hi: 'अनुसूची जांच & विसंगति पहचान',
           role_id: 'role-jso',
+          provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         currentLevel: 1,
         targetLevel: 4,
@@ -225,14 +240,17 @@ export default function SkillGapClient() {
           name: 'Statistical Estimation & Analysis',
           name_hi: 'सांख्यिकीय अनुमान & विश्लेषण',
           category: 'Functional',
-          levels: 'L1-L5',
+          levels: { L1: '', L2: '', L3: '', L4: '', L5: '' },
           provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         activity: {
           id: 'act-unit',
           name: 'Unit-Level Data Processing',
           name_hi: 'इकाई-स्तर डेटा प्रसंस्करण',
           role_id: 'role-jso',
+          provenance: 'PROPOSED_FRAMEWORK',
+          created_at: new Date().toISOString(),
         },
         currentLevel: 1,
         targetLevel: 4,
@@ -389,5 +407,3 @@ export default function SkillGapClient() {
     </div>
   );
 }
-
-export default SkillGapClient;

@@ -361,5 +361,3 @@ export default function PathwaysClient() {
     </div>
   );
 }
-
-export default PathwaysClient;

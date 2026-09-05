@@ -9,6 +9,8 @@ import { OfflineIndicator } from '@/components/layout/OfflineIndicator';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import './globals.css';
 
+export const dynamic = 'force-dynamic';
+
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
@@ -42,8 +44,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const locale = await getLocale();
-  const t = await getTranslations('app');
+  let locale = 'en';
 
   return (
     <html

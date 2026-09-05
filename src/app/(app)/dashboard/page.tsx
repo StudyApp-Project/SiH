@@ -8,9 +8,9 @@ export default async function DashboardPage() {
   const supabase = await getSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (!user || !user.email) {
     redirect('/auth/login');
   }
 
-  return <DashboardClient user={user} />;
+  return <DashboardClient user={{ ...user, email: user.email }} />;
 }

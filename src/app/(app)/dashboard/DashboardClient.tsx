@@ -79,11 +79,11 @@ export default function DashboardPage({ user }: DashboardProps) {
         setReadinessIndex(readiness);
 
         // Build gaps
+        const SEVERITY_MAP = { 0: 'PROFICIENT' as const, 1: 'MODERATE' as const, 2: 'HIGH' as const };
         const gaps: CompetencyGapCard[] = demoCompetencies
           .map(comp => {
-            const severity = CompetencyService.classifySeverity(
-              CompetencyService.computeGapSeverity(comp.current, comp.target, comp.priority)
-            );
+            const severityScore = CompetencyService.computeGapSeverity(comp.current, comp.target, comp.priority);
+            const severity = SEVERITY_MAP[severityScore as keyof typeof SEVERITY_MAP] || 'PROFICIENT';
             return {
               competencyId: comp.id,
               competencyName: comp.name,

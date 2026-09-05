@@ -305,6 +305,18 @@ export interface ProvenanceBadgeProps {
   label?: string;
 }
 
+export interface DemoPersona {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  organization_id: string;
+  cadre: string;
+  designation: string;
+  preferred_language: string;
+  department: string;
+}
+
 // ============================================================================
 // API REQUEST/RESPONSE TYPES
 // ============================================================================

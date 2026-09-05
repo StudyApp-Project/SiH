@@ -1,8 +1,8 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-import type { Role } from '@/lib/types';
+import type { UserRole } from '@/lib/types';
 
-const PROTECTED_ROUTES: Record<string, Role[]> = {
+const PROTECTED_ROUTES: Record<string, UserRole[]> = {
   '/dashboard': ['learner', 'trainer', 'admin'],
   '/skill-gap': ['learner', 'trainer', 'admin'],
   '/pathways': ['learner', 'trainer', 'admin'],
@@ -58,7 +58,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const userRole = (user.app_metadata?.role as Role) || 'learner';
+  const userRole = (user.app_metadata?.role as UserRole) || 'learner';
   const userOrgId = user.user_metadata?.organization_id || '';
 
   const routePath = getRoutePath(request.nextUrl.pathname);
@@ -72,7 +72,7 @@ export async function middleware(request: NextRequest) {
   const locale = user.user_metadata?.preferred_language || 'en';
   request.cookies.set('locale', locale);
 
-  response.headers.set('x-user-role', userRole);
+  response.headers.set('x-user-role', String(userRole));
   response.headers.set('x-user-org-id', userOrgId || '');
 
   return response;
