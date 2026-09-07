@@ -47,8 +47,23 @@ describe('copilotFaqResponses', () => {
     expect(response).toContain('Senior Statistical Officer');
   });
 
-  it('returns null for unknown queries', () => {
-    expect(matchPreMadeFaq('What is the weather in Delhi?')).toBeNull();
-    expect(matchPreMadeFaq('hiiiiiiii helloo wt u doing')).toBeNull();
+  it('returns a pre-made match for every question in FAQ_CATEGORIES', async () => {
+    const { FAQ_CATEGORIES } = await import('./copilotFaqCategories');
+    let totalQuestions = 0;
+    const unmatched: string[] = [];
+
+    for (const category of FAQ_CATEGORIES) {
+      for (const q of category.questions) {
+        totalQuestions++;
+        const answer = matchPreMadeFaq(q.prompt);
+        if (!answer) {
+          unmatched.push(`[${category.title}] "${q.prompt}"`);
+        }
+      }
+    }
+
+    expect(unmatched).toEqual([]);
+    expect(totalQuestions).toBe(54);
   });
 });
+

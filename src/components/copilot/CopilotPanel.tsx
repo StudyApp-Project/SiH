@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { X, Send, Sparkles, Zap, RotateCcw, WifiOff } from 'lucide-react';
+import { X, Send, Sparkles, Zap, RotateCcw, WifiOff, HelpCircle } from 'lucide-react';
 import { CopilotMessage } from './CopilotMessage';
+import { CopilotFaqBrowser } from './CopilotFaqBrowser';
 import type { CopilotUserContext } from '@/lib/copilotPrompt';
 import { matchPreMadeFaq } from '@/data/copilotFaqResponses';
 
@@ -82,6 +83,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
   const [messages, setMessages] = useState<Message[]>(() => [getWelcomeMessage(userContext)]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showFaq, setShowFaq] = useState(false);
   const [isOffline, setIsOffline] = useState(() =>
     typeof navigator !== 'undefined' ? !navigator.onLine : false
   );
@@ -302,9 +304,14 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
     setMessages([getWelcomeMessage(userContext)]);
   };
 
+  const handleFaqSelect = (prompt: string) => {
+    setShowFaq(false);
+    sendMessage(prompt);
+  };
+
   if (!isOpen) return null;
 
-  const showQuickActions = effectiveMessages.length <= 1;
+  const showQuickActions = effectiveMessages.length <= 1 && !showFaq;
 
   return (
     <>
@@ -343,6 +350,17 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
             </div>
           </div>
           <div className="flex items-center gap-1">
+            <button
+              onClick={() => setShowFaq((p) => !p)}
+              className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors ${
+                showFaq
+                  ? 'bg-white/25 text-white'
+                  : 'text-white/70 hover:bg-white/15 hover:text-white'
+              }`}
+              title={showFaq ? (isHindi ? 'चैट पर लौटें' : 'Back to Chat') : (isHindi ? 'FAQ ज्ञान आधार' : 'FAQ Knowledge Base')}
+            >
+              <HelpCircle className="h-3.5 w-3.5" />
+            </button>
             {effectiveMessages.length > 1 && (
               <button
                 onClick={clearChat}
@@ -370,40 +388,47 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
           </div>
         )}
 
-        {/* ─── Messages ─── */}
-        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3" id="copilot-messages">
-          {effectiveMessages.map((msg) => (
-            <CopilotMessage
-              key={msg.id}
-              role={msg.role}
-              content={msg.content}
-              isStreaming={msg.isStreaming}
-              timestamp={msg.timestamp}
-            />
-          ))}
-
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* ─── Quick Actions ─── */}
-        {showQuickActions && (
-          <div className="px-3 py-2 bg-[#F2E6D8]/30">
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#705849] flex items-center gap-1">
-              <Zap className="h-3 w-3 text-[#555934]" /> {isHindi ? 'त्वरित विकल्प' : 'Quick Actions'}
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {quickActions.map((action) => (
-                <button
-                  key={action.label}
-                  onClick={() => handleQuickAction(action.prompt)}
-                  disabled={isLoading}
-                  className="rounded-full bg-[#F2E6D8] px-2.5 py-1 text-[11px] font-medium text-[#2d1f17] transition-all hover:bg-[#BF9B7A]/30 hover:shadow-xs active:scale-95 disabled:opacity-50"
-                >
-                  {action.label}
-                </button>
+        {/* ─── FAQ Browser OR Messages ─── */}
+        {showFaq ? (
+          <CopilotFaqBrowser isHindi={isHindi} onSelectQuestion={handleFaqSelect} />
+        ) : (
+          <>
+            {/* ─── Messages ─── */}
+            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3" id="copilot-messages">
+              {effectiveMessages.map((msg) => (
+                <CopilotMessage
+                  key={msg.id}
+                  role={msg.role}
+                  content={msg.content}
+                  isStreaming={msg.isStreaming}
+                  timestamp={msg.timestamp}
+                />
               ))}
+
+              <div ref={messagesEndRef} />
             </div>
-          </div>
+
+            {/* ─── Quick Actions ─── */}
+            {showQuickActions && (
+              <div className="px-3 py-2 bg-[#F2E6D8]/30">
+                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#705849] flex items-center gap-1">
+                  <Zap className="h-3 w-3 text-[#555934]" /> {isHindi ? 'त्वरित विकल्प' : 'Quick Actions'}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {quickActions.map((action) => (
+                    <button
+                      key={action.label}
+                      onClick={() => handleQuickAction(action.prompt)}
+                      disabled={isLoading}
+                      className="rounded-full bg-[#F2E6D8] px-2.5 py-1 text-[11px] font-medium text-[#2d1f17] transition-all hover:bg-[#BF9B7A]/30 hover:shadow-xs active:scale-95 disabled:opacity-50"
+                    >
+                      {action.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* ─── Input ─── */}

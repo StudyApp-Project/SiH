@@ -560,10 +560,10 @@ Navigate to \`/profile\` in the sidebar (or click your user avatar in the Topbar
   {
     id: 'nav-dashboard',
     matchPatterns: [
-      /where\s*(is\s*)?(the\s*)?dashboard/i,
-      /go\s*to\s*(the\s*)?dashboard/i,
-      /open\s*(the\s*)?dashboard/i,
-      /show\s*(me\s*)?(the\s*)?dashboard/i,
+      /where\s*(is\s*)?(the\s*|my\s*)?dashboard/i,
+      /go\s*to\s*(the\s*|my\s*)?dashboard/i,
+      /open\s*(the\s*|my\s*)?dashboard/i,
+      /show\s*(me\s*)?(the\s*|my\s*)?dashboard/i,
       /dashboard\s*kahan/i,
       /डैशबोर्ड\s*कहाँ/i,
       /डैशबोर्ड\s*दिखाओ/i,
@@ -628,7 +628,9 @@ Review AI-generated questions, verify competency alignment, and approve items fo
   {
     id: 'nav-language',
     matchPatterns: [
-      /how\s*to\s*(change|switch)\s*(the\s*)?language/i,
+      /how\s*(do\s*i|to)\s*(change|switch)\s*(the\s*)?language/i,
+      /how\s*do\s*i\s*switch\s*between\s*english\s*and\s*hindi/i,
+      /switch\s*(between\s*)?(english\s*and\s*hindi|hindi\s*and\s*english)/i,
       /switch\s*(to\s*)?(hindi|english)/i,
       /change\s*language/i,
       /language\s*(switch|change|toggle)/i,
@@ -806,7 +808,1028 @@ Key Features:
 Visit \`/dashboard\` to get started.`;
     },
   },
+  // ═══════════════════════════════════════════════════════════════════════════
+  // NEW FAQ entries for Knowledge Base (covering all 54 categories questions)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    id: 'mission-karmayogi',
+    matchPatterns: [
+      /what\s*is\s*mission\s*karmayogi/i,
+      /mission\s*karmayogi\s*(kya|meaning)/i,
+      /कर्मयोगी\s*क्या/i,
+      /मिशन\s*कर्मयोगी/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🏛️ मिशन कर्मयोगी भारत सरकार की राष्ट्रीय सिविल सेवा क्षमता निर्माण पहल है।
+
+इसके 6 स्तंभ हैं, जिनमें FRAC (भूमिकाओं, गतिविधियों और योग्यताओं का ढाँचा) सबसे महत्वपूर्ण है। स्टैटविद्या इसी FRAC ढाँचे को MoSPI कार्यबल के लिए लागू करता है।
+
+- iGOT कर्मयोगी पोर्टल अधिकारियों को प्रशिक्षण प्रदान करता है
+- FRAC L1-L5 स्तरों में योग्यता को मानकीकृत करता है
+- स्टैटविद्या \`/pathways\` पर iGOT पाठ्यक्रम सीधे उपलब्ध कराता है`;
+      }
+      return `🏛️ Mission Karmayogi is the Government of India's National Programme for Civil Services Capacity Building (NPCSCB).
+
+It has 6 pillars, with FRAC (Framework for Roles, Activities, and Competencies) being the most critical. StatVidya implements this FRAC framework specifically for MoSPI's workforce.
+
+- iGOT Karmayogi portal provides official training courses
+- FRAC standardizes competency at L1-L5 proficiency levels
+- StatVidya integrates iGOT courses directly on \`/pathways\``;
+    },
+  },
+  {
+    id: 'ai-features',
+    matchPatterns: [
+      /how\s*does\s*ai\s*help/i,
+      /ai\s*(features?|capabilities)/i,
+      /what\s*ai\s*(does|do)/i,
+      /artificial\s*intelligence/i,
+      /ai\s*कैसे\s*मदद/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🤖 स्टैटविद्या में AI कई तरह से मदद करता है:
+
+- **अनुकूली मूल्यांकन**: AI आपके उत्तरों के आधार पर प्रश्नों की कठिनाई स्वचालित रूप से समायोजित करता है
+- **MCQ जनरेशन**: Gemini AI MoSPI मैनुअल से प्रामाणिक प्रश्न तैयार करता है (\`/mcq-generator\`)
+- **कोपायलट चैटबॉट**: यह AI सहायक आपको प्लेटफ़ॉर्म नेविगेट करने और FRAC को समझने में मदद करता है
+- **स्मार्ट अनुशंसा**: आपकी कमियों के आधार पर पाठ्यक्रमों की स्वचालित सिफारिश
+- **दस्तावेज़ पार्सिंग**: PDF मैनुअल को स्वचालित रूप से चंक और इंडेक्स करता है`;
+      }
+      return `🤖 AI powers several key features in StatVidya:
+
+- **Adaptive Assessments**: AI dynamically adjusts question difficulty based on your responses
+- **MCQ Generation**: Gemini AI generates authenticated questions from MoSPI manuals (\`/mcq-generator\`)
+- **Copilot Chatbot**: This AI assistant helps you navigate the platform and understand FRAC
+- **Smart Recommendations**: Auto-recommends courses based on your competency gaps
+- **Document Parsing**: Automatically chunks and indexes uploaded PDF manuals for search`;
+    },
+  },
+  {
+    id: 'hindi-availability',
+    matchPatterns: [
+      /is\s*(this\s*)?(platform|app|website)\s*available\s*in\s*hindi/i,
+      /hindi\s*(support|available|version)/i,
+      /does\s*(this|the)\s*(platform|app)\s*support\s*hindi/i,
+      /हिन्दी\s*में\s*उपलब्ध/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🌐 हाँ! स्टैटविद्या पूरी तरह से द्विभाषी (अंग्रेज़ी और हिन्दी) है।
+
+- **पूरा इंटरफ़ेस**: डैशबोर्ड, मूल्यांकन, प्रोफ़ाइल — सब कुछ हिन्दी में
+- **मूल्यांकन प्रश्न**: सभी 8 परीक्षणों में हिन्दी अनुवाद उपलब्ध
+- **कोपायलट**: यह चैटबॉट भी हिन्दी में उत्तर देता है
+- **भाषा बदलें**: टॉपबार में EN / हिन्दी टॉगल पर क्लिक करें`;
+      }
+      return `🌐 Yes! StatVidya is fully bilingual — English and Hindi throughout.
+
+- **Complete Interface**: Dashboard, assessments, profile — everything in Hindi
+- **Assessment Questions**: All 8 statutory drills include Hindi translations
+- **Copilot**: This chatbot responds in Hindi too
+- **Switch Language**: Click the EN / हिन्दी toggle in the Topbar`;
+    },
+  },
+  {
+    id: 'radar-chart',
+    matchPatterns: [
+      /competency\s*radar\s*chart/i,
+      /radar\s*chart/i,
+      /रडार\s*चार्ट/i,
+      /योग्यता\s*रडार/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📊 योग्यता रडार चार्ट \`/dashboard\` पर आपकी FRAC प्रोफ़ाइल का विज़ुअल मानचित्र है।
+
+- **कैसे काम करता है**: प्रत्येक अक्ष आपकी एक योग्यता दर्शाता है (जैसे CAPI, सीमांकन, डेटा जांच)
+- **दो परतें**: बाहरी वलय = लक्ष्य स्तर, भीतरी क्षेत्र = आपका वर्तमान सत्यापित स्तर
+- **अंतराल दृश्य**: बाहरी और भीतरी के बीच का अंतर आपकी कमी दर्शाता है
+- **रंग कोड**: हरा = दक्ष, पीला = मध्यम अंतर, लाल = गंभीर कमी`;
+      }
+      return `📊 The Competency Radar Chart on \`/dashboard\` visually maps your FRAC profile.
+
+- **How it works**: Each axis represents one competency (e.g., CAPI, Demarcation, Data Scrutiny)
+- **Two layers**: Outer ring = target level, inner shaded area = your current verified level
+- **Gap visibility**: The gap between outer and inner shows your deficit at a glance
+- **Color coded**: Green = proficient, Yellow = moderate gap, Red = critical deficit`;
+    },
+  },
+  {
+    id: 'role-dashboard',
+    matchPatterns: [
+      /what\s*does\s*my\s*dashboard\s*show\s*(based\s*on|for)\s*my\s*role/i,
+      /role\s*based\s*dashboard/i,
+      /dashboard\s*for\s*(learner|trainer|admin)/i,
+      /भूमिका\s*के\s*लिए\s*डैशबोर्ड/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📊 डैशबोर्ड आपकी भूमिका के अनुसार बदलता है:
+
+**शिक्षार्थी (Learner)**: तैयारी सूचकांक, कर्म अंक, योग्यता रडार, दैनिक अभ्यास, CAPI स्टेशन, अनुशंसित पाठ्यक्रम
+
+**प्रशिक्षक (Trainer)**: संकाय कमान डेस्क, प्रश्न समीक्षा कतार, प्रशिक्षु त्रुटि विश्लेषण, MCQ स्टूडियो
+
+**प्रशासक (Admin)**: कार्यबल कमान डेस्क, क्षेत्रीय कार्यालय स्वास्थ्य, जांच-प्रशिक्षण सहसंबंध, प्राथमिकता ध्वजारोहण
+
+टॉपबार में भूमिका बदलकर अलग-अलग व्यू देखें।`;
+      }
+      return `📊 The dashboard adapts to your role:
+
+**Learner**: Readiness Index, Karma points, Competency Radar, daily drills, CAPI station, recommended courses
+
+**Trainer**: Faculty Command Desk, question review queue, trainee error analytics, MCQ Item Studio
+
+**Admin**: Workforce Command Desk, Regional Office health, scrutiny-training correlation, priority flagging
+
+Switch roles via the Topbar role switcher to see different views.`;
+    },
+  },
+  {
+    id: 'gap-severity',
+    matchPatterns: [
+      /what\s*do\s*the\s*gap\s*severity/i,
+      /gap\s*severity\s*levels?/i,
+      /severity\s*(levels?|classification)/i,
+      /गंभीरता\s*स्तर/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🎯 योग्यता अंतराल गंभीरता के 3 स्तर:
+
+- **उच्च गंभीरता**: गंभीर (Critical) योग्यता पर 2+ स्तरों का अंतर। तत्काल प्रशिक्षण आवश्यक।
+- **मध्यम गंभीरता**: गंभीर/महत्वपूर्ण योग्यता पर 1 स्तर का अंतर, या वांछनीय पर 2 स्तर।
+- **दक्ष (Proficient)**: आप लक्ष्य मानदंड को पूरा करते हैं या उससे आगे हैं!
+
+विस्तृत विश्लेषण के लिए \`/skill-gap\` पर जाएं।`;
+      }
+      return `🎯 Gap severity has 3 levels:
+
+- **High Severity**: Deficit of 2+ levels on a Critical priority competency. Requires immediate intervention.
+- **Moderate Severity**: Deficit of 1 level on Critical/Important, or 2 levels on Desirable competencies.
+- **Proficient**: You meet or exceed the target benchmark!
+
+Visit \`/skill-gap\` for detailed root-cause analysis.`;
+    },
+  },
+  {
+    id: 'priority-weights',
+    matchPatterns: [
+      /priority\s*weights?\s*(calculated|formula|work)/i,
+      /how\s*are\s*priority\s*weights/i,
+      /weight\s*calculation/i,
+      /प्राथमिकता\s*भार/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `⚖️ प्राथमिकता भार गणना:
+
+- **गंभीर (Critical)** योग्यताएं: 3.0× भार (जैसे CAPI संचालन)
+- **महत्वपूर्ण (Important)** योग्यताएं: 2.0× भार (जैसे डेटा जांच)
+- **वांछनीय (Desirable)** योग्यताएं: 1.0× भार (जैसे संचार)
+
+तैयारी सूचकांक = (भारित सत्यापित योग्यता का योग) ÷ (कुल लक्ष्य भार)
+
+गंभीर कमियों को पहले दूर करने से आपका तैयारी सूचकांक तेज़ी से बढ़ता है।`;
+      }
+      return `⚖️ Priority weight calculation:
+
+- **Critical** competencies: 3.0× weight (e.g., CAPI Operations)
+- **Important** competencies: 2.0× weight (e.g., Data Scrutiny)
+- **Desirable** competencies: 1.0× weight (e.g., Communication)
+
+Readiness Index = (Sum of weighted verified competencies) ÷ (Total target weights)
+
+Closing Critical gaps first gives you the fastest boost to your Readiness Index.`;
+    },
+  },
+  {
+    id: 'close-gaps',
+    matchPatterns: [
+      /how\s*do\s*i\s*close\s*(my\s*)?(competency\s*)?gaps/i,
+      /close\s*(my\s*)?gaps/i,
+      /कमियाँ\s*कैसे\s*दूर/i,
+      /अंतर\s*कैसे\s*भर/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🚀 अपनी योग्यता कमियाँ दूर करने के 3 तरीके:
+
+1. **अनुकूली मूल्यांकन दें**: \`/assignments\` पर जाकर सत्यापित टेस्ट दें। 70%+ स्कोर पर स्तर स्वतः बढ़ता है।
+2. **iGOT पाठ्यक्रम पूरे करें**: \`/pathways\` पर अनुशंसित पाठ्यक्रमों में नामांकन करें।
+3. **MCQ अभ्यास करें**: \`/mcq-generator\` पर MoSPI मैनुअल से प्रश्न अभ्यास करें।
+
+सबसे पहले गंभीर (Critical) कमियों पर ध्यान दें — ये 3× भार रखती हैं!`;
+      }
+      return `🚀 3 ways to close your competency gaps:
+
+1. **Take Adaptive Assessments**: Visit \`/assignments\` for verified tests. Scoring 70%+ auto-promotes your level.
+2. **Complete iGOT Courses**: Enroll in recommended courses on \`/pathways\`.
+3. **Practice MCQs**: Generate practice questions from MoSPI manuals on \`/mcq-generator\`.
+
+Focus on Critical gaps first — they carry 3× weight in your Readiness Index!`;
+    },
+  },
+  {
+    id: 'adaptive-difficulty',
+    matchPatterns: [
+      /adaptive\s*difficulty/i,
+      /how\s*does\s*adaptive\s*(difficulty|testing|question)/i,
+      /difficulty\s*adjust/i,
+      /अनुकूली\s*कठिनाई/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📝 अनुकूली कठिनाई कैसे काम करती है:
+
+मूल्यांकन इंजन आपके वास्तविक समय के उत्तरों के आधार पर प्रश्नों की कठिनाई समायोजित करता है:
+
+- **सरल (Easy)**: बुनियादी अवधारणाएं और परिभाषाएं
+- **मध्यम (Medium)**: अनुप्रयोग और विश्लेषण प्रश्न
+- **कठिन (Hard)**: जटिल क्षेत्रीय परिदृश्य और समस्या समाधान
+
+अगर आप लगातार सही जवाब देते हैं तो कठिनाई बढ़ती है, गलत होने पर कम होती है। यह आपके सटीक FRAC स्तर का आकलन करता है।`;
+      }
+      return `📝 How adaptive difficulty works:
+
+The assessment engine dynamically calibrates question difficulty based on your real-time responses:
+
+- **Easy**: Basic concepts, definitions, and terminology
+- **Medium**: Application and analysis questions
+- **Hard**: Complex field scenarios and problem-solving
+
+If you answer correctly consistently, difficulty increases. If you struggle, it decreases. This precisely calibrates your FRAC proficiency level.`;
+    },
+  },
+  {
+    id: 'scoring-promotion',
+    matchPatterns: [
+      /what\s*happens\s*when\s*i\s*score\s*70/i,
+      /score\s*70\s*percent/i,
+      /auto\s*promot/i,
+      /automatic\s*promotion/i,
+      /70%\s*(or\s*above|plus)/i,
+      /70\s*प्रतिशत/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🏆 70% या अधिक स्कोर पर:
+
+- आपका FRAC प्रवीणता स्तर स्वचालित रूप से अपग्रेड होता है (जैसे L1 → L2)
+- आपकी प्रोफ़ाइल पर "मूल्यांकन-सत्यापित" बैज लगता है
+- तैयारी सूचकांक तुरंत अपडेट होता है
+- कर्म अंक अर्जित होते हैं
+
+70% से कम? चिंता न करें — आप दोबारा टेस्ट दे सकते हैं!`;
+      }
+      return `🏆 When you score 70% or above:
+
+- Your FRAC proficiency level is automatically promoted (e.g., L1 → L2)
+- An "Assessment-Verified" badge appears on your profile
+- Your Readiness Index updates immediately
+- Karma points are awarded
+
+Below 70%? Don't worry — you can retake the assessment!`;
+    },
+  },
+  {
+    id: 'retake-assessment',
+    matchPatterns: [
+      /can\s*i\s*retake/i,
+      /retake\s*(an?\s*)?assessment/i,
+      /take\s*(the\s*)?(test|assessment)\s*again/i,
+      /दोबारा\s*टेस्ट/i,
+      /फिर\s*से\s*परीक्षा/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🔄 हाँ! आप किसी भी मूल्यांकन को दोबारा दे सकते हैं।
+
+- प्रत्येक प्रयास का सर्वोच्च स्कोर संरक्षित रहता है
+- प्रत्येक प्रयास में नए प्रश्न मिल सकते हैं (अनुकूली इंजन)
+- 70%+ स्कोर आने तक बार-बार प्रयास कर सकते हैं
+- \`/assignments\` पर जाकर अपनी अगली परीक्षा शुरू करें`;
+      }
+      return `🔄 Yes! You can retake any assessment multiple times.
+
+- Your highest score across all attempts is preserved
+- Each attempt may present different questions (adaptive engine)
+- Keep trying until you score 70%+ for automatic level promotion
+- Head to \`/assignments\` to start your next attempt`;
+    },
+  },
+  {
+    id: 'mcq-difficulty',
+    matchPatterns: [
+      /what\s*difficulty\s*levels?\s*(are\s*)?(available\s*)?(for\s*)?mcq/i,
+      /mcq\s*difficulty/i,
+      /एमसीक्यू\s*कठिनाई/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🧠 MCQ जनरेटर में 3 कठिनाई स्तर:
+
+- **सरल (Easy)**: बुनियादी शब्दावली, परिभाषाएं, सीधे तथ्यात्मक प्रश्न
+- **मध्यम (Medium)**: अनुप्रयोग-आधारित प्रश्न, प्रक्रिया अनुक्रम, तुलनात्मक विश्लेषण
+- **कठिन (Hard)**: जटिल क्षेत्रीय परिदृश्य, बहु-चरणीय समस्या समाधान, अपवाद केस
+
+\`/mcq-generator\` पर जाकर अपना स्तर चुनें!`;
+      }
+      return `🧠 MCQ Generator offers 3 difficulty levels:
+
+- **Easy**: Basic terminology, definitions, straightforward factual recall
+- **Medium**: Application-based questions, process sequences, comparative analysis
+- **Hard**: Complex field scenarios, multi-step problem solving, exception cases
+
+Head to \`/mcq-generator\` and pick your level!`;
+    },
+  },
+  {
+    id: 'mcq-question-count',
+    matchPatterns: [
+      /how\s*many\s*questions?\s*can\s*i\s*generate/i,
+      /question\s*count/i,
+      /generate\s*at\s*once/i,
+      /कितने\s*प्रश्न\s*बना/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🧠 MCQ जनरेटर में प्रश्न संख्या विकल्प:
+
+- **1 प्रश्न**: त्वरित एकल अभ्यास
+- **5 प्रश्न**: छोटा अभ्यास सत्र
+- **10 प्रश्न**: मानक अभ्यास सत्र
+- **25 प्रश्न**: गहन तैयारी सत्र
+
+\`/mcq-generator\` पर जाकर मैनुअल और संख्या चुनें!`;
+      }
+      return `🧠 MCQ Generator question volume options:
+
+- **1 question**: Quick single practice
+- **5 questions**: Short practice session
+- **10 questions**: Standard practice session
+- **25 questions**: Deep preparation session
+
+Visit \`/mcq-generator\`, select your manual, and pick the count!`;
+    },
+  },
+  {
+    id: 'mcq-source-docs',
+    matchPatterns: [
+      /what\s*documents?\s*can\s*i\s*generate\s*mcq/i,
+      /mcq\s*(from|source)\s*documents?/i,
+      /which\s*manuals?\s*(for\s*)?mcq/i,
+      /किन\s*दस्तावेज़ों\s*से\s*mcq/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📄 MCQ जनरेटर आपके अपलोड किए गए MoSPI मैनुअल से प्रश्न बनाता है:
+
+- PLFS फ़ील्ड इंस्ट्रक्शन मैनुअल 2024-25
+- CAPI ऑपरेशंस मैनुअल
+- अनुसूची 0.0 सीमांकन गाइड
+- ASSE सर्वेक्षण मैनुअल
+- और आपके द्वारा अपलोड किया गया कोई भी मैनुअल
+
+\`/documents\` पर नए मैनुअल अपलोड करें, फिर \`/mcq-generator\` पर उनसे प्रश्न बनाएं!`;
+      }
+      return `📄 The MCQ Generator creates questions from your uploaded MoSPI manuals:
+
+- PLFS Field Instruction Manual 2024-25
+- CAPI Operations Manual
+- Schedule 0.0 Demarcation Guide
+- ASSE Survey Manual
+- Plus any manual you upload yourself
+
+Upload new manuals on \`/documents\`, then generate MCQs from them on \`/mcq-generator\`!`;
+    },
+  },
+  {
+    id: 'doc-upload',
+    matchPatterns: [
+      /how\s*do\s*i\s*upload\s*(a\s*)?new\s*document/i,
+      /upload\s*(a\s*)?(new\s*)?document/i,
+      /upload\s*(a\s*)?(new\s*)?manual/i,
+      /नया\s*दस्तावेज़\s*(कैसे\s*)?अपलोड/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📤 नया दस्तावेज़ अपलोड करने के लिए:
+
+1. \`/documents\` पर जाएं
+2. "दस्तावेज़ अपलोड करें" बटन पर क्लिक करें
+3. PDF या TXT फ़ाइल चुनें
+4. सिस्टम स्वचालित रूप से दस्तावेज़ को चंक करेगा और इंडेक्स करेगा
+5. अपलोड होने के बाद आप इससे MCQ अभ्यास कर सकते हैं
+
+समर्थित प्रारूप: PDF, TXT`;
+      }
+      return `📤 To upload a new document:
+
+1. Navigate to \`/documents\`
+2. Click the "Upload Document" button
+3. Select a PDF or TXT file
+4. The system will automatically chunk and index the document
+5. Once uploaded, you can generate MCQs and practice from it
+
+Supported formats: PDF, TXT`;
+    },
+  },
+  {
+    id: 'doc-competency-filter',
+    matchPatterns: [
+      /can\s*i\s*filter\s*documents?\s*by\s*competency/i,
+      /filter\s*(by\s*)?competency/i,
+      /competency\s*filter/i,
+      /योग्यता\s*(से\s*)?छान/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📄 हाँ! \`/documents\` पर आप योग्यता पिल फ़िल्टर का उपयोग कर सकते हैं:
+
+- **CAPI ऑपरेशंस**: CAPI टैबलेट से संबंधित मैनुअल
+- **सीमांकन**: अनुसूची 0.0 और UFS गाइड
+- **डेटा जांच**: सत्यापन और जांच नियम
+- **नमूनाकरण और डिज़ाइन**: सर्वेक्षण नमूनाकरण
+- **क्षेत्रीय सत्यापन**: फील्ड कार्य गाइड
+
+एक या अधिक फ़िल्टर चुनकर प्रासंगिक मैनुअल खोजें।`;
+      }
+      return `📄 Yes! On \`/documents\` you can use competency pill filters:
+
+- **CAPI Operations**: Tablet-related manuals
+- **Demarcation**: Schedule 0.0 and UFS guides
+- **Data Scrutiny**: Validation and scrutiny rules
+- **Sampling & Design**: Survey sampling methodology
+- **Field Validation**: Field work guides
+
+Select one or more filters to find the most relevant manuals.`;
+    },
+  },
+  {
+    id: 'doc-practice',
+    matchPatterns: [
+      /how\s*do\s*i\s*practice\s*(questions?\s*)?(from\s*)?(a\s*)?manual/i,
+      /practice\s*from\s*(a\s*)?manual/i,
+      /मैनुअल\s*से\s*अभ्यास/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📖 मैनुअल से अभ्यास करने के लिए:
+
+1. \`/documents\` पर जाएं
+2. अपना मनचाहा मैनुअल ढूंढें
+3. "अभ्यास" बटन पर क्लिक करें — यह आपको \`/mcq-generator\` पर ले जाएगा
+4. कठिनाई और प्रश्नों की संख्या चुनें
+5. तुरंत अभ्यास शुरू करें!
+
+या सीधे \`/mcq-generator\` पर जाकर ड्रॉपडाउन से मैनुअल चुनें।`;
+      }
+      return `📖 To practice questions from a manual:
+
+1. Go to \`/documents\`
+2. Find your desired manual
+3. Click "Practice" — this takes you to \`/mcq-generator\` with that manual pre-selected
+4. Choose difficulty and question count
+5. Start practicing immediately!
+
+Or go directly to \`/mcq-generator\` and select the manual from the dropdown.`;
+    },
+  },
+  {
+    id: 'course-matching',
+    matchPatterns: [
+      /how\s*are\s*courses?\s*matched\s*to\s*my\s*(skill\s*)?gaps/i,
+      /course\s*matching/i,
+      /courses?\s*matched/i,
+      /कोर्स\s*(मेरी\s*)?कमियों\s*से/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🛤️ पाठ्यक्रम-कमी मिलान प्रणाली:
+
+- प्रत्येक iGOT/NSSTA पाठ्यक्रम एक या अधिक FRAC योग्यताओं से जुड़ा है
+- सिस्टम आपकी कमियों की गंभीरता के अनुसार पाठ्यक्रमों को प्राथमिकता देता है
+- गंभीर (Critical) कमियों के लिए पाठ्यक्रम सबसे ऊपर दिखते हैं
+- \`/pathways\` पर देखें — पाठ्यक्रम पहले से ही सबसे अधिक प्रभावशाली कमी के अनुसार क्रमबद्ध हैं`;
+      }
+      return `🛤️ Course-gap matching system:
+
+- Each iGOT/NSSTA course is tagged to one or more FRAC competencies
+- The system ranks courses by your gap severity — most critical first
+- Critical-priority gaps surface courses at the top of the list
+- Visit \`/pathways\` — courses are already sorted by highest-impact deficit`;
+    },
+  },
+  {
+    id: 'igot-karmayogi',
+    matchPatterns: [
+      /what\s*is\s*igot\s*karmayogi/i,
+      /igot\s*(kya|meaning)/i,
+      /igot\s*कर्मयोगी\s*क्या/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🎓 iGOT कर्मयोगी भारत सरकार का ऑनलाइन प्रशिक्षण प्लेटफ़ॉर्म है।
+
+- "Integrated Government Online Training" का संक्षिप्त रूप
+- मिशन कर्मयोगी के तहत सभी सिविल सेवकों के लिए
+- MoSPI, NSSTA, NSSO आदि विभागों के विशिष्ट पाठ्यक्रम उपलब्ध
+- स्टैटविद्या \`/pathways\` पर iGOT पाठ्यक्रमों को सीधे एकीकृत करता है`;
+      }
+      return `🎓 iGOT Karmayogi is the Government of India's official online training platform.
+
+- Stands for "Integrated Government Online Training"
+- Part of Mission Karmayogi for all civil servants
+- Offers department-specific courses for MoSPI, NSSTA, NSSO, etc.
+- StatVidya integrates iGOT courses directly on \`/pathways\``;
+    },
+  },
+  {
+    id: 'training-providers',
+    matchPatterns: [
+      /what\s*providers?\s*offer\s*(training\s*)?courses/i,
+      /training\s*providers?/i,
+      /course\s*providers?/i,
+      /कौन\s*से\s*संस्थान\s*कोर्स/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🏫 प्रशिक्षण पाठ्यक्रम प्रदाता:
+
+- **NSSTA**: राष्ट्रीय सांख्यिकीय प्रणाली प्रशिक्षण अकादमी — MoSPI का प्रमुख प्रशिक्षण संस्थान
+- **MoSPI प्रशिक्षण प्रभाग**: मंत्रालय का आंतरिक प्रशिक्षण
+- **iGOT कर्मयोगी**: भारत सरकार का केंद्रीय ऑनलाइन प्रशिक्षण पोर्टल
+- **NSSO FOD**: क्षेत्रीय कार्यालय-स्तरीय व्यावहारिक प्रशिक्षण
+
+\`/pathways\` पर सभी प्रदाताओं के पाठ्यक्रम देखें।`;
+      }
+      return `🏫 Training course providers:
+
+- **NSSTA**: National Statistical Systems Training Academy — MoSPI's premier training institute
+- **MoSPI Training Division**: Ministry's internal training programs
+- **iGOT Karmayogi**: Government of India's central online training portal
+- **NSSO FOD**: Field Operations Division practical training
+
+Browse courses from all providers on \`/pathways\`.`;
+    },
+  },
+  {
+    id: 'frac-badges',
+    matchPatterns: [
+      /what\s*are\s*verified\s*frac\s*badges/i,
+      /frac\s*badges?/i,
+      /verified\s*badges?/i,
+      /सत्यापित\s*frac\s*बैज/i,
+      /सत्यापित\s*बैज/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🏅 FRAC बैज आपकी योग्यता प्रवीणता का आधिकारिक प्रमाण हैं:
+
+- **मूल्यांकन-सत्यापित (Assessment-Verified)**: मूल्यांकन में 70%+ स्कोर करके अर्जित — सबसे विश्वसनीय
+- **स्व-मूल्यांकित (Self-Assessed)**: प्रोफ़ाइल सेटअप के दौरान स्वयं घोषित
+
+सत्यापित बैज को प्राथमिकता दी जाती है और ये आपकी \`/profile\` पर प्रदर्शित होते हैं।`;
+      }
+      return `🏅 FRAC Badges are official proof of your competency proficiency:
+
+- **Assessment-Verified**: Earned by scoring 70%+ on a statutory assessment — most trusted
+- **Self-Assessed**: Self-declared during profile setup
+
+Verified badges take precedence and are prominently displayed on your \`/profile\`.`;
+    },
+  },
+  {
+    id: 'verified-vs-self',
+    matchPatterns: [
+      /assessment.verified\s*(vs|different|compared)/i,
+      /verified\s*(vs|different|compared)\s*(to\s*)?self/i,
+      /self.assessed\s*(vs|different|compared)/i,
+      /सत्यापित\s*बनाम\s*स्व/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🔍 मूल्यांकन-सत्यापित बनाम स्व-मूल्यांकित:
+
+**मूल्यांकन-सत्यापित**:
+- समयबद्ध परीक्षा में 70%+ स्कोर से अर्जित
+- आधिकारिक और विश्वसनीय
+- तैयारी सूचकांक में पूरा भार
+
+**स्व-मूल्यांकित**:
+- ऑनबोर्डिंग के दौरान स्वयं घोषित
+- अंतरिम / अनंतिम मूल्य
+- मूल्यांकन द्वारा सत्यापन की आवश्यकता
+
+\`/assignments\` पर जाकर अपनी स्व-मूल्यांकित योग्यताओं को सत्यापित करें!`;
+      }
+      return `🔍 Assessment-Verified vs Self-Assessed:
+
+**Assessment-Verified**:
+- Earned by scoring 70%+ on a timed assessment
+- Official and trusted
+- Full weight in Readiness Index
+
+**Self-Assessed**:
+- Self-declared during onboarding
+- Provisional / interim value
+- Needs verification through assessment
+
+Visit \`/assignments\` to verify your self-assessed competencies!`;
+    },
+  },
+  {
+    id: 'career-timeline',
+    matchPatterns: [
+      /career\s*(growth\s*)?timeline/i,
+      /can\s*i\s*see\s*my\s*career/i,
+      /growth\s*timeline/i,
+      /करियर\s*समयरेखा/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📈 हाँ! \`/profile\` पर आपकी करियर विकास समयरेखा उपलब्ध है:
+
+- पूर्ण किए गए मूल्यांकन और तारीखें
+- अर्जित FRAC बैज और स्तर उन्नयन
+- पूर्ण किए गए iGOT पाठ्यक्रम
+- कर्म अंक इतिहास
+- तैयारी सूचकांक की प्रगति`;
+      }
+      return `📈 Yes! Your career growth timeline is available on \`/profile\`:
+
+- Completed assessments with dates
+- Earned FRAC badges and level promotions
+- Finished iGOT pathway courses
+- Karma points history
+- Readiness Index progress over time`;
+    },
+  },
+  {
+    id: 'data-offline',
+    matchPatterns: [
+      /what\s*happens\s*to\s*(my\s*)?data\s*when\s*(i\s*am\s*|i'm\s*)?offline/i,
+      /data\s*when\s*offline/i,
+      /ऑफ़लाइन\s*होने\s*पर\s*डेटा/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `💾 ऑफ़लाइन होने पर आपका डेटा सुरक्षित रहता है:
+
+- सभी उत्तर ब्राउज़र के IndexedDB में एन्क्रिप्टेड रूप से संग्रहित होते हैं
+- परीक्षा प्रगति, ड्राफ्ट और सत्र टोकन स्थानीय रूप से कैश होते हैं
+- डेटा ब्राउज़र बंद करने पर भी संरक्षित रहता है
+- इंटरनेट आने पर सब कुछ स्वचालित रूप से क्लाउड से सिंक होता है`;
+      }
+      return `💾 Your data stays safe when offline:
+
+- All responses are stored encrypted in browser IndexedDB
+- Test progress, drafts, and session tokens are cached locally
+- Data persists even if you close the browser
+- Everything syncs automatically to the cloud when internet returns`;
+    },
+  },
+  {
+    id: 'data-sync',
+    matchPatterns: [
+      /how\s*does\s*(data\s*)?sync\s*(work\s*)?(when\s*)?internet\s*returns/i,
+      /sync\s*on\s*reconnect/i,
+      /data\s*sync/i,
+      /इंटरनेट\s*आने\s*पर\s*सिंक/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🔄 इंटरनेट वापस आने पर सिंक प्रक्रिया:
+
+1. **स्वचालित पहचान**: डिवाइस कनेक्टिविटी की जांच करता है
+2. **कतार प्रसंस्करण**: सभी कतारबद्ध उत्तर क्रम में भेजे जाते हैं
+3. **इडेम्पोटेंट सिंक**: अद्वितीय स्थानीय ID से डुप्लिकेट सबमिशन रोके जाते हैं
+4. **स्थिति सूचक**: टॉपबार में सिंक स्थिति (ऑफ़लाइन → सिंक हो रहा है → पूर्ण) दिखती है
+
+कोई डेटा कभी नहीं खोता!`;
+      }
+      return `🔄 Sync process when internet returns:
+
+1. **Auto-detection**: Device checks connectivity
+2. **Queue processing**: All queued submissions are sent in order
+3. **Idempotent sync**: Unique local IDs prevent duplicate submissions
+4. **Status indicator**: Topbar shows sync status (Offline → Syncing → Complete)
+
+No data is ever lost!`;
+    },
+  },
+  {
+    id: 'scrutiny-correlation',
+    matchPatterns: [
+      /what\s*is\s*(the\s*)?scrutiny\s*error\s*correlation/i,
+      /scrutiny\s*(error\s*)?correlation/i,
+      /error\s*vs\s*training/i,
+      /जांच\s*त्रुटि\s*सहसंबंध/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📉 जांच त्रुटि-प्रशिक्षण सहसंबंध (r = -0.84):
+
+यह Admin डैशबोर्ड पर एक महत्वपूर्ण विश्लेषण है जो दर्शाता है:
+
+- **ऋणात्मक सहसंबंध**: अधिक प्रशिक्षण = कम जांच त्रुटियाँ
+- **r = -0.84**: बहुत मजबूत उलटा संबंध
+- **निष्कर्ष**: प्रशिक्षण में निवेश सीधे डेटा गुणवत्ता सुधारता है
+- \`/dashboard\` पर Admin व्यू में चार्ट देखें`;
+      }
+      return `📉 Scrutiny Error-Training Correlation (r = -0.84):
+
+This is a key analytic on the Admin dashboard showing:
+
+- **Negative correlation**: More training = fewer scrutiny errors
+- **r = -0.84**: Very strong inverse relationship
+- **Implication**: Investment in training directly improves data quality
+- View the chart on \`/dashboard\` in the Admin view`;
+    },
+  },
+  {
+    id: 'flag-regions',
+    matchPatterns: [
+      /how\s*do\s*i\s*flag\s*regions?\s*for\s*priority\s*training/i,
+      /flag\s*(regions?|areas?)\s*for\s*training/i,
+      /priority\s*training\s*flag/i,
+      /प्रशिक्षण\s*के\s*लिए\s*क्षेत्र\s*(कैसे\s*)?चिह्नित/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🚩 क्षेत्रों को प्राथमिकता प्रशिक्षण के लिए चिह्नित करना:
+
+1. \`/dashboard\` पर Admin व्यू खोलें
+2. "क्षेत्रीय कार्यालय स्वास्थ्य" अनुभाग पर जाएं
+3. कमज़ोर प्रदर्शन वाले ज़ोन की पहचान करें (लाल/नारंगी)
+4. "प्राथमिकता प्रशिक्षण के लिए ध्वजांकित करें" बटन पर क्लिक करें
+
+यह सुविधा केवल Admin भूमिका वाले उपयोगकर्ताओं के लिए उपलब्ध है।`;
+      }
+      return `🚩 Flagging regions for priority training:
+
+1. Open the Admin view on \`/dashboard\`
+2. Navigate to the "Regional Office Health" section
+3. Identify underperforming zones (marked red/orange)
+4. Click "Flag for Priority Training" on underperforming regions
+
+This feature is available only for Admin role users.`;
+    },
+  },
+  {
+    id: 'regional-zones',
+    matchPatterns: [
+      /what\s*are\s*(the\s*)?regional\s*office\s*(health\s*)?zones/i,
+      /regional\s*health\s*zones?/i,
+      /zonal\s*breakdown/i,
+      /क्षेत्रीय\s*कार्यालय\s*ज़ोन/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🗺️ क्षेत्रीय कार्यालय स्वास्थ्य ज़ोन:
+
+Admin डैशबोर्ड भारत को 5 ज़ोनों में विभाजित करता है:
+
+- **उत्तर ज़ोन**: दिल्ली, UP, हरियाणा, पंजाब, HP, J&K, उत्तराखंड
+- **दक्षिण ज़ोन**: तमिलनाडु, कर्नाटक, केरल, AP, तेलंगाना
+- **पूर्व ज़ोन**: पश्चिम बंगाल, ओडिशा, बिहार, झारखंड, NE राज्य
+- **पश्चिम ज़ोन**: महाराष्ट्र, गुजरात, राजस्थान, गोवा
+- **मध्य ज़ोन**: MP, छत्तीसगढ़
+
+\`/dashboard\` पर प्रत्येक ज़ोन का प्रदर्शन स्कोर देखें।`;
+      }
+      return `🗺️ Regional Office Health Zones:
+
+The Admin dashboard divides India into 5 zones:
+
+- **North Zone**: Delhi, UP, Haryana, Punjab, HP, J&K, Uttarakhand
+- **South Zone**: Tamil Nadu, Karnataka, Kerala, AP, Telangana
+- **East Zone**: West Bengal, Odisha, Bihar, Jharkhand, NE states
+- **West Zone**: Maharashtra, Gujarat, Rajasthan, Goa
+- **Central Zone**: MP, Chhattisgarh
+
+View performance scores for each zone on \`/dashboard\`.`;
+    },
+  },
+  {
+    id: 'platform-hindi',
+    matchPatterns: [
+      /is\s*the\s*entire\s*platform\s*(available\s*)?in\s*hindi/i,
+      /entire\s*platform\s*hindi/i,
+      /full\s*hindi\s*support/i,
+      /पूरा\s*मंच\s*हिन्दी/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🌐 हाँ! पूरा स्टैटविद्या मंच हिन्दी में उपलब्ध है:
+
+- ✅ सभी UI तत्व (साइडबार, टॉपबार, बटन, लेबल)
+- ✅ डैशबोर्ड विजेट और चार्ट
+- ✅ सभी 8 मूल्यांकन (प्रश्न और विकल्प)
+- ✅ कौशल अंतर विश्लेषण
+- ✅ MCQ जनरेटर
+- ✅ कोपायलट चैटबॉट
+
+टॉपबार में EN / हिन्दी टॉगल से भाषा बदलें।`;
+      }
+      return `🌐 Yes! The entire StatVidya platform is available in Hindi:
+
+- ✅ All UI elements (sidebar, topbar, buttons, labels)
+- ✅ Dashboard widgets and charts
+- ✅ All 8 assessments (questions and options)
+- ✅ Skill gap analysis
+- ✅ MCQ Generator
+- ✅ Copilot Chatbot
+
+Toggle via EN / हिन्दी in the Topbar.`;
+    },
+  },
+  {
+    id: 'chatbot-hindi',
+    matchPatterns: [
+      /does\s*(the\s*)?chatbot\s*respond\s*in\s*hindi/i,
+      /chatbot\s*hindi/i,
+      /copilot\s*hindi/i,
+      /चैटबॉट\s*हिन्दी/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🤖 हाँ! यह कोपायलट चैटबॉट पूरी तरह से हिन्दी में जवाब देता है।
+
+- प्लेटफ़ॉर्म की भाषा सेटिंग के अनुसार स्वचालित भाषा चयन
+- सभी FAQ और त्वरित उत्तर हिन्दी में उपलब्ध
+- AI उत्तर भी हिन्दी प्रॉम्प्ट पर हिन्दी में आते हैं
+- आप हिन्दी या अंग्रेज़ी में कोई भी प्रश्न पूछ सकते हैं`;
+      }
+      return `🤖 Yes! This Copilot chatbot fully responds in Hindi.
+
+- Auto-detects language based on platform language setting
+- All FAQ and instant answers available in Hindi
+- AI responses come in Hindi when you ask in Hindi
+- You can ask questions in either Hindi or English`;
+    },
+  },
+  {
+    id: 'cadres-support',
+    matchPatterns: [
+      /what\s*cadres?\s*(does\s*)?statvidya\s*support/i,
+      /supported\s*cadres?/i,
+      /which\s*cadres?/i,
+      /कौन\s*से\s*संवर्ग\s*समर्थित/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `👥 स्टैटविद्या निम्नलिखित MoSPI संवर्गों को समर्थन करता है:
+
+- **NSSO FOD**: राष्ट्रीय नमूना सर्वेक्षण कार्यालय — क्षेत्रीय संचालन प्रभाग (फील्ड अन्वेषक, सहायक अधिकारी)
+- **SSS**: अधीनस्थ सांख्यिकी सेवा (कनिष्ठ सांख्यिकी अधिकारी)
+- **ISS**: भारतीय सांख्यिकी सेवा (उप-महानिदेशक, निदेशक)
+- **NSSTA**: राष्ट्रीय सांख्यिकीय प्रणाली प्रशिक्षण अकादमी (संकाय प्रशिक्षक)
+
+प्रत्येक संवर्ग की अलग FRAC योग्यता प्रोफ़ाइल और लक्ष्य स्तर होते हैं।`;
+      }
+      return `👥 StatVidya supports the following MoSPI cadres:
+
+- **NSSO FOD**: National Sample Survey Office — Field Operations Division (Field Investigators, Asst. Officers)
+- **SSS**: Subordinate Statistical Service (Junior Statistical Officers)
+- **ISS**: Indian Statistical Service (Deputy Directors General, Directors)
+- **NSSTA**: National Statistical Systems Training Academy (Faculty Trainers)
+
+Each cadre has distinct FRAC competency profiles and target levels.`;
+    },
+  },
+  {
+    id: 'demo-personas',
+    matchPatterns: [
+      /what\s*are\s*(the\s*)?(4|four)\s*demo\s*personas/i,
+      /demo\s*personas?/i,
+      /sample\s*personas?/i,
+      /demo\s*users?/i,
+      /डेमो\s*व्यक्तित्व/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `👤 स्टैटविद्या के 4 डेमो व्यक्तित्व:
+
+1. **सुनीता देवी** — फील्ड अन्वेषक, NSSO FOD (ग्रामीण CAPI, सूचीकरण)
+2. **अमित शर्मा** — कनिष्ठ सांख्यिकी अधिकारी, SSS (जांच, PLFS)
+3. **डॉ. प्रिया वर्मा** — NSSTA संकाय (प्रशिक्षक और प्रश्न अंशांकन)
+4. **राजेश कुमार** — ADG, MoSPI मुख्यालय (प्रशासक और परिणाम सहसंबंध)
+
+प्रत्येक व्यक्तित्व अलग भूमिका, संवर्ग और FRAC प्रोफ़ाइल दर्शाता है।`;
+      }
+      return `👤 StatVidya's 4 demo personas:
+
+1. **Sunita Devi** — Field Investigator, NSSO FOD (Rural CAPI, Listing)
+2. **Amit Sharma** — Junior Statistical Officer, SSS (Scrutiny, PLFS)
+3. **Dr. Priya Verma** — NSSTA Faculty (Trainer & Question Calibration)
+4. **Rajesh Kumar** — ADG, MoSPI HQ (Administrator & Outcome Correlation)
+
+Each persona demonstrates a different role, cadre, and FRAC competency profile.`;
+    },
+  },
+  {
+    id: 'role-switching',
+    matchPatterns: [
+      /how\s*does\s*role\s*switching\s*work/i,
+      /switch\s*(my\s*)?role/i,
+      /change\s*(my\s*)?role/i,
+      /role\s*switch/i,
+      /भूमिका\s*(कैसे\s*)?स्विच/i,
+      /भूमिका\s*बदल/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🔄 भूमिका स्विच करना:
+
+1. टॉपबार में अपने प्रोफ़ाइल अवतार के पास देखें
+2. भूमिका ड्रॉपडाउन पर क्लिक करें
+3. शिक्षार्थी (Learner), प्रशिक्षक (Trainer), या प्रशासक (Admin) चुनें
+4. पूरा डैशबोर्ड और साइडबार तुरंत बदल जाता है
+
+प्रत्येक भूमिका का अपना अलग नेविगेशन, डैशबोर्ड और सुविधा सेट होता है।`;
+      }
+      return `🔄 How role switching works:
+
+1. Look near your profile avatar in the Topbar
+2. Click the role dropdown
+3. Select Learner, Trainer, or Admin
+4. The entire dashboard and sidebar instantly adapt
+
+Each role has its own distinct navigation, dashboard layout, and feature set.`;
+    },
+  },
+  {
+    id: 'offline-test',
+    matchPatterns: [
+      /can\s*i\s*take\s*tests?\s*offline/i,
+      /offline\s*(test|assessment|exam)/i,
+      /test\s*without\s*internet/i,
+      /ऑफ़लाइन\s*(टेस्ट|परीक्षा)/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📡 हाँ! आप ऑफ़लाइन टेस्ट दे सकते हैं:
+
+- मूल्यांकन प्रश्न ब्राउज़र में कैश होते हैं
+- उत्तर IndexedDB में सुरक्षित रूप से संग्रहित होते हैं
+- टाइमर स्थानीय रूप से चलता है
+- इंटरनेट आने पर उत्तर स्वचालित रूप से सबमिट होते हैं
+- कोई डेटा नहीं खोता
+
+दूरदराज के क्षेत्रों में फील्ड कार्य के लिए विशेष रूप से उपयोगी!`;
+      }
+      return `📡 Yes! You can take tests offline:
+
+- Assessment questions are cached in the browser
+- Answers are stored securely in IndexedDB
+- Timer runs locally
+- Submissions auto-sync when internet returns
+- No data is ever lost
+
+Especially useful for field work in remote areas!`;
+    },
+  },
 ];
+
+
 
 /**
  * Checks if a user prompt matches any pre-made FAQ.
