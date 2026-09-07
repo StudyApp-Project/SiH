@@ -42,6 +42,17 @@ export default function DocumentsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const filteredDocuments = documents.filter((d) => {
+    const lowerTitle = (d.title || '').toLowerCase();
+    const lowerFilename = (d.filename || '').toLowerCase();
+    if (
+      lowerTitle.includes('test_survey') ||
+      lowerFilename.includes('test_survey') ||
+      d.title === 'Test_Survey_Manual' ||
+      d.filename === 'Test_Survey_Manual.txt'
+    ) {
+      return false;
+    }
+
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch =
       q === '' ||
@@ -62,7 +73,16 @@ export default function DocumentsPage() {
       if (res.ok) {
         const data = await res.json();
         if (data.documents && data.documents.length > 0) {
-          setDocuments(data.documents);
+          const cleanDocs = data.documents.filter((d: IngestedDocument) => {
+            const t = (d.title || '').toLowerCase();
+            const f = (d.filename || '').toLowerCase();
+            const isTest = t.includes('test_survey') || f.includes('test_survey');
+            if (isTest && d.id) {
+              fetch(`/api/documents?id=${encodeURIComponent(d.id)}`, { method: 'DELETE' }).catch(() => {});
+            }
+            return !isTest;
+          });
+          setDocuments(cleanDocs);
         }
       }
     } catch (err) {
@@ -72,14 +92,23 @@ export default function DocumentsPage() {
     }
   };
 
-  // Initial load from backend Firestore
+  // Initial load from backend Firestore with automated purge of test survey artifacts
   useEffect(() => {
     let active = true;
     fetch('/api/documents')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (active && data?.documents?.length > 0) {
-          setDocuments(data.documents);
+          const cleanDocs = data.documents.filter((d: IngestedDocument) => {
+            const t = (d.title || '').toLowerCase();
+            const f = (d.filename || '').toLowerCase();
+            const isTest = t.includes('test_survey') || f.includes('test_survey');
+            if (isTest && d.id) {
+              fetch(`/api/documents?id=${encodeURIComponent(d.id)}`, { method: 'DELETE' }).catch(() => {});
+            }
+            return !isTest;
+          });
+          setDocuments(cleanDocs);
         }
       })
       .catch((err) => {

@@ -296,24 +296,24 @@ function MCQGeneratorInner() {
               </p>
             </div>
 
-            {/* Difficulty Calibration */}
+            {/* Target Difficulty */}
             <div>
               <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                {isHindi ? 'लक्षित कठिनाई अंशांकन' : 'Target Difficulty Calibration'}
+                {isHindi ? 'लक्षित कठिनाई' : 'Target Difficulty'}
               </label>
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value as 'easy' | 'medium' | 'hard')}
                 className="w-full text-xs sm:text-sm border border-stone-300 rounded-lg p-2.5 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#8b9a6e]"
               >
-                <option value="medium">
-                  {isHindi ? 'मध्यम (L3 परिचालन फील्ड कार्य)' : 'Medium (L3 Operational Field Work)'}
-                </option>
                 <option value="easy">
-                  {isHindi ? 'सरल (L1-L2 बुनियादी स्मरण)' : 'Easy (L1-L2 Foundational Recall)'}
+                  {isHindi ? 'सरल' : 'Easy'}
+                </option>
+                <option value="medium">
+                  {isHindi ? 'मध्यम' : 'Medium'}
                 </option>
                 <option value="hard">
-                  {isHindi ? 'कठिन (L4-L5 उन्नत संवीक्षा एवं विशेष स्थितियां)' : 'Hard (L4-L5 Advanced Scrutiny & Edge Cases)'}
+                  {isHindi ? 'कठिन' : 'Hard'}
                 </option>
               </select>
               <p className="text-[11px] text-stone-500 mt-1">
