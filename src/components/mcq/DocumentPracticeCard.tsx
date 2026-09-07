@@ -20,6 +20,8 @@ import {
   RotateCcw,
 } from 'lucide-react';
 
+import { useSafeLocale } from '@/lib/useSafeLocale';
+
 export interface AnswerRecord {
   selectedIndex: number;
   isChecked: boolean;
@@ -59,6 +61,7 @@ export function DocumentPracticeCard({
   onRecordAnswer,
   onResetSession,
 }: DocumentPracticeCardProps) {
+  const systemLocale = useSafeLocale();
   const currentRecord = sessionAnswers?.[currentIndex];
   const [selectedOption, setSelectedOption] = useState<number | null>(
     currentRecord ? currentRecord.selectedIndex : null
@@ -66,15 +69,18 @@ export function DocumentPracticeCard({
   const [isSubmitted, setIsSubmitted] = useState<boolean>(
     currentRecord ? currentRecord.isChecked : false
   );
-  const [lang, setLang] = useState<'en' | 'hi'>('en');
+  const [langOverride, setLangOverride] = useState<'en' | 'hi' | null>(null);
+  const lang = langOverride ?? (systemLocale === 'hi' ? 'hi' : 'en');
+  const isHindi = lang === 'hi';
+
   const [showExplanation, setShowExplanation] = useState(
     currentRecord ? currentRecord.isChecked : false
   );
 
   const isCorrect = selectedOption === question.correctIndex;
-  const currentStem = lang === 'en' ? question.stemEn : question.stemHi;
-  const currentOptions = lang === 'en' ? question.optionsEn : question.optionsHi;
-  const currentRationale = lang === 'en' ? question.rationaleEn : question.rationaleHi;
+  const currentStem = lang === 'en' ? (question.stemEn || question.stemHi) : (question.stemHi || question.stemEn);
+  const currentOptions = lang === 'en' ? (question.optionsEn || question.optionsHi) : (question.optionsHi || question.optionsEn);
+  const currentRationale = lang === 'en' ? (question.rationaleEn || question.rationaleHi) : (question.rationaleHi || question.rationaleEn);
 
   const handleSelect = (idx: number) => {
     if (!isSubmitted) {
@@ -107,27 +113,29 @@ export function DocumentPracticeCard({
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
                 <Sparkles className="h-3 w-3 text-emerald-700" />
-                AI Practice Station
+                {isHindi ? 'AI अभ्यास स्टेशन' : 'AI Practice Station'}
               </span>
               <span className="text-[11px] px-2 py-0.5 rounded-md bg-stone-200/80 text-stone-700 font-semibold uppercase tracking-wider">
-                {difficulty} Calibration
+                {difficulty === 'easy' ? (isHindi ? 'सरल अंशांकन' : 'Easy Calibration') : difficulty === 'hard' ? (isHindi ? 'कठिन अंशांकन' : 'Hard Calibration') : (isHindi ? 'मध्यम अंशांकन' : 'Medium Calibration')}
               </span>
               <span className="text-xs text-stone-500 font-medium truncate max-w-xs sm:max-w-md">
-                • Grounded in: <strong>{docTitle}</strong>
+                • {isHindi ? 'आधार:' : 'Grounded in:'} <strong>{docTitle}</strong>
               </span>
             </div>
             <CardTitle className="text-lg sm:text-xl font-bold text-stone-900 pt-1">
-              Self-Paced Knowledge Check
+              {isHindi ? 'स्व-गति ज्ञान जांच' : 'Self-Paced Knowledge Check'}
             </CardTitle>
             <CardDescription className="text-xs text-stone-600">
-              Select the best answer based on the official guidelines. No timer or scoring penalties.
+              {isHindi
+                ? 'आधिकारिक दिशानिर्देशों के आधार पर सर्वोत्तम उत्तर चुनें। कोई समय सीमा या नकारात्मक अंकन नहीं।'
+                : 'Select the best answer based on the official guidelines. No timer or scoring penalties.'}
             </CardDescription>
           </div>
 
           {/* Language Switcher */}
           <div className="flex rounded-xl bg-stone-200/70 p-1 border border-stone-300/80 self-start sm:self-auto shrink-0">
             <button
-              onClick={() => setLang('en')}
+              onClick={() => setLangOverride('en')}
               className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${
                 lang === 'en'
                   ? 'bg-white text-stone-900 shadow-xs'
@@ -137,7 +145,7 @@ export function DocumentPracticeCard({
               English
             </button>
             <button
-              onClick={() => setLang('hi')}
+              onClick={() => setLangOverride('hi')}
               className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${
                 lang === 'hi'
                   ? 'bg-white text-stone-900 shadow-xs'
@@ -154,11 +162,11 @@ export function DocumentPracticeCard({
           <div className="pt-4 mt-2 border-t border-stone-200/60 space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-stone-700">
-                Question <strong className="text-[#555934]">{currentIndex + 1}</strong> of{' '}
+                {isHindi ? 'प्रश्न' : 'Question'} <strong className="text-[#555934]">{currentIndex + 1}</strong> {isHindi ? 'कुल' : 'of'}{' '}
                 <strong>{totalCount}</strong>
               </span>
               <span className="text-stone-500">
-                Progress: {answeredCount}/{totalCount} Completed
+                {isHindi ? 'प्रगति:' : 'Progress:'} {answeredCount}/{totalCount} {isHindi ? 'पूर्ण' : 'Completed'}
               </span>
             </div>
 
@@ -181,7 +189,7 @@ export function DocumentPracticeCard({
                     key={idx}
                     onClick={() => onJumpToQuestion?.(idx)}
                     className={`h-7 w-7 rounded-lg text-xs font-bold border transition flex items-center justify-center cursor-pointer ${bubbleStyle}`}
-                    title={`Go to question ${idx + 1}`}
+                    title={isHindi ? `प्रश्न ${idx + 1} पर जाएं` : `Go to question ${idx + 1}`}
                   >
                     {idx + 1}
                   </button>
@@ -198,11 +206,11 @@ export function DocumentPracticeCard({
           <div className="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1.5 flex items-center justify-between">
             <span className="flex items-center gap-1.5">
               <HelpCircle className="h-3.5 w-3.5 text-stone-500" />
-              Operational Question ({lang === 'en' ? 'English' : 'हिन्दी'})
+              {isHindi ? 'परिचालन प्रश्न (हिन्दी)' : 'Operational Question (English)'}
             </span>
             {totalCount > 1 && (
               <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-stone-200 text-stone-700">
-                Item #{currentIndex + 1}
+                {isHindi ? `प्रश्न #${currentIndex + 1}` : `Item #${currentIndex + 1}`}
               </span>
             )}
           </div>
@@ -214,7 +222,7 @@ export function DocumentPracticeCard({
         {/* Options List */}
         <div className="space-y-3">
           <div className="text-[11px] font-bold uppercase tracking-wider text-stone-400 flex items-center justify-between">
-            <span>Select one answer choice:</span>
+            <span>{isHindi ? 'एक विकल्प का चयन करें:' : 'Select one answer choice:'}</span>
             {isSubmitted && (
               <span
                 className={`text-xs font-bold flex items-center gap-1 ${
@@ -223,11 +231,11 @@ export function DocumentPracticeCard({
               >
                 {isCorrect ? (
                   <>
-                    <CheckCircle2 className="h-4 w-4" /> Correct Answer!
+                    <CheckCircle2 className="h-4 w-4" /> {isHindi ? 'सही उत्तर!' : 'Correct Answer!'}
                   </>
                 ) : (
                   <>
-                    <XCircle className="h-4 w-4" /> Review Protocol Below
+                    <XCircle className="h-4 w-4" /> {isHindi ? 'नीचे दिए गए प्रोटोकॉल की समीक्षा करें' : 'Review Protocol Below'}
                   </>
                 )}
               </span>
@@ -285,13 +293,13 @@ export function DocumentPracticeCard({
 
                   {isSubmitted && isTargetAnswer && (
                     <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0 self-center">
-                      Correct Key
+                      {isHindi ? 'सत्यापित उत्तर' : 'Correct Key'}
                     </span>
                   )}
 
                   {isSubmitted && isChosen && !isTargetAnswer && (
                     <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-300 shrink-0 self-center">
-                      Your Choice
+                      {isHindi ? 'आपका चयन' : 'Your Choice'}
                     </span>
                   )}
                 </div>
@@ -309,7 +317,7 @@ export function DocumentPracticeCard({
                 className="px-4 py-3 bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-bold rounded-xl transition flex items-center gap-1.5"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
+                {isHindi ? 'पिछला' : 'Previous'}
               </button>
             )}
 
@@ -319,7 +327,7 @@ export function DocumentPracticeCard({
                 disabled={selectedOption === null}
                 className="flex-1 sm:flex-none px-6 py-3 bg-[#555934] hover:bg-[#3e4225] disabled:bg-stone-300 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
               >
-                Check Answer
+                {isHindi ? 'उत्तर जांचें' : 'Check Answer'}
                 <ArrowRight className="h-4 w-4" />
               </button>
             ) : hasNext ? (
@@ -327,7 +335,7 @@ export function DocumentPracticeCard({
                 onClick={onNextQuestion}
                 className="flex-1 sm:flex-none px-6 py-3 bg-[#555934] hover:bg-[#3e4225] text-white text-sm font-bold rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
               >
-                Next Question
+                {isHindi ? 'अगला प्रश्न' : 'Next Question'}
                 <ChevronRight className="h-4 w-4" />
               </button>
             ) : (
@@ -339,12 +347,12 @@ export function DocumentPracticeCard({
                 {isGeneratingNext ? (
                   <>
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    Generating from PDF...
+                    {isHindi ? 'पीडीएफ से निर्माण हो रहा है...' : 'Generating from PDF...'}
                   </>
                 ) : (
                   <>
                     <RotateCcw className="h-4 w-4" />
-                    Complete & Practice Again
+                    {isHindi ? 'पूर्ण एवं पुनः अभ्यास करें' : 'Complete & Practice Again'}
                   </>
                 )}
               </button>
@@ -355,15 +363,17 @@ export function DocumentPracticeCard({
                 onClick={() => setShowExplanation(!showExplanation)}
                 className="px-4 py-3 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-xl transition"
               >
-                {showExplanation ? 'Hide Explanation' : 'View Explanation'}
+                {showExplanation
+                  ? (isHindi ? 'व्याख्या छिपाएं' : 'Hide Explanation')
+                  : (isHindi ? 'व्याख्या देखें' : 'View Explanation')}
               </button>
             )}
           </div>
 
           <div className="flex items-center gap-2 text-xs text-stone-500">
-            <span>MoSPI Cognitive Assessment Engine</span>
+            <span>{isHindi ? 'MoSPI संज्ञानात्मक मूल्यांकन इंजन' : 'MoSPI Cognitive Assessment Engine'}</span>
             <span>•</span>
-            <span>Consensus: {(question.consensusScore * 100).toFixed(0)}%</span>
+            <span>{isHindi ? 'सहमति:' : 'Consensus:'} {(question.consensusScore * 100).toFixed(0)}%</span>
           </div>
         </div>
 
@@ -372,7 +382,7 @@ export function DocumentPracticeCard({
           <div className="rounded-2xl border border-amber-200/90 bg-amber-50/70 p-5 space-y-3 animate-in fade-in-50 duration-200">
             <div className="flex items-center gap-2 text-amber-900 font-bold text-sm">
               <BookOpen className="h-4 w-4 text-amber-700" />
-              <span>MoSPI Protocol Explanation & Citation</span>
+              <span>{isHindi ? 'MoSPI प्रोटोकॉल व्याख्या और उद्धरण' : 'MoSPI Protocol Explanation & Citation'}</span>
             </div>
 
             <p className="text-xs sm:text-sm text-amber-950 leading-relaxed font-normal">
@@ -381,20 +391,20 @@ export function DocumentPracticeCard({
 
             <div className="pt-2 border-t border-amber-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-amber-900">
               <div>
-                <strong>Citation Anchor:</strong> {question.citation}
+                <strong>{isHindi ? 'उद्धरण संदर्भ:' : 'Citation Anchor:'}</strong> {question.citation}
               </div>
 
               <div>
                 {stagedToQueue ? (
                   <span className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5">
-                    <Check className="h-3.5 w-3.5" /> Staged into Review Queue
+                    <Check className="h-3.5 w-3.5" /> {isHindi ? 'समीक्षा कतार में रखा गया' : 'Staged into Review Queue'}
                   </span>
                 ) : (
                   <button
                     onClick={onStageToQueue}
                     className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-200/80 hover:bg-amber-300 text-amber-950 font-bold rounded-lg text-xs transition"
                   >
-                    <Send className="h-3 w-3" /> Save to Review Queue
+                    <Send className="h-3 w-3" /> {isHindi ? 'समीक्षा कतार में सहेजें' : 'Save to Review Queue'}
                   </button>
                 )}
               </div>
@@ -408,7 +418,11 @@ export function DocumentPracticeCard({
             <div className="flex items-center gap-2">
               <Award className="h-4 w-4 text-emerald-600 shrink-0" />
               <span>
-                Item saved to <strong>Faculty Review Queue</strong> for inclusion in formal assessments.
+                {isHindi ? (
+                  <>प्रश्न औपचारिक मूल्यांकन में शामिल करने हेतु <strong>संकाय समीक्षा कतार</strong> में सहेज लिया गया है।</>
+                ) : (
+                  <>Item saved to <strong>Faculty Review Queue</strong> for inclusion in formal assessments.</>
+                )}
               </span>
             </div>
             <Link
@@ -416,7 +430,7 @@ export function DocumentPracticeCard({
               prefetch={true}
               className="font-bold underline text-emerald-800 hover:text-emerald-950 shrink-0"
             >
-              Open Queue →
+              {isHindi ? 'कतार खोलें →' : 'Open Queue →'}
             </Link>
           </div>
         )}
