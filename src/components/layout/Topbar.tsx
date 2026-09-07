@@ -208,6 +208,24 @@ export function Topbar({ initialRole }: TopbarProps) {
   const handleLanguageToggle = useCallback(() => {
     const nextLang = locale === 'en' ? 'hi' : 'en';
     document.cookie = `locale=${nextLang};path=/;max-age=31536000;SameSite=Lax`;
+
+    // Also update demo_user cookie if active so both client and server stay in sync
+    try {
+      const match = document.cookie.match(/(?:^|;\s*)demo_user=([^;]+)/);
+      if (match) {
+        const demoUser = JSON.parse(decodeURIComponent(match[1]));
+        demoUser.preferred_language = nextLang;
+        if (demoUser.user_metadata) {
+          demoUser.user_metadata.preferred_language = nextLang;
+        }
+        document.cookie = `demo_user=${encodeURIComponent(
+          JSON.stringify(demoUser)
+        )};path=/;max-age=604800;SameSite=Lax`;
+      }
+    } catch {
+      // Ignore cookie JSON parse error
+    }
+
     window.location.reload();
   }, [locale]);
 
