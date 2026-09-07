@@ -1,6 +1,7 @@
 import type { UserRole } from '@/lib/types';
 import {
   LayoutDashboard,
+  Home,
   Target,
   ClipboardCheck,
   Flag,
@@ -25,8 +26,8 @@ export interface RoleNavItem {
 export const LEARNER_NAV_ITEMS: RoleNavItem[] = [
   {
     href: '/dashboard',
-    label: 'nav.dashboard',
-    icon: LayoutDashboard,
+    label: 'nav.home',
+    icon: Home,
   },
   {
     href: '/skill-gap',

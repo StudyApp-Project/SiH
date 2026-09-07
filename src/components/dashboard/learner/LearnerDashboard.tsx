@@ -3,22 +3,31 @@
 import React, { useState } from 'react';
 import type { DashboardUserProps } from '@/components/dashboard/RoleDashboardRouter';
 import { getPersonaFRAC } from '@/data/fracCadres';
-import { LearnerKpiStrip } from './LearnerKpiStrip';
-import { LearnerHeroBento } from './LearnerHeroBento';
-import { PriorityGapsCard } from './PriorityGapsCard';
-import { LearnerCoursesTable } from './LearnerCoursesTable';
-import { MoSPIFieldManualsShelf } from './MoSPIFieldManualsShelf';
-import { HorizontalDrillsCarousel } from './HorizontalDrillsCarousel';
-import { KarmayogiPathwaysTrack } from './KarmayogiPathwaysTrack';
-import { CAPIFieldStationTab } from './CAPIFieldStationTab';
-import { LearnerDrillModal } from './modals/LearnerDrillModal';
-import { ManualReaderModal } from './modals/ManualReaderModal';
-import { OfficerDossierModal } from './modals/OfficerDossierModal';
-import { CAPIConnectivityModal } from './modals/CAPIConnectivityModal';
-import { LearnerKarmaLedgerModal } from './modals/LearnerKarmaLedgerModal';
 import { useSafeLocale } from '@/lib/useSafeLocale';
-import { Globe2, LayoutDashboard, BookOpen, Target, GraduationCap, Wifi, Award } from 'lucide-react';
 import type { DemoPersona } from '@/lib/types';
+
+import {
+  calculateCourseTimeline,
+  getLayeredCompetencies,
+  getPersonalizedRecommendations,
+  getRecentActivities,
+  getProgressTrend,
+  type LearnerActionCard,
+} from '@/services/learnerProgressService';
+
+import { LearnerWelcomeHeader } from './LearnerWelcomeHeader';
+import { LearnerCourseStatusCard } from './LearnerCourseStatusCard';
+import { LearnerCompetencyOverview } from './LearnerCompetencyOverview';
+import { LearnerRecommendations } from './LearnerRecommendations';
+import { LearnerRecentActivity } from './LearnerRecentActivity';
+import { LearnerProgressTrendComponent } from './LearnerProgressTrend';
+
+import { LearnerKarmaLedgerModal } from './modals/LearnerKarmaLedgerModal';
+import { CAPIConnectivityModal } from './modals/CAPIConnectivityModal';
+import { OfficerDossierModal } from './modals/OfficerDossierModal';
+import { LearnerDrillModal } from './modals/LearnerDrillModal';
+import { Sparkles, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function LearnerDashboard({ user }: { user: DashboardUserProps }) {
   // Retrieve official FRAC profile
@@ -26,28 +35,25 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
 
   // Read global app locale from next-intl (with fallback to user preferred language)
   const globalLocale = useSafeLocale(user.user_metadata?.preferred_language || 'en');
-  const isHindi = globalLocale === 'hi';
-  const [activeTab, setActiveTab] = useState<'overview' | 'manuals' | 'competencies' | 'pathways' | 'capi'>('overview');
+  const isHindi = globalLocale === 'hi' || user.user_metadata?.preferred_language === 'hi';
+
+  const displayName = isHindi && profile.name === 'Sunita Devi' ? 'सुनीता देवी' : profile.name;
+
+  // Compute calculated course timeline, layered competencies, recommendations, activity, and trend
+  const timeline = calculateCourseTimeline(profile);
+  const layeredCompetencies = getLayeredCompetencies(profile.competencies, timeline.expectedProgress);
+  const recommendations = getPersonalizedRecommendations(profile, timeline);
+  const recentActivities = getRecentActivities(isHindi);
+  const progressTrend = getProgressTrend();
 
   // Interactive Modal States
   const [activeDrillId, setActiveDrillId] = useState<string | null>(null);
-  const [activeManualId, setActiveManualId] = useState<string | null>(null);
   const [dossierModalOpen, setDossierModalOpen] = useState(false);
   const [capiModalOpen, setCapiModalOpen] = useState(false);
   const [karmaModalOpen, setKarmaModalOpen] = useState(false);
   const [isOfflineSimulated, setIsOfflineSimulated] = useState(false);
 
-  // Compute readiness index & verified counts
-  const totalSkills = profile.competencies.length;
-  const verifiedSkills = profile.competencies.filter(
-    (c) => c.evidenceType === 'assessment-verified'
-  ).length;
-  const metTargetCount = profile.competencies.filter(
-    (c) => c.currentLevel >= c.targetLevel
-  ).length;
-  const readinessIndex = Math.round((metTargetCount / Math.max(1, totalSkills)) * 100);
-
-  // Fallback persona for dossier modal
+  // Persona for dossier modal
   const activePersona: DemoPersona = {
     id: user.id || 'demo-learner',
     name: (user.user_metadata?.name as string) || profile.name,
@@ -64,10 +70,6 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
     setActiveDrillId(drillId);
   };
 
-  const handleOpenManual = (manualId: string) => {
-    setActiveManualId(manualId);
-  };
-
   const handleDrillComplete = (points: number) => {
     alert(
       isHindi
@@ -76,283 +78,80 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
     );
   };
 
-  const tabs = [
-    {
-      id: 'overview' as const,
-      label: isHindi ? 'परिचालन कार्यक्षेत्र' : 'Operational Workspace',
-      icon: LayoutDashboard,
-    },
-    {
-      id: 'manuals' as const,
-      label: isHindi ? 'फील्ड मैनुअल शेल्फ' : 'Field Manuals Shelf',
-      icon: BookOpen,
-    },
-    {
-      id: 'competencies' as const,
-      label: isHindi ? 'FRAC क्षमता अंतर' : 'FRAC Competency Gaps',
-      icon: Target,
-    },
-    {
-      id: 'pathways' as const,
-      label: isHindi ? 'कर्मयोगी प्रगति पथ' : 'Karmayogi Pathways',
-      icon: GraduationCap,
-    },
-    {
-      id: 'capi' as const,
-      label: isHindi ? 'कैपी फील्ड स्टेशन' : 'CAPI Field Station',
-      icon: Wifi,
-    },
-  ];
+  const handleActionClick = (card: LearnerActionCard) => {
+    if (card.type === 'PRACTICE' || card.type === 'ASSESS') {
+      // Open drill modal directly if practicing
+      handleStartDrill('drill-1');
+    }
+  };
+
+  // Check if brand new learner with zero competencies
+  const isNewLearner = profile.competencies.length === 0;
 
   return (
-    <div data-testid="learner-dashboard" className="space-y-6 pb-12">
-      {/* Top Header Bar with Language Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#BF9B7A]/20">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#555934]" />
-            <h1 className="text-xl sm:text-2xl font-black text-[#2d1f17] tracking-tight">
-              {isHindi ? 'अधिकारी क्षमता एवं प्रशिक्षण कार्यक्षेत्र' : 'Officer Competency & Learning Workspace'}
-            </h1>
+    <div
+      data-testid="learner-dashboard"
+      className="space-y-6 pb-12 max-w-6xl mx-auto animate-in fade-in duration-200"
+    >
+      {/* Section A — Welcome Header (Lightweight, no location pill, no bulky profile bento) */}
+      <LearnerWelcomeHeader name={displayName} isHindi={isHindi} />
+
+      {/* New Learner Onboarding / Empty State Banner */}
+      {isNewLearner ? (
+        <div className="rounded-3xl bg-white border border-[#BF9B7A]/30 p-8 shadow-xs text-center space-y-4">
+          <div className="h-16 w-16 mx-auto rounded-2xl bg-[#F8C858]/20 text-[#8C5B3E] flex items-center justify-center">
+            <Sparkles className="h-8 w-8" />
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <h2 className="text-xl font-bold text-[#2d1f17]">
+            {isHindi ? 'आपकी शिक्षण यात्रा में आपका स्वागत है!' : 'Welcome to your Learning Journey!'}
+          </h2>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
             {isHindi
-              ? 'सांख्यिकी और कार्यक्रम कार्यान्वयन मंत्रालय • क्षमता विकास पोर्टल'
-              : 'Ministry of Statistics & Programme Implementation • Capacity Building Ecosystem'}
+              ? 'अपनी दक्षताओं का निदान करने और व्यक्तिगत अनुशंसाएं प्राप्त करने के लिए आधारभूत मूल्यांकन पूर्ण करें।'
+              : 'Complete your baseline assessment to map your competencies and unlock personalized recommendations.'}
           </p>
-        </div>
-
-        {/* Action Controls */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => setKarmaModalOpen(true)}
-            title="View Karma Points Ledger"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F8C858]/20 border border-[#F8C858]/40 text-xs font-bold text-[#8C5B3E] hover:bg-[#F8C858]/30 transition-colors shadow-2xs cursor-pointer"
+          <Link
+            href="/assignments"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#555934] text-white font-bold text-sm hover:bg-[#434728] transition-colors shadow-2xs"
           >
-            <Award className="h-3.5 w-3.5 text-[#8C5B3E]" />
-            <span className="font-mono">+550 KP</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              const nextLang = isHindi ? 'en' : 'hi';
-              document.cookie = `locale=${nextLang};path=/;max-age=31536000;SameSite=Lax`;
-              try {
-                const match = document.cookie.match(/(?:^|;\s*)demo_user=([^;]+)/);
-                if (match) {
-                  const demoUser = JSON.parse(decodeURIComponent(match[1]));
-                  demoUser.preferred_language = nextLang;
-                  if (demoUser.user_metadata) {
-                    demoUser.user_metadata.preferred_language = nextLang;
-                  }
-                  document.cookie = `demo_user=${encodeURIComponent(
-                    JSON.stringify(demoUser)
-                  )};path=/;max-age=604800;SameSite=Lax`;
-                }
-              } catch {
-                // Ignore cookie JSON parse error
-              }
-              window.location.reload();
-            }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-[#BF9B7A]/40 text-xs font-bold text-[#555934] hover:bg-[#FAF6F0] transition-colors shadow-2xs cursor-pointer"
-            aria-label="Toggle Hindi language"
-          >
-            <Globe2 className="h-3.5 w-3.5 text-[#8C5B3E]" />
-            <span>{isHindi ? 'English में देखें' : 'हिन्दी में बदलें'}</span>
-          </button>
+            <span>{isHindi ? 'आधारभूत मूल्यांकन आरंभ करें →' : 'Start Baseline Assessment →'}</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* Section B — Overall Learning / Course Status (Layered Actual vs Expected Timeline) */}
+          <LearnerCourseStatusCard timeline={timeline} isHindi={isHindi} />
 
-      {/* 5-Card Pastel KPI Strip (Image 2) */}
-      <LearnerKpiStrip
-        readinessIndex={readinessIndex}
-        activeModulesCount={2}
-        verifiedSkillsCount={verifiedSkills}
-        totalSkillsCount={totalSkills}
-        drillsCompleted={6}
-        trainingHours={24}
-        isHindi={isHindi}
-        onSelectTab={(tab) => {
-          if (tab === 'competencies' || tab === 'pathways' || tab === 'overview') {
-            setActiveTab(tab);
-          }
-        }}
-      />
-
-      {/* Interactive Workspace Navigation Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-[#BF9B7A]/25 text-xs font-bold scrollbar-none">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all cursor-pointer shrink-0 ${
-                isActive
-                  ? 'bg-[#555934] text-white shadow-2xs font-black'
-                  : 'bg-white text-muted-foreground hover:bg-[#FAF6F0] hover:text-[#2d1f17] border border-[#BF9B7A]/20'
-              }`}
-            >
-              <Icon className={`h-4 w-4 ${isActive ? 'text-[#F8C858]' : 'text-[#8C5B3E]'}`} />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Tab 1: Operational Workspace (Default) */}
-      {activeTab === 'overview' && (
-        <div className="space-y-6 animate-in fade-in duration-150">
-          {/* Asymmetric Hero Bento (Image 1) */}
-          <LearnerHeroBento
-            user={user}
-            profile={profile}
-            isHindi={isHindi}
-            readinessIndex={readinessIndex}
-            onOpenDossier={() => setDossierModalOpen(true)}
-            onOpenCapiModal={() => setCapiModalOpen(true)}
-            onStartDrill={handleStartDrill}
-            onViewGaps={() => setActiveTab('competencies')}
-          />
-
-          {/* Horizontal Priority Drills Carousel */}
-          <HorizontalDrillsCarousel
-            onStartDrill={handleStartDrill}
+          {/* Section C — Competency Section (Your Competencies with Layered Progress Bars) */}
+          <LearnerCompetencyOverview
+            competencies={layeredCompetencies}
             isHindi={isHindi}
           />
 
-          {/* Horizontal Official MoSPI Field Manuals Shelf */}
-          <MoSPIFieldManualsShelf
+          {/* Section D — Personalized Recommendations (2-3 Action Cards) */}
+          <LearnerRecommendations
+            recommendations={recommendations}
             isHindi={isHindi}
-            onOpenManual={handleOpenManual}
+            onActionClick={handleActionClick}
           />
 
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left Column: Priority Competency Gaps (7 cols) */}
-            <div className="lg:col-span-7 space-y-6">
-              <PriorityGapsCard
-                competencies={profile.competencies}
-                isHindi={isHindi}
-                onBridgeGap={() => handleStartDrill('drill-schedule-0')}
-                onViewAllGaps={() => setActiveTab('competencies')}
-              />
-            </div>
+          {/* Sections E & F — Recent Activity & Progress Trend (Compact side-by-side or stacked grid) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+            {/* Section E — Recent Activity */}
+            <LearnerRecentActivity
+              activities={recentActivities}
+              isHindi={isHindi}
+              onViewAll={() => setKarmaModalOpen(true)}
+            />
 
-            {/* Right Column: Enrolled Courses Table (5 cols) */}
-            <div className="lg:col-span-5 space-y-6">
-              <LearnerCoursesTable isHindi={isHindi} />
-            </div>
+            {/* Section F — Progress Trend ("Am I improving?") */}
+            <LearnerProgressTrendComponent trend={progressTrend} isHindi={isHindi} />
           </div>
-        </div>
+        </>
       )}
 
-      {/* Tab 2: Field Manuals & SOP Shelf */}
-      {activeTab === 'manuals' && (
-        <div className="space-y-6 animate-in fade-in duration-150">
-          <MoSPIFieldManualsShelf
-            isHindi={isHindi}
-            onOpenManual={handleOpenManual}
-          />
-          <div className="rounded-3xl bg-white border border-[#BF9B7A]/30 p-6 shadow-xs space-y-4">
-            <h3 className="text-base font-bold text-[#2d1f17]">
-              {isHindi ? 'डिजिटल मैनुअल खोज एवं वैधानिक संदर्भ' : 'Digital Manual Search & Statutory Repository'}
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              {isHindi
-                ? 'सभी मैनुअल एनएसएसटीए और राष्ट्रीय सांख्यिकी आयोग (NSC) द्वारा प्रमाणित हैं।'
-                : 'All statutory guidelines are certified by NSSTA and the National Statistical Commission (NSC).'}
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <button
-                type="button"
-                onClick={() => handleOpenManual('manual-plfs-vol1')}
-                className="p-4 rounded-2xl bg-[#FAF6F0] border border-[#BF9B7A]/30 text-left hover:border-[#555934] transition-all cursor-pointer shadow-2xs"
-              >
-                <span className="text-[10px] font-bold text-[#555934] uppercase tracking-wider block mb-1">
-                  NSSO FOD
-                </span>
-                <p className="font-bold text-xs text-[#2d1f17]">PLFS Vol 1: Instructions</p>
-                <p className="text-[11px] text-muted-foreground mt-1">184 Pages • Ver 2026.1</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleOpenManual('manual-schedule-0')}
-                className="p-4 rounded-2xl bg-[#FAF6F0] border border-[#BF9B7A]/30 text-left hover:border-[#555934] transition-all cursor-pointer shadow-2xs"
-              >
-                <span className="text-[10px] font-bold text-[#8C5B3E] uppercase tracking-wider block mb-1">
-                  SDRD
-                </span>
-                <p className="font-bold text-xs text-[#2d1f17]">Schedule 0.0 Demarcation</p>
-                <p className="text-[11px] text-muted-foreground mt-1">96 Pages • Ver 2025.4</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleOpenManual('manual-capi-handbook')}
-                className="p-4 rounded-2xl bg-[#FAF6F0] border border-[#BF9B7A]/30 text-left hover:border-[#555934] transition-all cursor-pointer shadow-2xs"
-              >
-                <span className="text-[10px] font-bold text-chart-5 uppercase tracking-wider block mb-1">
-                  DPD
-                </span>
-                <p className="font-bold text-xs text-[#2d1f17]">ASHE & CAPI Tablet Protocol</p>
-                <p className="text-[11px] text-muted-foreground mt-1">64 Pages • Ver 2026.2</p>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab 3: FRAC Competency Gaps */}
-      {activeTab === 'competencies' && (
-        <div className="space-y-6 animate-in fade-in duration-150">
-          <PriorityGapsCard
-            competencies={profile.competencies}
-            isHindi={isHindi}
-            onBridgeGap={() => handleStartDrill('drill-schedule-0')}
-          />
-          <HorizontalDrillsCarousel
-            onStartDrill={handleStartDrill}
-            isHindi={isHindi}
-          />
-        </div>
-      )}
-
-      {/* Tab 4: Karmayogi Pathways */}
-      {activeTab === 'pathways' && (
-        <div className="space-y-6 animate-in fade-in duration-150">
-          <KarmayogiPathwaysTrack isHindi={isHindi} />
-          <LearnerCoursesTable isHindi={isHindi} />
-        </div>
-      )}
-
-      {/* Tab 5: CAPI Field Station */}
-      {activeTab === 'capi' && (
-        <div className="space-y-6 animate-in fade-in duration-150">
-          <CAPIFieldStationTab isHindi={isHindi} />
-        </div>
-      )}
-
-      {/* Active Interactive Modals */}
-      <LearnerDrillModal
-        isOpen={!!activeDrillId}
-        onClose={() => setActiveDrillId(null)}
-        drillId={activeDrillId || undefined}
-        onComplete={handleDrillComplete}
-        isHindi={isHindi}
-      />
-
-      <ManualReaderModal
-        isOpen={!!activeManualId}
-        onClose={() => setActiveManualId(null)}
-        manualId={activeManualId || undefined}
-        isHindi={isHindi}
-      />
-
+      {/* Interactive Support Modals */}
       <OfficerDossierModal
         isOpen={dossierModalOpen}
         onClose={() => setDossierModalOpen(false)}
@@ -363,14 +162,23 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
       <CAPIConnectivityModal
         isOpen={capiModalOpen}
         onClose={() => setCapiModalOpen(false)}
-        isHindi={isHindi}
         isOfflineSimulated={isOfflineSimulated}
         onToggleOfflineSimulated={() => setIsOfflineSimulated(!isOfflineSimulated)}
+        isHindi={isHindi}
       />
 
       <LearnerKarmaLedgerModal
         isOpen={karmaModalOpen}
         onClose={() => setKarmaModalOpen(false)}
+        points={550}
+        isHindi={isHindi}
+      />
+
+      <LearnerDrillModal
+        isOpen={Boolean(activeDrillId)}
+        drillId={activeDrillId || 'drill-schedule-0'}
+        onClose={() => setActiveDrillId(null)}
+        onComplete={handleDrillComplete}
         isHindi={isHindi}
       />
     </div>

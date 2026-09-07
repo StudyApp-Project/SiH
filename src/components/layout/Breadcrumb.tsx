@@ -40,7 +40,12 @@ export function Breadcrumb() {
 
   const segments = pathname.split('/').filter(Boolean);
 
-  if (segments.length === 0 || segments[0] === 'auth') {
+  if (
+    segments.length === 0 ||
+    segments[0] === 'auth' ||
+    pathname === '/dashboard' ||
+    (segments.length === 1 && segments[0] === 'dashboard')
+  ) {
     return null;
   }
 
@@ -49,22 +54,28 @@ export function Breadcrumb() {
       ? 'NSSTA Faculty Studio'
       : role === 'admin'
         ? 'Executive Command Desk'
-        : 'Learner Workspace';
+        : t('home');
 
   const crumbs = segments.map((seg, i) => {
     const routeKey = routeLabels[`/${seg}`];
     let label = seg;
     try {
-      label = routeKey ? t(routeKey) : seg;
+      if (seg === 'dashboard' && role === 'learner') {
+        label = t('home');
+      } else {
+        label = routeKey ? t(routeKey) : seg;
+      }
     } catch {
-      label = seg;
+      label = seg === 'dashboard' && role === 'learner' ? 'Home' : seg;
     }
     const href = i === 0 ? '/dashboard' : `/${segments.slice(0, i + 1).join('/')}`;
     return { label, href };
   });
 
+  const filteredCrumbs = crumbs.filter((c) => c.href !== '/dashboard');
+
   return (
-    <nav aria-label="Breadcrumb" className="flex items-center text-xs text-muted-foreground select-none">
+    <nav aria-label="Breadcrumb" className="mb-4 flex items-center text-xs text-muted-foreground select-none">
       <ol className="flex items-center gap-1.5 flex-wrap">
         <li>
           <Link
@@ -75,7 +86,7 @@ export function Breadcrumb() {
             <span>{rootLabel}</span>
           </Link>
         </li>
-        {crumbs.map((crumb, idx) => (
+        {filteredCrumbs.map((crumb, idx) => (
           <li key={crumb.href + idx} className="flex items-center gap-1.5">
             <ChevronRight className="h-3 w-3 text-[#BF9B7A]" aria-hidden="true" />
             {idx === crumbs.length - 1 ? (

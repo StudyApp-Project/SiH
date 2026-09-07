@@ -84,9 +84,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
         <Topbar />
         <main className="flex-1 overflow-y-auto bg-[#FAF6F0]/30">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-5">
-            <div className="mb-4">
-              <Breadcrumb />
-            </div>
+            <Breadcrumb />
             <div>{children}</div>
           </div>
         </main>

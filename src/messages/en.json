@@ -4,6 +4,7 @@
     "tagline": "Competency Intelligence Platform for India's Official Statistical System"
   },
   "nav": {
+    "home": "Home",
     "dashboard": "Dashboard",
     "skillGap": "Skill Gap",
     "pathways": "Learning Pathways",
@@ -232,6 +233,66 @@
     "criticalGapsOnly": "Critical Gaps",
     "foundational": "Foundational",
     "applied": "Applied Practice"
+  },
+  "learnerHome": {
+    "welcome": {
+      "greetingMorning": "Good morning",
+      "greetingAfternoon": "Good afternoon",
+      "greetingEvening": "Good evening",
+      "subtitle": "Here's a quick look at your learning progress."
+    },
+    "status": {
+      "title": "Learning Status",
+      "whereAmI": "Where am I in my learning journey?",
+      "courseProgress": "Course progress",
+      "expectedMarker": "Expected",
+      "actualMarker": "Actual",
+      "ahead": "You're ahead of schedule 🎯",
+      "onTrack": "You're on track 🎯",
+      "behind": "Behind schedule — Needs attention ⚠️",
+      "aheadDesc": "You are {delta}% ahead of your expected course timeline.",
+      "onTrackDesc": "You are progressing right on schedule.",
+      "behindDesc": "You are {delta}% behind your expected timeline. Focus on priority gaps.",
+      "timelineSummary": "Week {current} of {total} weeks ({expected}% expected)"
+    },
+    "competencies": {
+      "title": "Your Competencies",
+      "subtitle": "Key competency development vs. expected pace",
+      "expected": "Expected",
+      "actual": "Actual",
+      "ahead": "Ahead",
+      "onTrack": "On track",
+      "needsAttention": "Needs attention",
+      "viewAll": "View all competencies →"
+    },
+    "recommendations": {
+      "title": "Recommended for you",
+      "subtitle": "Personalized action cards prioritized by your current learning gaps",
+      "assess": "Assess",
+      "continue": "Continue Learning",
+      "practice": "Practice",
+      "reassess": "Reassess",
+      "startCta": "Start →",
+      "continueCta": "Continue →",
+      "practiceCta": "Practice →"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "subtitle": "Meaningful learning events and milestones",
+      "viewHistory": "View full history →"
+    },
+    "progressTrend": {
+      "title": "Progress Trend",
+      "subtitle": "Am I improving?",
+      "summary": "+16% over the last 90 days",
+      "improving": "Steady upward progression across official cadre competencies"
+    },
+    "emptyStates": {
+      "newLearnerTitle": "Welcome to your Learning Journey!",
+      "newLearnerDesc": "Complete your baseline assessment to diagnose your competencies and unlock personalized recommendations.",
+      "takeBaseline": "Start Baseline Assessment →",
+      "completedCourse": "Course Completed! You have achieved all target competency milestones."
+    }
   },
   "skillGap": {
     "title": "Skill Gap Analysis",

@@ -6,7 +6,7 @@ import {
 } from './roleNavigation';
 
 describe('roleNavigation', () => {
-  it('returns learner-exclusive navigation items', () => {
+  it('returns learner-exclusive navigation items with Home terminology', () => {
     const items = getNavigationForRole('learner');
     const hrefs = items.map((i) => i.href);
 
@@ -15,6 +15,10 @@ describe('roleNavigation', () => {
     expect(hrefs).toContain('/assignments');
     expect(hrefs).toContain('/pathways');
     expect(hrefs).toContain('/profile');
+
+    // Main landing page for learner must be 'nav.home', not 'nav.dashboard'
+    const homeItem = items.find((i) => i.href === '/dashboard');
+    expect(homeItem?.label).toBe('nav.home');
 
     // Learners must NOT see trainer tools
     expect(hrefs).not.toContain('/documents');
