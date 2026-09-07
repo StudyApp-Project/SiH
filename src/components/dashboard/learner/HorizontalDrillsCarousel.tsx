@@ -132,7 +132,7 @@ export function HorizontalDrillsCarousel({
             className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAF6F0] border border-[#BF9B7A]/35 text-xs font-bold text-[#555934] hover:bg-[#F2E6D8] transition-colors cursor-pointer"
           >
             <Brain className="h-3.5 w-3.5 text-[#8C5B3E]" />
-            <span>{isHindi ? 'क्विज़ स्टेशन' : 'AI Quiz Station'}</span>
+            <span>{isHindi ? 'अभ्यास स्टेशन' : 'Practice Station'}</span>
           </Link>
 
           <div className="flex items-center gap-1.5">

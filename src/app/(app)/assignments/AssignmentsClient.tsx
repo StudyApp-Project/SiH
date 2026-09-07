@@ -78,10 +78,10 @@ export default function AssignmentsClient() {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-sm sm:text-base font-bold text-[#2d1f17]">
-                {isHindi ? 'स्व-गति क्विज़ एवं अभ्यास एमसीक्यू' : 'Self-Paced Practice & AI Quiz Studio'}
+                {isHindi ? 'स्व-गति अभ्यास एवं एमसीक्यू स्टेशन' : 'Self-Paced Practice & MCQ Station'}
               </h3>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#555934]/15 text-[#555934]">
-                {isHindi ? 'एआई समर्थित' : 'MoSPI Grounded'}
+                {isHindi ? 'MoSPI आधारित' : 'MoSPI Grounded'}
               </span>
             </div>
             <p className="text-xs text-[#705849] mt-0.5">
@@ -95,7 +95,7 @@ export default function AssignmentsClient() {
           href="/mcq-generator"
           className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#555934] text-white text-xs font-bold hover:bg-[#3e4225] transition-all shadow-xs shrink-0 cursor-pointer"
         >
-          <span>{isHindi ? 'क्विज़ स्टेशन खोलें' : 'Launch Quiz Station'}</span>
+          <span>{isHindi ? 'अभ्यास स्टेशन खोलें' : 'Launch Practice Station'}</span>
           <ChevronRight className="w-3.5 h-3.5" />
         </Link>
       </div>

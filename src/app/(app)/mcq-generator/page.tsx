@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { ProvenanceBadge } from '@/components/ProvenanceBadge';
 import { type GeneratedQuestion } from '@/services/mcqService';
-import { Sparkles, RefreshCw, BookOpen, Bot, FileText, SlidersHorizontal, Hash } from 'lucide-react';
+import { Sparkles, RefreshCw, BookOpen, Bot, FileText, Hash } from 'lucide-react';
 import { DocumentPracticeCard, type AnswerRecord } from '@/components/mcq/DocumentPracticeCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useSafeLocale } from '@/lib/useSafeLocale';
@@ -102,7 +102,7 @@ function MCQGeneratorInner() {
 
   const [selectedDocId, setSelectedDocId] = useState(initialDocId);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
-  const [questionFocus, setQuestionFocus] = useState<'protocols' | 'thresholds' | 'scrutiny'>('protocols');
+  const questionFocus: 'protocols' | 'thresholds' | 'scrutiny' = 'protocols';
   const [questionCount, setQuestionCount] = useState<number>(5);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedQuestion, setGeneratedQuestion] = useState<GeneratedQuestion | null>(null);
@@ -257,21 +257,21 @@ function MCQGeneratorInner() {
         <ProvenanceBadge provenance="PROPOSED_METHODOLOGY" />
       </div>
 
-      {/* Generator & Composition Controls */}
+      {/* Generator & Grounding Controls */}
       <Card className="border-stone-200 bg-white shadow-xs">
         <CardHeader className="bg-stone-50/50 border-b border-stone-100 pb-4">
           <CardTitle className="text-base font-semibold text-stone-900 flex items-center gap-2">
             <FileText className="h-4 w-4 text-[#8b9a6e]" />
-            {isHindi ? 'दस्तावेज़ आधार और प्रश्न संरचना' : 'Document Grounding & Question Composition'}
+            {isHindi ? 'दस्तावेज़ आधार' : 'Document Grounding'}
           </CardTitle>
           <CardDescription className="text-xs text-stone-500">
             {isHindi
-              ? 'एक अंतर्ग्रहीत मैनुअल चुनें और प्रश्न निर्माण के लिए कठिनाई और परिचालन फोकस निर्धारित करें।'
-              : 'Select an ingested manual and tailor difficulty and operational focus for question generation.'}
+              ? 'एक अंतर्ग्रहीत मैनुअल चुनें और प्रश्न निर्माण के लिए लक्षित कठिनाई निर्धारित करें।'
+              : 'Select an ingested manual and target difficulty for question generation.'}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-5 space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Document Grounding Selector */}
             <div>
               <label className="block text-xs font-semibold text-stone-700 mb-1.5">
@@ -285,7 +285,7 @@ function MCQGeneratorInner() {
                 {docList.map((doc) => (
                   <option key={doc.id} value={doc.id}>
                     {doc.cadre === 'My Upload'
-                      ? (isHindi ? `📁 [मेरा अपलोड] ${doc.title}` : `📁 [My Upload] ${doc.title}`)
+                       ? (isHindi ? `📁 [मेरा अपलोड] ${doc.title}` : `📁 [My Upload] ${doc.title}`)
                       : `[${doc.cadre}] ${doc.title}`}
                   </option>
                 ))}
@@ -321,32 +321,6 @@ function MCQGeneratorInner() {
                 <span className="font-semibold text-[#7a885f]">
                   {isHindi ? (HINDI_COMPETENCY_MAP[competencyId] || activeDoc.competencyName) : activeDoc.competencyName}
                 </span>
-              </p>
-            </div>
-
-            {/* Question Composition Focus */}
-            <div>
-              <label className="block text-xs font-semibold text-stone-700 mb-1.5">
-                {isHindi ? 'प्रश्न संरचना फोकस' : 'Question Composition Focus'}
-              </label>
-              <select
-                value={questionFocus}
-                onChange={(e) => setQuestionFocus(e.target.value as 'protocols' | 'thresholds' | 'scrutiny')}
-                className="w-full text-xs sm:text-sm border border-stone-300 rounded-lg p-2.5 bg-white text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#8b9a6e]"
-              >
-                <option value="protocols">
-                  {isHindi ? 'परिचालन फील्ड प्रोटोकॉल और SOP' : 'Operational Field Protocols & SOPs'}
-                </option>
-                <option value="thresholds">
-                  {isHindi ? 'संख्यात्मक सीमाएं, कटऑफ और नियम' : 'Numerical Cutoffs, Limits & Rules'}
-                </option>
-                <option value="scrutiny">
-                  {isHindi ? 'डेटा संवीक्षा और विसंगति जांच' : 'Data Scrutiny & Discrepancy Checks'}
-                </option>
-              </select>
-              <p className="text-[11px] text-stone-500 mt-1 flex items-center gap-1">
-                <SlidersHorizontal className="h-3 w-3 text-[#555934]" />
-                {isHindi ? 'लक्षित संज्ञानात्मक संरचना' : 'Targeted cognitive framing'}
               </p>
             </div>
 

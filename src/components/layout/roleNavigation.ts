@@ -44,8 +44,6 @@ export const LEARNER_NAV_ITEMS: RoleNavItem[] = [
     href: '/mcq-generator',
     label: 'nav.quiz',
     icon: Brain,
-    badge: 'AI Quiz',
-    badgeType: 'default',
   },
   {
     href: '/documents',
