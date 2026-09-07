@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Link from 'next/link';
-import { Download, ExternalLink, ShieldCheck, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
+import { Download, ExternalLink, ShieldCheck, ChevronLeft, ChevronRight, BookOpen, X, CheckCircle2 } from 'lucide-react';
 
 interface MoSPIFieldManualsShelfProps {
   isHindi?: boolean;
@@ -78,6 +78,8 @@ export function MoSPIFieldManualsShelf({
     },
   ];
 
+  const [shelfToast, setShelfToast] = useState<string | null>(null);
+
   const scroll = (direction: 'left' | 'right') => {
     if (containerRef.current) {
       const scrollAmount = direction === 'left' ? -320 : 320;
@@ -89,14 +91,18 @@ export function MoSPIFieldManualsShelf({
     if (onOpenManual) {
       onOpenManual(id);
     } else {
-      alert(`Accessing official MoSPI document: ${id}`);
+      setShelfToast(
+        isHindi
+          ? `आधिकारिक MoSPI दस्तावेज़ खोला जा रहा है: ${id}`
+          : `Accessing official MoSPI document: ${id}`
+      );
     }
   };
 
   const handleDownload = (title: string, pages: string) => {
-    alert(
+    setShelfToast(
       isHindi
-        ? `आधिकारिक MoSPI पीडीएफ डाउनलोड हो रहा है: ${title} (${pages})`
+        ? `आधिकारिक MoSPI पीडीएफ डाउनलोड प्रारंभ: ${title} (${pages})`
         : `Downloading official MoSPI statutory manual: ${title} (${pages})...`
     );
   };
@@ -237,6 +243,23 @@ export function MoSPIFieldManualsShelf({
           </div>
         ))}
       </div>
+
+      {/* In-website status feedback */}
+      {shelfToast && (
+        <div className="flex items-center justify-between gap-2 px-3.5 py-2 rounded-xl bg-[#555934]/10 border border-[#555934]/25 text-xs text-[#555934] animate-in fade-in duration-150">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-[#555934]" />
+            <span className="font-semibold">{shelfToast}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShelfToast(null)}
+            className="text-[#555934]/70 hover:text-[#555934] p-0.5 rounded cursor-pointer"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* Footer link */}
       <div className="pt-2 border-t border-[#BF9B7A]/20 flex flex-wrap items-center justify-between gap-2 text-xs">

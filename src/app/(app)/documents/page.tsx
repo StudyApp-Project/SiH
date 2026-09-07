@@ -20,6 +20,8 @@ import {
   Database,
   Search,
   Sparkles,
+  AlertTriangle,
+  Loader2,
 } from 'lucide-react';
 import { useSafeLocale } from '@/lib/useSafeLocale';
 
@@ -36,6 +38,8 @@ export default function DocumentsPage() {
   const [selectedChunkDoc, setSelectedChunkDoc] = useState<IngestedDocument | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilterComp, setActiveFilterComp] = useState<string>('all');
+  const [deleteConfirmDoc, setDeleteConfirmDoc] = useState<IngestedDocument | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const filteredDocuments = documents.filter((d) => {
     const q = searchQuery.toLowerCase().trim();
@@ -87,14 +91,32 @@ export default function DocumentsPage() {
     };
   }, []);
 
-  const handleDeleteDocument = async (id: string, title: string) => {
-    if (!confirm(isHindi ? `क्या आप वाकई रिपॉजिटरी से "${title}" हटाना चाहते हैं?` : `Are you sure you want to remove "${title}" from the repository?`)) return;
+  const handleOpenDeleteConfirm = (doc: IngestedDocument) => {
+    setDeleteConfirmDoc(doc);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirmDoc) return;
+    const { id, title } = deleteConfirmDoc;
+    setIsDeleting(true);
     try {
       await fetch(`/api/documents?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
       setDocuments((prev) => prev.filter((d) => d.id !== id));
-      setUploadMessage(isHindi ? `दस्तावेज़ संग्रह से "${title}" हटा दिया गया।` : `Removed "${title}" from document repository.`);
+      setUploadMessage(
+        isHindi
+          ? `दस्तावेज़ संग्रह से "${title}" हटा दिया गया।`
+          : `Removed "${title}" from document repository.`
+      );
+      setDeleteConfirmDoc(null);
     } catch (err) {
       console.error('Failed to delete document:', err);
+      setUploadMessage(
+        isHindi
+          ? `दस्तावेज़ "${title}" को हटाने में विफल।`
+          : `Failed to remove "${title}" from document repository.`
+      );
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -391,9 +413,11 @@ export default function DocumentsPage() {
                   </Link>
 
                   <button
-                    onClick={() => handleDeleteDocument(doc.id, doc.title)}
+                    type="button"
+                    onClick={() => handleOpenDeleteConfirm(doc)}
                     className="p-2 text-[#8C5B3E] hover:bg-[#8C5B3E]/10 rounded-xl transition cursor-pointer"
-                    title="Delete document"
+                    title={isHindi ? 'दस्तावेज़ हटाएं' : 'Delete document'}
+                    aria-label={isHindi ? `दस्तावेज़ "${doc.title}" हटाएं` : `Delete document "${doc.title}"`}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -482,6 +506,107 @@ export default function DocumentsPage() {
               >
                 {isHindi ? 'MCQ निर्माण पर आगे बढ़ें →' : 'Proceed to MCQ Generation →'}
               </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* In-Website Document Deletion Confirmation Modal */}
+      {deleteConfirmDoc && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-dialog-title"
+          onClick={() => !isDeleting && setDeleteConfirmDoc(null)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#BF9B7A]/30 space-y-5 animate-in zoom-in-95 duration-150 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top alert badge & close button */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3.5">
+                <div className="h-12 w-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center shrink-0">
+                  <AlertTriangle className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 id="delete-dialog-title" className="text-base font-bold text-[#2d1f17]">
+                    {isHindi ? 'दस्तावेज़ हटाने की पुष्टि' : 'Remove Document?'}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {isHindi ? 'MoSPI डिजिटल रिपॉजिटरी क्रिया' : 'MoSPI Digital Repository Action'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => !isDeleting && setDeleteConfirmDoc(null)}
+                disabled={isDeleting}
+                aria-label="Close dialog"
+                className="p-1.5 text-muted-foreground hover:text-[#2d1f17] hover:bg-[#FAF6F0] rounded-xl transition cursor-pointer disabled:opacity-50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Document Info Card */}
+            <div className="p-3.5 rounded-2xl bg-[#FAF6F0] border border-[#BF9B7A]/30 space-y-1.5">
+              <div className="flex items-center gap-2">
+                <FileText className="w-4 h-4 text-[#8C5B3E] shrink-0" />
+                <span className="text-xs font-bold text-[#2d1f17] line-clamp-1">
+                  {deleteConfirmDoc.title}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 text-[11px] text-[#705849] pl-6">
+                <span className="font-mono">{deleteConfirmDoc.filename}</span>
+                <span>•</span>
+                <span>{deleteConfirmDoc.chunkCount} {isHindi ? 'खंड' : 'chunks'}</span>
+              </div>
+            </div>
+
+            {/* Description prompt */}
+            <p className="text-xs text-[#705849] leading-relaxed">
+              {isHindi ? (
+                <>
+                  क्या आप वाकई रिपॉजिटरी से इस दस्तावेज़ को हटाना चाहते हैं? यह क्रिया संबंधित सभी <strong>{deleteConfirmDoc.chunkCount} खंडों</strong> को AI प्रश्न निर्माण बैंक से स्थायी रूप से हटा देगी।
+                </>
+              ) : (
+                <>
+                  Are you sure you want to remove this document from the repository? All <strong>{deleteConfirmDoc.chunkCount} indexed chunks</strong> will be unlinked from the AI question generator studio.
+                </>
+              )}
+            </p>
+
+            {/* Action buttons */}
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmDoc(null)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-[#BF9B7A]/40 text-[#705849] hover:bg-[#FAF6F0] hover:text-[#2d1f17] text-xs font-bold transition cursor-pointer disabled:opacity-50"
+              >
+                {isHindi ? 'रद्द करें' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>{isHindi ? 'हटाया जा रहा है...' : 'Removing...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>{isHindi ? 'हटाने की पुष्टि करें' : 'Confirm Delete'}</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>

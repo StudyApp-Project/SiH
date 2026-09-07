@@ -17,7 +17,7 @@ import { OfficerDossierModal } from './modals/OfficerDossierModal';
 import { CAPIConnectivityModal } from './modals/CAPIConnectivityModal';
 import { LearnerKarmaLedgerModal } from './modals/LearnerKarmaLedgerModal';
 import { useSafeLocale } from '@/lib/useSafeLocale';
-import { Globe2, LayoutDashboard, BookOpen, Target, GraduationCap, Wifi, Award } from 'lucide-react';
+import { Globe2, LayoutDashboard, BookOpen, Target, GraduationCap, Wifi, Award, X } from 'lucide-react';
 import type { DemoPersona } from '@/lib/types';
 
 export default function LearnerDashboard({ user }: { user: DashboardUserProps }) {
@@ -36,6 +36,7 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
   const [capiModalOpen, setCapiModalOpen] = useState(false);
   const [karmaModalOpen, setKarmaModalOpen] = useState(false);
   const [isOfflineSimulated, setIsOfflineSimulated] = useState(false);
+  const [drillToast, setDrillToast] = useState<{ points: number; message: string } | null>(null);
 
   // Compute readiness index & verified counts
   const totalSkills = profile.competencies.length;
@@ -69,11 +70,12 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
   };
 
   const handleDrillComplete = (points: number) => {
-    alert(
-      isHindi
+    setDrillToast({
+      points,
+      message: isHindi
         ? `बधाई! आपके आधिकारिक कैडर प्रोफाइल में +${points} कर्म अंक जोड़ दिए गए हैं।`
-        : `Congratulations! +${points} Karma Points have been credited to your official civil service dossier.`
-    );
+        : `Congratulations! +${points} Karma Points have been credited to your official civil service dossier.`,
+    });
   };
 
   const tabs = [
@@ -373,6 +375,33 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
         onClose={() => setKarmaModalOpen(false)}
         isHindi={isHindi}
       />
+
+      {/* In-Website Toast for Drill Karma Credit */}
+      {drillToast && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-200">
+          <div className="bg-[#2d1f17] text-white px-5 py-4 rounded-2xl shadow-2xl border border-[#BF9B7A]/40 flex items-center gap-3.5 max-w-md">
+            <div className="h-10 w-10 rounded-xl bg-[#F8C858]/20 text-[#F8C858] flex items-center justify-center shrink-0">
+              <Award className="h-5 w-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-[#F8C858]">
+                {isHindi ? 'कर्म अंक अर्जित!' : 'Karma Points Earned!'}
+              </p>
+              <p className="text-xs text-white/90 leading-snug mt-0.5">
+                {drillToast.message}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setDrillToast(null)}
+              aria-label="Close notification"
+              className="text-white/60 hover:text-white p-1 rounded-lg cursor-pointer transition"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
