@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { matchPreMadeFaq, COPILOT_PREMADE_FAQS } from './copilotFaqResponses';
 
 describe('copilotFaqResponses', () => {
-  it('has 6 core pre-made FAQs', () => {
-    expect(COPILOT_PREMADE_FAQS.length).toBe(6);
+  it('has core and navigation pre-made FAQs', () => {
+    expect(COPILOT_PREMADE_FAQS.length).toBeGreaterThanOrEqual(11);
   });
 
   it('matches all exact quick action prompts', () => {
@@ -28,6 +28,14 @@ describe('copilotFaqResponses', () => {
     expect(matchPreMadeFaq('explain the frac levels')).toContain('Mission Karmayogi');
     expect(matchPreMadeFaq('start assessment')).toContain('Starting an Adaptive Assessment');
     expect(matchPreMadeFaq('recommend courses')).toContain('Recommended iGOT Karmayogi Courses');
+  });
+
+  it('matches navigation queries instantly', () => {
+    expect(matchPreMadeFaq('where can I find manuals?')).toContain('/documents');
+    expect(matchPreMadeFaq('how does mcq generator work?')).toContain('/mcq-generator');
+    expect(matchPreMadeFaq('what tests are available?')).toContain('/assignments');
+    expect(matchPreMadeFaq('how does offline mode work?')).toContain('IndexedDB');
+    expect(matchPreMadeFaq('where is my profile?')).toContain('/profile');
   });
 
   it('customizes greeting with user context', () => {

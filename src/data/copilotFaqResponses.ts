@@ -276,11 +276,182 @@ StatVidya is India's dedicated AI-powered competency management system for the *
 #### Core Platform Modules:
 - 📊 **Dashboard (\`/dashboard\`)**: Track your real-time Readiness Index, personalized greeting, and competency radar overview.
 - 🎯 **Skill Gap Matrix (\`/skill-gap\`)**: Drill down into operational skill gaps with priority weights and remedial suggestions.
-- 📝 **Adaptive Assessments (\`/assessment/comp-capi\`)**: Live evaluation engine with instant scoring and competency upgrades.
+- 📝 **Assessments & Statutory Drills (\`/assignments\`)**: 8 timed verified tests (including CAPI, Demarcation, PLFS, and Scrutiny).
+- 🧠 **Practice MCQs (\`/mcq-generator\`)**: Generate self-paced questions grounded directly in uploaded MoSPI manuals.
+- 📄 **MoSPI Documents Library (\`/documents\`)**: Ingest, search, and practice questions from official MoSPI survey manuals.
 - 🛤️ **Learning Pathways (\`/pathways\`)**: Curated MoSPI & iGOT courses matched directly to your deficits.
-- 📑 **Survey Document Parser (\`/documents\`)**: Upload NSSO/NSSTA manuals and generate instant competency frameworks.
-- 🤖 **AI MCQ Generator (\`/mcq-generator\`)**: Create customized question banks from official statistical handbooks.
-- 🏛️ **Admin Workforce Governance (\`/admin/analytics\`)**: Departmental scrutiny audits, readiness correlations, and priority flagging.`;
+- 👤 **Profile & Cadre Dossier (\`/profile\`)**: Official cadre credentials, verified FRAC badges, and career timeline.
+- 🏛️ **Admin Workforce Governance (\`/dashboard#regional-offices\`)**: Regional health, scrutiny error correlations, and priority flagging.`;
+    },
+  },
+  {
+    id: 'nav-documents',
+    matchPatterns: [
+      'Where can I find MoSPI manuals and documents?',
+      /where\s*(are|can\s*i\s*find)\s*(the\s*)?(manuals?|documents?|pdfs?)/i,
+      /how\s*to\s*upload\s*manual/i,
+      /open\s*documents?/i,
+      /दस्तावेज़\s*कहाँ/i,
+      /मैनुअल\s*कहाँ/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `### 📄 MoSPI दस्तावेज़ और सर्वेक्षण नियमावली
+        
+आधिकारिक सर्वेक्षण मैनुअल और दिशानिर्देश देखने के लिए \`/documents\` पर जाएं।
+
+#### मुख्य सुविधाएं:
+- **लाइव खोज व फ़िल्टर**: PLFS, CAPI और Schedule 0.0 मैनुअल को तुरंत खोजें।
+- **योग्यता फ़िल्टर**: CAPI ऑपरेशंस, सीमांकन, डेटा जांच, या नमूनाकरण के अनुसार छांटें।
+- **प्रश्न अभ्यास**: किसी भी मैनुअल से सीधे प्रश्न हल करने के लिए "अभ्यास" बटन पर क्लिक करें।
+- **दस्तावेज़ अपलोड**: MoSPI प्रशिक्षण सामग्री को सुरक्षित रूप से अपलोड करें।`;
+      }
+      return `### 📄 MoSPI Documents & Manuals Library
+
+Head to \`/documents\` in the sidebar to access official MoSPI survey manuals and guidelines.
+
+#### Key Features:
+- **Live Search & Filters**: Search across PLFS, CAPI, Schedule 0.0, and ASSE manuals.
+- **Competency Pills**: Filter by CAPI Operations, Demarcation, Data Scrutiny, Sampling & Design, or Field Validation.
+- **Direct Question Practice**: Click "Practice Questions from Manuals" to jump straight into \`/mcq-generator\` with grounded context.
+- **Document Ingestion**: Upload official PDF and TXT guidelines safely with automatic chunk indexing.`;
+    },
+  },
+  {
+    id: 'nav-mcq-generator',
+    matchPatterns: [
+      'How does the MCQ Generator work?',
+      /how\s*(does\s*)?(the\s*)?mcq\s*generator\s*work/i,
+      /how\s*to\s*generate\s*(mcqs?|questions?|quiz)/i,
+      /open\s*(mcq|quiz)/i,
+      /एमसीक्यू\s*जनरेटर/i,
+      /प्रश्न\s*कैसे\s*बनाएं/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `### 🧠 MoSPI दस्तावेज़ अभ्यास एवं MCQ स्टेशन
+        
+स्व-गति से प्रश्न अभ्यास करने के लिए \`/mcq-generator\` पर जाएं।
+
+#### यह कैसे काम करता है:
+1. **दस्तावेज़ चुनें**: अपने अपलोड किए गए MoSPI मैनुअल में से किसी एक को चुनें (जैसे PLFS Field Instruction Manual 2024-25)।
+2. **लक्षित कठिनाई तय करें**: अपनी तैयारी के अनुसार **सरल**, **मध्यम**, या **कठिन** चुनें।
+3. **प्रश्नों की संख्या**: 1, 5, 10, या 25 प्रश्नों का चयन करें और तुरंत प्रामाणिक प्रश्नों का अभ्यास करें!`;
+      }
+      return `### 🧠 MoSPI Document Practice & MCQ Station
+
+Head to \`/mcq-generator\` under Content Tools for self-paced, authenticated question generation.
+
+#### How It Works:
+1. **Select Grounding Manual**: Choose from ingested MoSPI manuals (e.g. PLFS Field Instruction Manual 2024-25 or CAPI Operations Manual).
+2. **Target Difficulty**: Clean 3-tier calibration — **Easy**, **Medium**, or **Hard**.
+3. **Question Volume**: Generate 1, 5, 10, or 25 questions grounded strictly in official MoSPI methodology!`;
+    },
+  },
+  {
+    id: 'nav-assignments',
+    matchPatterns: [
+      'What tests and assignments are available?',
+      /what\s*(tests?|assignments?|drills?)\s*(are\s*)?available/i,
+      /list\s*(all\s*)?tests/i,
+      /show\s*assessments/i,
+      /परीक्षण\s*सूची/i,
+      /कौन\s*से\s*टेस्ट\s*हैं/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `### 📝 वैधानिक मूल्यांकन एवं टेस्ट सूची
+
+सभी 8 आधिकारिक परीक्षण देने के लिए \`/assignments\` पर जाएं:
+
+1. 📱 **CAPI टैबलेट संचालन**: \`/assessment/comp-capi\`
+2. 🗺️ **अनुसूची 0.0 एवं UFS सीमांकन**: \`/assessment/comp-demarcation\`
+3. 📊 **PLFS सर्वेक्षण कार्यप्रणाली**: \`/assessment/comp-survey\`
+4. 📋 **सांख्यिकीय डेटा जांच और सत्यापन**: \`/assessment/comp-scrutiny\`
+5. 🧩 **समस्या समाधान**: \`/assessment/problem-solving\`
+6. 🔍 **समीक्षात्मक सोच**: \`/assessment/critical-thinking\`
+7. 💬 **संचार दक्षता**: \`/assessment/communication\`
+8. ⚖️ **निर्णय क्षमता**: \`/assessment/decision-making\`
+
+सभी टेस्ट में टाइमर और समीक्षा पैलेट शामिल हैं, तथा ये ऑफ़लाइन भी कार्य करते हैं!`;
+      }
+      return `### 📝 Statutory Assessments & Drills Catalog
+
+Visit \`/assignments\` to take any of the 8 verified statutory drills:
+
+1. 📱 **CAPI Tablet Operations**: \`/assessment/comp-capi\`
+2. 🗺️ **Schedule 0.0 & UFS Demarcation**: \`/assessment/comp-demarcation\`
+3. 📊 **PLFS Survey Methodology**: \`/assessment/comp-survey\`
+4. 📋 **Statistical Scrutiny & Validation Rules**: \`/assessment/comp-scrutiny\`
+5. 🧩 **Problem Solving**: \`/assessment/problem-solving\`
+6. 🔍 **Critical Thinking**: \`/assessment/critical-thinking\`
+7. 💬 **Field Communication**: \`/assessment/communication\`
+8. ⚖️ **Decision Making**: \`/assessment/decision-making\`
+
+Each test features timed simulations, progress palettes, and automatic FRAC competency level verification upon scoring 70%+!`;
+    },
+  },
+  {
+    id: 'nav-offline-capi',
+    matchPatterns: [
+      'How does offline mode work?',
+      /how\s*(does\s*)?offline\s*(mode\s*)?work/i,
+      /can\s*i\s*work\s*without\s*internet/i,
+      /indexeddb/i,
+      /ऑफ़लाइन\s*काम/i,
+      /बिना\s*इंटरनेट/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `### 📡 CAPI ऑफ़लाइन इंजन और सिंक प्रणाली
+
+स्टैटविद्या दूरस्थ ग्रामीण और जनजातीय क्षेत्रों में बिना इंटरनेट के कार्य करने के लिए पूरी तरह सुसज्जित है:
+
+- **IndexedDB एन्क्रिप्टेड स्टोरेज**: आपके सभी परीक्षण उत्तर और प्रगति ब्राउज़र के स्थानीय सुरक्षित कैश में सहेजे जाते हैं।
+- **स्वतः तुल्यकालन**: जैसे ही डिवाइस इंटरनेट से जुड़ता है, सभी कतारबद्ध उत्तर क्लाउड से सुरक्षित रूप से सिंक हो जाते हैं।
+- **टॉपबार स्थिति सूचक**: शीर्ष बार में वास्तविक समय सिंक स्थिति (ऑफ़लाइन, सिंक हो रहा है, पूर्ण) देखें।`;
+      }
+      return `### 📡 CAPI Offline Engine & Synchronization
+
+StatVidya is engineered for seamless operation in remote field environments without active internet connectivity:
+
+- **IndexedDB Encrypted Cache**: All your active test attempts, draft responses, and session tokens are cached locally and securely.
+- **Idempotent Background Sync**: Submissions automatically queue and reconcile idempotently using unique local IDs upon network restoration.
+- **Real-Time Status Indicator**: Monitor your CAPI offline status anytime via the connectivity pill in the top navigation bar.`;
+    },
+  },
+  {
+    id: 'nav-profile',
+    matchPatterns: [
+      'Where is my profile and badges?',
+      /where\s*(is|are)\s*my\s*profile/i,
+      /how\s*to\s*see\s*my\s*badges/i,
+      /view\s*cadre\s*details/i,
+      /मेरी\s*प्रोफ़ाइल/i,
+      /बैज\s*कहाँ/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `### 👤 संवर्ग प्रोफ़ाइल एवं सत्यापित बैज
+
+अपनी आधिकारिक क्रेडेंशियल देखने के लिए \`/profile\` पर जाएं:
+
+- **आधिकारिक संवर्ग विवरण**: संवर्ग, कर्मचारी आईडी, पदनाम और तैनाती क्षेत्र।
+- **FRAC प्रवीणता बैज**: मूल्यांकन-सत्यापित बनाम स्व-मूल्यांकित बैज।
+- **विकास समयरेखा**: पूर्ण किए गए परीक्षणों और शिक्षण मील के पत्थरों का आधिकारिक रिकॉर्ड।`;
+      }
+      return `### 👤 Official Cadre Profile & Badges
+
+Navigate to \`/profile\` in the sidebar (or click your user avatar in the Topbar):
+
+- **Cadre Dossier**: View official cadre, designation, employee ID, and department deployment.
+- **Verified FRAC Badges**: Inspect Assessment-Verified vs Self-Assessed competency credentials.
+- **Career Growth Timeline**: Track milestones from completed statutory drills and verified pathway courses.`;
     },
   },
 ];

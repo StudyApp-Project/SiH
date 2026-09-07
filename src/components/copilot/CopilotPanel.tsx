@@ -31,7 +31,9 @@ interface CopilotPanelProps {
 const QUICK_ACTIONS_EN = [
   { label: '📊 My Readiness', prompt: 'What is my readiness index and how can I improve it?' },
   { label: '🎯 Skill Gaps', prompt: 'Show me my top competency gaps and what to do about them' },
-  { label: '📝 Take Assessment', prompt: 'How do I start an assessment?' },
+  { label: '📝 Take Assessment', prompt: 'What tests and assignments are available?' },
+  { label: '🧠 Practice MCQs', prompt: 'How does the MCQ Generator work?' },
+  { label: '📄 MoSPI Manuals', prompt: 'Where can I find MoSPI manuals and documents?' },
   { label: '🛤️ Recommend Courses', prompt: 'Recommend iGOT courses for my skill gaps' },
   { label: '🏛️ FRAC Levels', prompt: 'Explain the FRAC competency levels L1 to L5' },
   { label: '🧭 Platform Guide', prompt: 'Give me a quick overview of all platform features' },
@@ -40,7 +42,9 @@ const QUICK_ACTIONS_EN = [
 const QUICK_ACTIONS_HI = [
   { label: '📊 मेरी तैयारी', prompt: 'What is my readiness index and how can I improve it?' },
   { label: '🎯 कौशल अंतर', prompt: 'Show me my top competency gaps and what to do about them' },
-  { label: '📝 टेस्ट दें', prompt: 'How do I start an assessment?' },
+  { label: '📝 टेस्ट दें', prompt: 'What tests and assignments are available?' },
+  { label: '🧠 अभ्यास MCQ', prompt: 'How does the MCQ Generator work?' },
+  { label: '📄 सर्वेक्षण नियमावली', prompt: 'Where can I find MoSPI manuals and documents?' },
   { label: '🛤️ अनुशंसित कोर्स', prompt: 'Recommend iGOT courses for my skill gaps' },
   { label: '🏛️ FRAC स्तर', prompt: 'Explain the FRAC competency levels L1 to L5' },
   { label: '🧭 मंच का परिचय', prompt: 'Give me a quick overview of all platform features' },
