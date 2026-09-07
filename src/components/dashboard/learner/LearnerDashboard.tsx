@@ -16,6 +16,7 @@ import { ManualReaderModal } from './modals/ManualReaderModal';
 import { OfficerDossierModal } from './modals/OfficerDossierModal';
 import { CAPIConnectivityModal } from './modals/CAPIConnectivityModal';
 import { LearnerKarmaLedgerModal } from './modals/LearnerKarmaLedgerModal';
+import { useLocale } from 'next-intl';
 import { Globe2, LayoutDashboard, BookOpen, Target, GraduationCap, Wifi, Award } from 'lucide-react';
 import type { DemoPersona } from '@/lib/types';
 
@@ -23,13 +24,14 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
   // Retrieve official FRAC profile
   const profile = getPersonaFRAC(user);
 
-  // Language state: auto-detect from user profile (Sunita Devi defaults to Hindi)
-  const initialIsHindi =
-    user.user_metadata?.preferred_language === 'hi' ||
-    profile.preferredLanguage === 'hi' ||
-    user.id?.includes('sunita');
+  // Read global app locale from next-intl
+  const globalLocale = useLocale();
+  const [isHindi, setIsHindi] = useState(globalLocale === 'hi');
 
-  const [isHindi, setIsHindi] = useState(initialIsHindi);
+  // Keep synced with global locale changes
+  useEffect(() => {
+    setIsHindi(globalLocale === 'hi');
+  }, [globalLocale]);
   const [activeTab, setActiveTab] = useState<'overview' | 'manuals' | 'competencies' | 'pathways' | 'capi'>('overview');
 
   // Interactive Modal States
@@ -139,7 +141,26 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
 
           <button
             type="button"
-            onClick={() => setIsHindi(!isHindi)}
+            onClick={() => {
+              const nextLang = isHindi ? 'en' : 'hi';
+              document.cookie = `locale=${nextLang};path=/;max-age=31536000;SameSite=Lax`;
+              try {
+                const match = document.cookie.match(/(?:^|;\s*)demo_user=([^;]+)/);
+                if (match) {
+                  const demoUser = JSON.parse(decodeURIComponent(match[1]));
+                  demoUser.preferred_language = nextLang;
+                  if (demoUser.user_metadata) {
+                    demoUser.user_metadata.preferred_language = nextLang;
+                  }
+                  document.cookie = `demo_user=${encodeURIComponent(
+                    JSON.stringify(demoUser)
+                  )};path=/;max-age=604800;SameSite=Lax`;
+                }
+              } catch {
+                // Ignore cookie JSON parse error
+              }
+              window.location.reload();
+            }}
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-[#BF9B7A]/40 text-xs font-bold text-[#555934] hover:bg-[#FAF6F0] transition-colors shadow-2xs cursor-pointer"
             aria-label="Toggle Hindi language"
           >
