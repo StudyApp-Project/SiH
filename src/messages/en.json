@@ -24,7 +24,14 @@
     "persona": "Persona",
     "learner": "Learner",
     "trainer": "Trainer",
-    "admin": "Admin"
+    "admin": "Admin",
+    "facultyCommandDesk": "Faculty Command Desk",
+    "traineeErrorAnalytics": "Trainee Error Analytics",
+    "workforceCommand": "Workforce Command",
+    "scrutinyCorrelation": "Scrutiny Correlation",
+    "regionalOfficeHealth": "Regional Office Health",
+    "nationalCompetencyMatrix": "National Competency Matrix",
+    "statutoryAssessmentAudit": "Statutory Assessment Audit"
   },
   "notifications": {
     "title": "Notifications",

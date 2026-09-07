@@ -24,7 +24,14 @@
     "persona": "व्यक्तित्व",
     "learner": "शिक्षार्थी",
     "trainer": "प्रशिक्षक",
-    "admin": "प्रशासक"
+    "admin": "प्रशासक",
+    "facultyCommandDesk": "संकाय कमान डेस्क",
+    "traineeErrorAnalytics": "प्रशिक्षु त्रुटि विश्लेषण",
+    "workforceCommand": "श्रमबल कमान",
+    "scrutinyCorrelation": "जांच सहसंबंध",
+    "regionalOfficeHealth": "क्षेत्रीय कार्यालय स्वास्थ्य",
+    "nationalCompetencyMatrix": "राष्ट्रीय योग्यता मैट्रिक्स",
+    "statutoryAssessmentAudit": "वैधानिक मूल्यांकन ऑडिट"
   },
   "notifications": {
     "title": "सूचनाएं",
