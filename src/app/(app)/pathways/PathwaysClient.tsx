@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { ProvenanceBadge } from '@/components/ProvenanceBadge';
 import { rankCoursesForGaps } from '@/services/recommendationService';
@@ -8,6 +8,7 @@ import { getPersonaFRAC } from '@/data/fracCadres';
 import { CompetencyService } from '@/services/competencyService';
 import type { CompetencyGap } from '@/lib/types';
 import type { AppUser } from '@/lib/auth';
+import { useSafeLocale } from '@/lib/useSafeLocale';
 
 interface RecommendedCourse {
   id: string;
@@ -37,7 +38,7 @@ interface PathwaysData {
   totalGaps: number;
 }
 
-function CourseCard({ course }: { course: RecommendedCourse }) {
+function CourseCard({ course, isHindi }: { course: RecommendedCourse; isHindi?: boolean }) {
   const priorityColors = {
     HIGH: 'bg-[#8C5B3E]/12 text-[#8C5B3E]',
     MEDIUM: 'bg-[#BF9B7A]/20 text-[#593E2E]',
@@ -45,9 +46,9 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
   };
 
   const priorityLabels = {
-    HIGH: '🔥 High Priority',
-    MEDIUM: '⚡ Medium Priority',
-    LOW: '✅ Low Priority',
+    HIGH: isHindi ? '🔥 उच्च प्राथमिकता' : '🔥 High Priority',
+    MEDIUM: isHindi ? '⚡ मध्यम प्राथमिकता' : '⚡ Medium Priority',
+    LOW: isHindi ? '✅ सामान्य प्राथमिकता' : '✅ Low Priority',
   };
 
   return (
@@ -56,7 +57,7 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <h3 className="text-lg font-semibold text-foreground group-hover:text-[#555934] transition-colors">
-              {course.title}
+              {isHindi && course.title_hi ? course.title_hi : course.title}
             </h3>
             <ProvenanceBadge provenance="SYNTHETIC_DEMO_DATA" showLabel={false} size="sm" />
           </div>
@@ -72,15 +73,19 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
       </div>
 
       <div className="mb-4">
-        <h4 className="text-sm font-medium text-foreground mb-2">Why This Course</h4>
+        <h4 className="text-sm font-medium text-foreground mb-2">
+          {isHindi ? 'यह पाठ्यक्रम क्यों' : 'Why This Course'}
+        </h4>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          {course.whyRecommended}
+          {isHindi && course.whyRecommended_hi ? course.whyRecommended_hi : course.whyRecommended}
         </p>
       </div>
 
       <div className="mb-4">
         <h4 className="text-sm font-medium text-foreground mb-2">
-          Targets {course.targetCompetencies.length} Competency {course.targetCompetencies.length === 1 ? 'Gap' : 'Gaps'}:
+          {isHindi
+            ? `${course.targetCompetencies.length} दक्षताओं के अंतर को पूरा करता है:`
+            : `Targets ${course.targetCompetencies.length} Competency ${course.targetCompetencies.length === 1 ? 'Gap' : 'Gaps'}:`}
         </h4>
         <div className="flex flex-wrap gap-2">
           {course.targetCompetencies.map((comp, idx) => (
@@ -97,17 +102,19 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
       {course.competencyGaps && course.competencyGaps.length > 0 && (
         <div className="mb-4">
           <h4 className="text-sm font-medium text-foreground mb-2">
-            Specific Gaps Addressed:
+            {isHindi ? 'संबोधित विशिष्ट अंतर:' : 'Specific Gaps Addressed:'}
           </h4>
           <div className="space-y-2">
             {course.competencyGaps.map((gap, idx) => (
               <div key={idx} className="flex items-center justify-between text-sm bg-[#F2E6D8]/50 rounded-xl p-3">
                 <span className="font-medium text-foreground">{gap.competency}</span>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className="text-muted-foreground">Current: L{gap.currentLevel}</span>
+                  <span className="text-muted-foreground">{isHindi ? 'वर्तमान:' : 'Current:'} L{gap.currentLevel}</span>
                   <span className="text-slate-400">→</span>
                   <span className="font-bold text-[#555934]">L{gap.targetLevel}</span>
-                  <span className="text-muted-foreground ml-1">({gap.gap} level{gap.gap === 1 ? '' : 's'})</span>
+                  <span className="text-muted-foreground ml-1">
+                    ({gap.gap} {isHindi ? 'स्तर' : gap.gap === 1 ? 'level' : 'levels'})
+                  </span>
                 </div>
               </div>
             ))}
@@ -118,13 +125,13 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
       <div className="flex items-center justify-between pt-4">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span className="w-2 h-2 rounded-full bg-[#555934]"></span>
-          <span>Live integration with iGOT Karmayogi</span>
+          <span>{isHindi ? 'iGOT कर्मयोगी के साथ सीधा एकीकरण' : 'Live integration with iGOT Karmayogi'}</span>
         </div>
         <a
           href={course.iGotLink || "#"}
           className="inline-flex items-center gap-2 px-4 py-2 bg-[#555934] hover:bg-[#3e4225] text-white text-sm font-semibold rounded-xl transition-all shadow-xs active:scale-95"
         >
-          View Course
+          {isHindi ? 'पाठ्यक्रम देखें' : 'View Course'}
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
@@ -134,9 +141,9 @@ function CourseCard({ course }: { course: RecommendedCourse }) {
   );
 }
 
-function buildPersonaPathwaysData(user?: AppUser | null): PathwaysData {
+function buildPersonaPathwaysData(user?: AppUser | null, isHindiLang?: boolean): PathwaysData {
   const profile = getPersonaFRAC(user);
-  const isHindi = user?.user_metadata?.preferred_language === 'hi' || profile.preferredLanguage === 'hi';
+  const isHindi = isHindiLang ?? (user?.user_metadata?.preferred_language === 'hi' || profile.preferredLanguage === 'hi');
 
   const gaps: CompetencyGap[] = profile.competencies.map((comp) => {
     const gap = Math.max(0, comp.targetLevel - comp.currentLevel);
@@ -213,13 +220,17 @@ function buildPersonaPathwaysData(user?: AppUser | null): PathwaysData {
 
 export default function PathwaysClient({ user }: { user?: AppUser | null }) {
   const t = useTranslations();
-  const [data] = useState<PathwaysData>(() => buildPersonaPathwaysData(user));
+  const locale = useSafeLocale(user?.user_metadata?.preferred_language || 'en');
+  const isHindi = locale === 'hi';
+  const data = useMemo(() => buildPersonaPathwaysData(user, isHindi), [user, isHindi]);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
 
   if (!data) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">No pathways available</p>
+        <p className="text-muted-foreground">
+          {isHindi ? 'कोई शिक्षण पथ उपलब्ध नहीं है' : 'No pathways available'}
+        </p>
       </div>
     );
   }
@@ -241,17 +252,17 @@ export default function PathwaysClient({ user }: { user?: AppUser | null }) {
         {/* Readiness Card */}
         <div className="rounded-2xl bg-white p-6 shadow-card hover:shadow-card-hover transition-all">
           <h3 className="text-sm font-medium text-muted-foreground mb-2">
-            Overall Readiness
+            {isHindi ? 'समग्र तत्परता' : 'Overall Readiness'}
           </h3>
           <div className="text-3xl font-bold text-[#555934] mb-1 font-mono">
             {data.readinessIndex}%
           </div>
           <p className="text-xs text-muted-foreground">
             {data.readinessIndex >= 80
-              ? 'Excellent! Most competencies met'
+              ? isHindi ? 'उत्कृष्ट! अधिकांश दक्षताएं पूर्ण' : 'Excellent! Most competencies met'
               : data.readinessIndex >= 50
-              ? 'Good progress, some gaps remain'
-              : 'Significant gaps need attention'
+              ? isHindi ? 'अच्छी प्रगति, कुछ कमियां शेष' : 'Good progress, some gaps remain'
+              : isHindi ? 'दक्षताओं पर ध्यान देने की आवश्यकता' : 'Significant gaps need attention'
             }
           </p>
         </div>
@@ -259,17 +270,17 @@ export default function PathwaysClient({ user }: { user?: AppUser | null }) {
         {/* Gaps Card */}
         <div className="rounded-2xl bg-white p-6 shadow-card hover:shadow-card-hover transition-all">
           <h3 className="text-sm font-medium text-muted-foreground mb-2">
-            Total Competency Gaps
+            {isHindi ? 'कुल दक्षता अंतर' : 'Total Competency Gaps'}
           </h3>
           <div className="text-3xl font-bold text-[#8C5B3E] mb-1 font-mono">
             {data.totalGaps}
           </div>
           <p className="text-xs text-muted-foreground">
             {data.totalGaps === 1
-              ? 'One level needs improvement'
+              ? isHindi ? 'एक स्तर में सुधार की आवश्यकता' : 'One level needs improvement'
               : data.totalGaps <= 3
-              ? 'Few gaps identified'
-              : 'Multiple gaps require attention'
+              ? isHindi ? 'कुछ कमियां पहचानी गईं' : 'Few gaps identified'
+              : isHindi ? 'कई कमियों पर ध्यान देने की आवश्यकता' : 'Multiple gaps require attention'
             }
           </p>
         </div>
@@ -277,13 +288,13 @@ export default function PathwaysClient({ user }: { user?: AppUser | null }) {
         {/* Priority Courses Card */}
         <div className="rounded-2xl bg-white p-6 shadow-card hover:shadow-card-hover transition-all">
           <h3 className="text-sm font-medium text-muted-foreground mb-2">
-            Recommended Courses
+            {isHindi ? 'अनुशंसित पाठ्यक्रम' : 'Recommended Courses'}
           </h3>
           <div className="text-3xl font-bold text-[#593E2E] mb-1 font-mono">
             {data.pathways.filter(c => c.priority === 'HIGH').length}
           </div>
           <p className="text-xs text-muted-foreground">
-            High-priority courses matching your gaps
+            {isHindi ? 'आपकी दक्षता कमियों से मेल खाने वाले उच्च-प्राथमिकता पाठ्यक्रम' : 'High-priority courses matching your gaps'}
           </p>
         </div>
       </div>
@@ -292,17 +303,17 @@ export default function PathwaysClient({ user }: { user?: AppUser | null }) {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-foreground">
-            Recommended Learning Pathways
+            {isHindi ? 'अनुशंसित शिक्षण पथ' : 'Recommended Learning Pathways'}
           </h2>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>Integration:</span>
+            <span>{isHindi ? 'एकीकरण:' : 'Integration:'}</span>
             <ProvenanceBadge provenance="SYNTHETIC_DEMO_DATA" showLabel={true} size="sm" />
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {data.pathways.map((course) => (
-            <CourseCard key={course.id} course={course} />
+            <CourseCard key={course.id} course={course} isHindi={isHindi} />
           ))}
         </div>
       </div>
@@ -311,14 +322,13 @@ export default function PathwaysClient({ user }: { user?: AppUser | null }) {
       {selectedCourse && data.pathways.find(c => c.id === selectedCourse) && (
         <div className="rounded-2xl bg-white p-6 shadow-card">
           <h3 className="text-lg font-semibold text-foreground mb-4">
-            Course Details
+            {isHindi ? 'पाठ्यक्रम विवरण' : 'Course Details'}
           </h3>
-          {/* Course details would go here */}
           <button
             onClick={() => setSelectedCourse(null)}
             className="text-sm text-primary hover:underline"
           >
-            Show all courses
+            {isHindi ? 'सभी पाठ्यक्रम दिखाएं' : 'Show all courses'}
           </button>
         </div>
       )}
