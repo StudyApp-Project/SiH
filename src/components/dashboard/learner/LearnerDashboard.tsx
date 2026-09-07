@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { DashboardUserProps } from '@/components/dashboard/RoleDashboardRouter';
 import { getPersonaFRAC } from '@/data/fracCadres';
 import { LearnerKpiStrip } from './LearnerKpiStrip';
@@ -16,20 +17,30 @@ import { ManualReaderModal } from './modals/ManualReaderModal';
 import { OfficerDossierModal } from './modals/OfficerDossierModal';
 import { CAPIConnectivityModal } from './modals/CAPIConnectivityModal';
 import { LearnerKarmaLedgerModal } from './modals/LearnerKarmaLedgerModal';
-import { Globe2, LayoutDashboard, BookOpen, Target, GraduationCap, Wifi, Award } from 'lucide-react';
+import { useLocale } from 'next-intl';
+import { LayoutDashboard, BookOpen, Target, GraduationCap, Wifi, Award } from 'lucide-react';
 import type { DemoPersona } from '@/lib/types';
 
 export default function LearnerDashboard({ user }: { user: DashboardUserProps }) {
+  const router = useRouter();
   // Retrieve official FRAC profile
   const profile = getPersonaFRAC(user);
 
-  // Language state: auto-detect from user profile (Sunita Devi defaults to Hindi)
-  const initialIsHindi =
-    user.user_metadata?.preferred_language === 'hi' ||
-    profile.preferredLanguage === 'hi' ||
-    user.id?.includes('sunita');
+  // Global next-intl locale integration
+  let currentLocale: string | null = null;
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    currentLocale = useLocale();
+  } catch {
+    currentLocale = null;
+  }
 
-  const [isHindi, setIsHindi] = useState(initialIsHindi);
+  // Active language is driven by the global Topbar language toggle (next-intl locale),
+  // with fallback to user profile preference in test environments.
+  const isHindi = currentLocale
+    ? currentLocale === 'hi'
+    : user.user_metadata?.preferred_language === 'hi' || profile.preferredLanguage === 'hi' || user.id?.includes('sunita');
+
   const [activeTab, setActiveTab] = useState<'overview' | 'manuals' | 'competencies' | 'pathways' | 'capi'>('overview');
 
   // Interactive Modal States
@@ -97,7 +108,7 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
     },
     {
       id: 'pathways' as const,
-      label: isHindi ? 'कर्मयोगी प्रगति पथ' : 'Karmayogi Pathways',
+      label: isHindi ? 'सरकारी पाठ्यक्रम (Karmayogi Pathways)' : 'Government Courses (Karmayogi Pathways)',
       icon: GraduationCap,
     },
     {
@@ -135,16 +146,6 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
           >
             <Award className="h-3.5 w-3.5 text-[#8C5B3E]" />
             <span className="font-mono">+550 KP</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsHindi(!isHindi)}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-[#BF9B7A]/40 text-xs font-bold text-[#555934] hover:bg-[#FAF6F0] transition-colors shadow-2xs cursor-pointer"
-            aria-label="Toggle Hindi language"
-          >
-            <Globe2 className="h-3.5 w-3.5 text-[#8C5B3E]" />
-            <span>{isHindi ? 'English में देखें' : 'हिन्दी में बदलें'}</span>
           </button>
         </div>
       </div>
@@ -204,6 +205,24 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
             onViewGaps={() => setActiveTab('competencies')}
           />
 
+          {/* Main Content Grid: Priority Competency Gaps & Government Courses Table */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left Column: Priority Competency Gaps (7 cols) */}
+            <div className="lg:col-span-7 space-y-6">
+              <PriorityGapsCard
+                competencies={profile.competencies}
+                isHindi={isHindi}
+                onBridgeGap={(competencyId) => router.push(`/assessment/${competencyId}`)}
+                onViewAllGaps={() => setActiveTab('competencies')}
+              />
+            </div>
+
+            {/* Right Column: Enrolled Courses Table (5 cols) */}
+            <div className="lg:col-span-5 space-y-6">
+              <LearnerCoursesTable isHindi={isHindi} />
+            </div>
+          </div>
+
           {/* Horizontal Priority Drills Carousel */}
           <HorizontalDrillsCarousel
             onStartDrill={handleStartDrill}
@@ -215,24 +234,6 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
             isHindi={isHindi}
             onOpenManual={handleOpenManual}
           />
-
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left Column: Priority Competency Gaps (7 cols) */}
-            <div className="lg:col-span-7 space-y-6">
-              <PriorityGapsCard
-                competencies={profile.competencies}
-                isHindi={isHindi}
-                onBridgeGap={() => handleStartDrill('drill-schedule-0')}
-                onViewAllGaps={() => setActiveTab('competencies')}
-              />
-            </div>
-
-            {/* Right Column: Enrolled Courses Table (5 cols) */}
-            <div className="lg:col-span-5 space-y-6">
-              <LearnerCoursesTable isHindi={isHindi} />
-            </div>
-          </div>
         </div>
       )}
 
@@ -297,7 +298,7 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
           <PriorityGapsCard
             competencies={profile.competencies}
             isHindi={isHindi}
-            onBridgeGap={() => handleStartDrill('drill-schedule-0')}
+            onBridgeGap={(competencyId) => router.push(`/assessment/${competencyId}`)}
           />
           <HorizontalDrillsCarousel
             onStartDrill={handleStartDrill}

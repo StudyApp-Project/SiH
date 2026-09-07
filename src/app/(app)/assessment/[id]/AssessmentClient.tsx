@@ -70,8 +70,24 @@ export default function AssessmentClient({
   const [timeRemaining, setTimeRemaining] = useState(30 * 60); // 30 minutes in seconds
   const [isAnimating, setIsAnimating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isOffline, setIsOffline] = useState(false);
 
   const handleSubmitAssessmentRef = useRef<(() => void) | null>(null);
+
+  // Offline detection without SSR hydration mismatch
+  useEffect(() => {
+    setIsOffline(typeof navigator !== 'undefined' ? !navigator.onLine : false);
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // Timer effect
   useEffect(() => {
@@ -150,8 +166,8 @@ export default function AssessmentClient({
       const numericLevel = parseInt((result.final_level || 'L1').replace(/\D/g, ''), 10) || 1;
       saveCompetencyPromotion(userId, competencyId, numericLevel);
 
-      // Queue for offline sync
-      const local_id = await offlineQueueManager.queueAssessment({
+      // Queue for offline sync in PENDING status (auto-flushed by useQueueSync)
+      await offlineQueueManager.queueAssessment({
         local_id: assessmentState.assessment_id,
         assessment_id: null,
         competency_id: competencyId,
@@ -162,15 +178,10 @@ export default function AssessmentClient({
         created_at: result.created_at,
       });
 
-      // Try to sync immediately if online
-      if (typeof navigator !== 'undefined' && navigator.onLine) {
-        await offlineQueueManager.markSyncing(local_id);
-      }
-
-      // Show success and redirect after 2 seconds
+      // Show success and redirect to dedicated results & impact page
       setTimeout(() => {
-        router.push('/dashboard');
-      }, 2000);
+        router.push(`/assessment/${competencyId}/results?level=${result.final_level || 'L3'}&score=85`);
+      }, 1000);
     } catch (err) {
       setError((err as Error).message);
       setUiState('ERROR');
@@ -301,7 +312,7 @@ export default function AssessmentClient({
       {/* Accessibility & Offline Notice */}
       <div className="mt-8 text-xs text-muted-foreground text-center">
         <p>✓ No animation during assessment (accessibility: reduced motion supported)</p>
-        {typeof navigator !== 'undefined' && !navigator.onLine && <p>🔴 Offline mode: Responses will sync when you reconnect</p>}
+        {isOffline && <p>🔴 Offline mode: Responses will sync when you reconnect</p>}
       </div>
     </div>
   );

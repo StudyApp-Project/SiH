@@ -13,7 +13,7 @@ const RadarChart = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex h-64 w-64 items-center justify-center">
-        <div className="h-48 w-48 rounded-full bg-[#E8DACB]/40 animate-pulse" />
+        <div className="h-48 w-48 rounded-full bg-muted/40 animate-pulse" />
       </div>
     ),
   }
@@ -118,7 +118,7 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
   if (!data) {
     return (
       <div className="text-center py-12">
-        <p className="text-[#705849]">Profile data unavailable</p>
+        <p className="text-muted-foreground">Profile data unavailable</p>
       </div>
     );
   }
@@ -171,8 +171,8 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
                   {data.role}
                 </span>
               </div>
-              <p className="text-sm text-[#705849] mt-0.5">{data.designation}</p>
-              <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-[#705849]">
+              <p className="text-sm text-muted-foreground mt-0.5">{data.designation}</p>
+              <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-muted-foreground">
                 <span className="font-medium text-[#2d1f17]">{data.department}</span>
                 <span>•</span>
                 <span>{data.cadre}</span>
@@ -188,21 +188,21 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
               <div className="text-2xl sm:text-3xl font-bold text-[#555934] font-mono">
                 {data.karmaPoints.toLocaleString()}
               </div>
-              <p className="text-[11px] font-semibold text-[#705849] uppercase tracking-wider mt-0.5">Karma Points</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-0.5">Karma Points</p>
             </div>
-            <div className="h-8 w-px bg-[#E8DACB]" />
+            <div className="h-8 w-px bg-muted" />
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-[#593E2E] font-mono">
+              <div className="text-2xl sm:text-3xl font-bold text-chart-5 font-mono">
                 {data.assessmentsCompleted}
               </div>
-              <p className="text-[11px] font-semibold text-[#705849] uppercase tracking-wider mt-0.5">Assessments</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-0.5">Assessments</p>
             </div>
-            <div className="h-8 w-px bg-[#E8DACB]" />
+            <div className="h-8 w-px bg-muted" />
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-[#BF9B7A] font-mono">
                 {data.coursesCompleted}
               </div>
-              <p className="text-[11px] font-semibold text-[#705849] uppercase tracking-wider mt-0.5">Courses</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-0.5">Courses</p>
             </div>
           </div>
         </div>
@@ -214,7 +214,7 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
               <Award className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#705849]">{t('profile.aparMilestone')}</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t('profile.aparMilestone')}</p>
               <p className="text-base font-bold text-[#2d1f17] mt-0.5">{data.aparMilestone}</p>
             </div>
           </div>
@@ -235,7 +235,7 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
               className={`px-5 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 -mb-px ${
                 isActive
                   ? 'border-[#555934] text-[#555934]'
-                  : 'border-transparent text-[#705849] hover:text-[#2d1f17]'
+                  : 'border-transparent text-muted-foreground hover:text-[#2d1f17]'
               }`}
             >
               {tab === 'overview' ? 'Overview' : tab === 'competencies' ? 'FRAC Competencies' : 'Growth History'}
@@ -254,7 +254,7 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
                 <h3 className="text-base font-semibold text-[#2d1f17]">
                   {t('dashboard.readinessIndex')}
                 </h3>
-                <p className="text-xs text-[#705849]">Composite official evaluation</p>
+                <p className="text-xs text-muted-foreground">Composite official evaluation</p>
               </div>
               <span className="text-xs font-mono font-bold text-[#555934] bg-[#555934]/12 px-3 py-1 rounded-full">
                 {data.readinessIndex}%
@@ -277,7 +277,7 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
                 <h3 className="text-base font-semibold text-[#2d1f17]">
                   {t('profile.competencyRadar')}
                 </h3>
-                <p className="text-xs text-[#705849]">Current versus role benchmark</p>
+                <p className="text-xs text-muted-foreground">Current versus role benchmark</p>
               </div>
             </div>
             <div className="flex justify-center py-2">
@@ -302,7 +302,7 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
                     <span className={`w-2.5 h-2.5 rounded-full ${style.dot}`} />
                     {category} Competencies
                   </h3>
-                  <span className="text-xs font-semibold text-[#705849]">
+                  <span className="text-xs font-semibold text-muted-foreground">
                     {records.length} Tracked
                   </span>
                 </div>
@@ -329,13 +329,13 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
                                   <CheckCircle2 className="h-3 w-3" /> Verified
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#BF9B7A]/20 text-[#593E2E]">
+                                <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#BF9B7A]/20 text-chart-5">
                                   Self-Assessed
                                 </span>
                               )}
                             </div>
                           </div>
-                          <span className="text-[11px] text-[#705849] font-mono">
+                          <span className="text-[11px] text-muted-foreground font-mono">
                             {record.lastUpdated}
                           </span>
                         </div>
@@ -343,13 +343,13 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
                         {/* Level Progress */}
                         <div className="space-y-1.5 mt-3 pt-2">
                           <div className="flex justify-between text-xs">
-                            <span className="text-[#705849]">Current Level</span>
+                            <span className="text-muted-foreground">Current Level</span>
                             <span className="font-bold font-mono text-[#2d1f17]">
                               L{record.currentLevel} / L{record.targetLevel}
                             </span>
                           </div>
 
-                          <div className="h-2 bg-[#E8DACB] rounded-full overflow-hidden">
+                          <div className="h-2 bg-muted rounded-full overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all duration-500 ${
                                 isTargetMet
@@ -362,7 +362,7 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
                             />
                           </div>
 
-                          <div className="flex justify-between text-[11px] text-[#705849] pt-0.5">
+                          <div className="flex justify-between text-[11px] text-muted-foreground pt-0.5">
                             <span>Benchmark: L{record.targetLevel}</span>
                             {isTargetMet ? (
                               <span className="text-[#555934] font-semibold">✓ Target Achieved</span>
@@ -391,7 +391,7 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
               <h3 className="text-base font-bold text-[#2d1f17]">
                 {t('profile.growthHistory')}
               </h3>
-              <p className="text-xs text-[#705849]">Audit trail of validated assessments and self-ratings</p>
+              <p className="text-xs text-muted-foreground">Audit trail of validated assessments and self-ratings</p>
             </div>
           </div>
 
@@ -414,7 +414,7 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
                             <span className="text-xs font-bold text-[#2d1f17]">
                               Achieved Level {entry.level}
                             </span>
-                            <span className="text-[11px] text-[#705849] font-mono flex items-center gap-1">
+                            <span className="text-[11px] text-muted-foreground font-mono flex items-center gap-1">
                               <Clock className="h-3 w-3" />
                               {new Date(entry.date).toLocaleDateString('en-IN', {
                                 day: 'numeric',
@@ -429,8 +429,8 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
                                 entry.source === 'assessment-score'
                                   ? 'bg-[#555934]/15 text-[#555934]'
                                   : entry.source === 'course-completion'
-                                  ? 'bg-[#BF9B7A]/20 text-[#593E2E]'
-                                  : 'bg-[#F2E6D8] text-[#705849]'
+                                  ? 'bg-[#BF9B7A]/20 text-chart-5'
+                                  : 'bg-[#F2E6D8] text-muted-foreground'
                               }`}
                             >
                               {entry.source === 'assessment-score'
@@ -454,7 +454,7 @@ export default function ProfileClient({ user }: { user?: AppUser | null }) {
       {/* Data Provenance Footer */}
       <div className="rounded-2xl bg-white/70 p-4 flex items-start gap-3 shadow-card">
         <span className="text-lg">ℹ️</span>
-        <div className="text-xs text-[#705849] space-y-1">
+        <div className="text-xs text-muted-foreground space-y-1">
           <p>
             <strong className="text-[#2d1f17]">Official Record:</strong> This profile displays verified FRAC competency records and evaluation histories for MoSPI personnel.
           </p>

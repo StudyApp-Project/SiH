@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import type { DashboardUserProps } from '@/components/dashboard/RoleDashboardRouter';
 import type { PersonaFRACProfile } from '@/data/fracCadres';
-import { ShieldCheck, Wifi, MapPin, Calendar, ArrowRight, CheckCircle, Clock } from 'lucide-react';
+import { ShieldCheck, Wifi, MapPin, Calendar, ArrowRight, CheckCircle, Clock, BookOpen } from 'lucide-react';
 
 interface LearnerHeroBentoProps {
   user: DashboardUserProps;
@@ -139,13 +140,21 @@ export function LearnerHeroBento({
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={onViewGaps}
-                className="px-3.5 py-1.5 rounded-xl bg-[#555934] text-white text-xs font-bold hover:bg-[#434728] transition-colors shrink-0 cursor-pointer shadow-2xs"
-              >
-                {isHindi ? 'कौशल अंतर देखें' : 'View Gap Analysis'}
-              </button>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/pathways"
+                  className="px-3 py-1.5 rounded-xl border border-[#555934]/30 text-[#555934] hover:bg-[#555934]/10 text-xs font-bold transition-colors cursor-pointer shrink-0"
+                >
+                  {isHindi ? 'पाठ्यक्रम' : 'Courses'}
+                </Link>
+                <button
+                  type="button"
+                  onClick={onViewGaps}
+                  className="px-3.5 py-1.5 rounded-xl bg-[#555934] text-white text-xs font-bold hover:bg-[#434728] transition-colors shrink-0 cursor-pointer shadow-2xs"
+                >
+                  {isHindi ? 'कौशल अंतर देखें' : 'View Gap Analysis'}
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -225,10 +234,14 @@ export function LearnerHeroBento({
         </div>
 
         {/* Footer Action */}
-        <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
-          <span className="text-[11px] text-[#FAF6F0]/70 font-medium">
-            {isHindi ? 'मानक संचालन प्रक्रिया (SOP) देखें' : 'Review Field SOP Guidelines'}
-          </span>
+        <div className="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+          <Link
+            href="/pathways"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#FAF6F0] text-xs font-semibold transition-colors cursor-pointer border border-white/10"
+          >
+            <BookOpen className="h-3.5 w-3.5 text-[#F8C858]" />
+            <span>{isHindi ? 'सरकारी पाठ्यक्रम (10) →' : 'Browse Official Courses (10) →'}</span>
+          </Link>
           <button
             type="button"
             onClick={() => {
@@ -236,7 +249,7 @@ export function LearnerHeroBento({
                 onStartDrill('drill-schedule-0');
               }
             }}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#F8C858] text-[#2d1f17] text-xs font-bold hover:bg-[#e6b94e] transition-colors cursor-pointer shadow-2xs active:scale-95"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#F8C858] text-[#2d1f17] text-xs font-bold hover:bg-[#e6b94e] transition-colors cursor-pointer shadow-2xs active:scale-95 ml-auto"
           >
             <span>{isHindi ? 'अभ्यास आरंभ करें' : 'Start Field Drill'}</span>
             <ArrowRight className="h-3.5 w-3.5" />

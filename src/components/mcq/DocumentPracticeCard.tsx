@@ -33,6 +33,8 @@ interface DocumentPracticeCardProps {
   isGeneratingNext: boolean;
   onStageToQueue: () => void;
   stagedToQueue: boolean;
+  onApproveToBank?: () => void;
+  approvedToBank?: boolean;
   // Multi-question batch navigation
   currentIndex?: number;
   totalCount?: number;
@@ -51,6 +53,8 @@ export function DocumentPracticeCard({
   isGeneratingNext,
   onStageToQueue,
   stagedToQueue,
+  onApproveToBank,
+  approvedToBank = false,
   currentIndex = 0,
   totalCount = 1,
   onPreviousQuestion,
@@ -317,7 +321,7 @@ export function DocumentPracticeCard({
               <button
                 onClick={handleCheckAnswer}
                 disabled={selectedOption === null}
-                className="flex-1 sm:flex-none px-6 py-3 bg-[#555934] hover:bg-[#3e4225] disabled:bg-stone-300 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
+                className="flex-1 sm:flex-none px-6 py-3 bg-[#555934] hover:bg-primary-dark disabled:bg-stone-300 disabled:cursor-not-allowed text-white text-sm font-bold rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
               >
                 Check Answer
                 <ArrowRight className="h-4 w-4" />
@@ -325,7 +329,7 @@ export function DocumentPracticeCard({
             ) : hasNext ? (
               <button
                 onClick={onNextQuestion}
-                className="flex-1 sm:flex-none px-6 py-3 bg-[#555934] hover:bg-[#3e4225] text-white text-sm font-bold rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
+                className="flex-1 sm:flex-none px-6 py-3 bg-[#555934] hover:bg-primary-dark text-white text-sm font-bold rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
               >
                 Next Question
                 <ChevronRight className="h-4 w-4" />
@@ -334,7 +338,7 @@ export function DocumentPracticeCard({
               <button
                 onClick={onResetSession || onNextQuestion}
                 disabled={isGeneratingNext}
-                className="flex-1 sm:flex-none px-6 py-3 bg-[#555934] hover:bg-[#3e4225] text-white text-sm font-bold rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
+                className="flex-1 sm:flex-none px-6 py-3 bg-[#555934] hover:bg-primary-dark text-white text-sm font-bold rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-2"
               >
                 {isGeneratingNext ? (
                   <>
@@ -384,7 +388,7 @@ export function DocumentPracticeCard({
                 <strong>Citation Anchor:</strong> {question.citation}
               </div>
 
-              <div>
+              <div className="flex flex-wrap items-center gap-2">
                 {stagedToQueue ? (
                   <span className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5">
                     <Check className="h-3.5 w-3.5" /> Staged into Review Queue
@@ -397,18 +401,41 @@ export function DocumentPracticeCard({
                     <Send className="h-3 w-3" /> Save to Review Queue
                   </button>
                 )}
+
+                {onApproveToBank && (
+                  approvedToBank ? (
+                    <span className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5 bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-300">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700" /> Approved to Exam Bank
+                    </span>
+                  ) : (
+                    <button
+                      onClick={onApproveToBank}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg text-xs transition shadow-xs"
+                    >
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Certify & Approve
+                    </button>
+                  )
+                )}
               </div>
             </div>
           </div>
         )}
 
         {/* Staged Confirmation alert */}
-        {stagedToQueue && (
+        {(stagedToQueue || approvedToBank) && (
           <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs rounded-xl flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <Award className="h-4 w-4 text-emerald-600 shrink-0" />
               <span>
-                Item saved to <strong>Faculty Review Queue</strong> for inclusion in formal assessments.
+                {approvedToBank ? (
+                  <>
+                    Item <strong>certified & approved into live Exam Bank</strong> for official MoSPI assessments.
+                  </>
+                ) : (
+                  <>
+                    Item saved to <strong>Faculty Review Queue</strong> for inclusion in formal assessments.
+                  </>
+                )}
               </span>
             </div>
             <Link

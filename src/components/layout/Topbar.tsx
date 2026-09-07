@@ -33,6 +33,7 @@ import { CAPIConnectivityModal } from '@/components/dashboard/learner/modals/CAP
 import { MinisterialBriefingModal } from '@/components/dashboard/admin/modals/MinisterialBriefingModal';
 import { NationalReadinessModal } from '@/components/dashboard/admin/modals/NationalReadinessModal';
 import { FlaggedRegionsModal } from '@/components/dashboard/admin/modals/FlaggedRegionsModal';
+import { GlobalSearchModal } from './GlobalSearchModal';
 
 function getInitialPersona(): DemoPersona {
   if (typeof document === 'undefined') return DEMO_PERSONAS[0];
@@ -97,6 +98,7 @@ export function Topbar({ initialRole }: TopbarProps) {
   const [adminBriefingOpen, setAdminBriefingOpen] = useState(false);
   const [adminReadinessOpen, setAdminReadinessOpen] = useState(false);
   const [adminFlaggedOpen, setAdminFlaggedOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   const [activePersona, setActivePersona] = useState<DemoPersona>(() => {
     const fromCookie = getInitialPersona();
@@ -110,6 +112,18 @@ export function Topbar({ initialRole }: TopbarProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const switcherRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
+
+  // Global ⌘K / Ctrl+K keyboard shortcut for Search Palette
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setSearchModalOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Sync with cookie changes
   useEffect(() => {
@@ -208,6 +222,21 @@ export function Topbar({ initialRole }: TopbarProps) {
   const handleLanguageToggle = useCallback(() => {
     const nextLang = locale === 'en' ? 'hi' : 'en';
     document.cookie = `locale=${nextLang};path=/;max-age=31536000;SameSite=Lax`;
+    try {
+      const match = document.cookie.match(/(?:^|;\s*)demo_user=([^;]+)/);
+      if (match) {
+        const demoUser = JSON.parse(decodeURIComponent(match[1]));
+        demoUser.preferred_language = nextLang;
+        if (demoUser.user_metadata) {
+          demoUser.user_metadata.preferred_language = nextLang;
+        }
+        document.cookie = `demo_user=${encodeURIComponent(
+          JSON.stringify(demoUser)
+        )};path=/;max-age=${60 * 60 * 24 * 7};SameSite=Lax`;
+      }
+    } catch {
+      // Ignore JSON parse errors
+    }
     window.location.reload();
   }, [locale]);
 
@@ -216,7 +245,7 @@ export function Topbar({ initialRole }: TopbarProps) {
     setSwitcherOpen(false);
     setNotifications(getInitialNotifications(persona.role));
     setPersonaCookie(persona);
-    window.location.reload();
+    window.location.href = '/dashboard';
   };
 
   const roleColors: Record<
@@ -248,16 +277,24 @@ export function Topbar({ initialRole }: TopbarProps) {
     <header className="flex h-16 items-center justify-between bg-white border-b border-[#BF9B7A]/30 px-4 sm:px-6 z-10 select-none shadow-2xs">
       {/* Search / Context Area */}
       <div className="flex items-center gap-4 min-w-0">
-        <div className="relative hidden xl:flex items-center">
-          <Search className="absolute left-3 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Search competencies, manuals, or metrics... (⌘K)"
-            className="h-9 w-64 lg:w-72 rounded-xl bg-[#FAF6F0] border border-[#BF9B7A]/25 pl-9 pr-4 text-xs text-[#2d1f17] placeholder:text-muted-foreground focus:bg-white focus:ring-2 focus:ring-[#555934]/20 focus:outline-none transition-all shadow-2xs"
-            readOnly
-            onClick={() => router.push(role === 'trainer' ? '/documents' : '/skill-gap')}
-          />
-        </div>
+        {/* Global Search Command Trigger Button */}
+        <button
+          type="button"
+          onClick={() => setSearchModalOpen(true)}
+          className="flex items-center justify-between h-9 w-52 sm:w-64 lg:w-72 rounded-xl bg-[#FAF6F0] border border-[#BF9B7A]/30 px-3 text-xs text-[#2d1f17] hover:bg-white hover:border-[#555934]/40 transition-all shadow-2xs cursor-pointer group"
+          title={locale === 'hi' ? 'दक्षताएं, मैनुअल या पेज खोजें (⌘K)' : 'Search competencies, manuals, or pages (⌘K)'}
+          aria-label="Open Search Palette"
+        >
+          <div className="flex items-center gap-2 min-w-0">
+            <Search className="h-3.5 w-3.5 text-stone-400 group-hover:text-[#555934] shrink-0 transition-colors" />
+            <span className="truncate text-stone-500 group-hover:text-stone-700">
+              {locale === 'hi' ? 'खोजें (दक्षता, मैनुअल)...' : 'Search competencies, manuals...'}
+            </span>
+          </div>
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-[#BF9B7A]/30 bg-white px-1.5 py-0.5 font-mono text-[10px] font-semibold text-stone-500 shadow-2xs">
+            ⌘K
+          </kbd>
+        </button>
 
         {/* Role-Specific Context Badge Strip */}
         <div className="flex items-center gap-2 overflow-x-auto py-1">
@@ -646,6 +683,13 @@ export function Topbar({ initialRole }: TopbarProps) {
           />
         </>
       )}
+
+      {/* Global Command Search Palette Modal */}
+      <GlobalSearchModal
+        isOpen={searchModalOpen}
+        onClose={() => setSearchModalOpen(false)}
+        isHindi={locale === 'hi'}
+      />
     </header>
   );
 }

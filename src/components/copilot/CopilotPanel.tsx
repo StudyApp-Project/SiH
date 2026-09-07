@@ -58,9 +58,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
   const [messages, setMessages] = useState<Message[]>(() => [getWelcomeMessage(userContext)]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isOffline, setIsOffline] = useState(() =>
-    typeof navigator !== 'undefined' ? !navigator.onLine : false
-  );
+  const [isOffline, setIsOffline] = useState(false);
   const msgCounterRef = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -95,6 +93,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
 
   // Online/offline detection
   useEffect(() => {
+    setIsOffline(typeof navigator !== 'undefined' ? !navigator.onLine : false);
     const goOnline = () => setIsOffline(false);
     const goOffline = () => setIsOffline(true);
     window.addEventListener('online', goOnline);
@@ -304,7 +303,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
         ref={panelRef}
         role="dialog"
         aria-label="StatVidya Copilot"
-        className="fixed bottom-20 right-4 z-[999] flex flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:right-6 sm:bottom-24"
+        className="fixed bottom-20 right-4 z-999 flex flex-col overflow-hidden rounded-2xl bg-white shadow-2xl sm:right-6 sm:bottom-24"
         style={{
           width: 'min(400px, calc(100vw - 2rem))',
           height: 'min(560px, calc(100vh - 10rem))',
@@ -312,7 +311,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
         }}
       >
         {/* ─── Header ─── */}
-        <div className="flex items-center justify-between bg-gradient-to-r from-[#555934] to-[#3e4225] px-4 py-3">
+        <div className="flex items-center justify-between bg-linear-to-r from-[#555934] to-primary-dark px-4 py-3">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm">
               <Sparkles className="h-4 w-4 text-white" />
@@ -348,7 +347,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
 
         {/* ─── Offline Banner ─── */}
         {isOffline && (
-          <div className="flex items-center gap-2 bg-[#BF9B7A]/15 px-3 py-1.5 text-[11px] text-[#593E2E]">
+          <div className="flex items-center gap-2 bg-[#BF9B7A]/15 px-3 py-1.5 text-[11px] text-chart-5">
             <WifiOff className="h-3 w-3 shrink-0" />
             <span>Offline — using built-in navigation assistance</span>
           </div>
@@ -372,7 +371,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
         {/* ─── Quick Actions ─── */}
         {showQuickActions && (
           <div className="px-3 py-2 bg-[#F2E6D8]/30">
-            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#705849] flex items-center gap-1">
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
               <Zap className="h-3 w-3 text-[#555934]" /> Quick Actions
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -408,7 +407,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#555934] text-white shadow-sm transition-all hover:bg-[#3e4225] hover:shadow-md active:scale-95 disabled:opacity-40 disabled:hover:bg-[#555934] disabled:hover:shadow-sm"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#555934] text-white shadow-sm transition-all hover:bg-primary-dark hover:shadow-md active:scale-95 disabled:opacity-40 disabled:hover:bg-[#555934] disabled:hover:shadow-sm"
           >
             <Send className="h-4 w-4" />
           </button>

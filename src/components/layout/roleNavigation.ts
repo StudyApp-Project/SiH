@@ -11,6 +11,7 @@ import {
   Building2,
   TrendingUp,
   Layers,
+  GraduationCap,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -43,7 +44,9 @@ export const LEARNER_NAV_ITEMS: RoleNavItem[] = [
   {
     href: '/pathways',
     label: 'nav.pathways',
-    icon: Flag,
+    icon: GraduationCap,
+    badge: '10 Modules',
+    badgeType: 'default',
   },
   {
     href: '/profile',

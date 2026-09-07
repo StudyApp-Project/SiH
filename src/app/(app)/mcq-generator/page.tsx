@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { ProvenanceBadge } from '@/components/ProvenanceBadge';
 import { type GeneratedQuestion } from '@/services/mcqService';
-import { Sparkles, RefreshCw, BookOpen, Bot, FileText, SlidersHorizontal, Hash } from 'lucide-react';
+import { Sparkles, RefreshCw, BookOpen, Bot, FileText, SlidersHorizontal, Hash, CheckCircle2 } from 'lucide-react';
 import { DocumentPracticeCard, type AnswerRecord } from '@/components/mcq/DocumentPracticeCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 
@@ -98,7 +98,41 @@ function MCQGeneratorInner() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sessionAnswers, setSessionAnswers] = useState<Record<number, AnswerRecord>>({});
   const [stagedToQueue, setStagedToQueue] = useState(false);
+  const [approvedToBank, setApprovedToBank] = useState(false);
   const [viewMode, setViewMode] = useState<'practice' | 'inspector'>('practice');
+
+  const activeQuestion = questionList[currentIndex] || generatedQuestion;
+
+  useEffect(() => {
+    if (!activeQuestion) {
+      setStagedToQueue(false);
+      setApprovedToBank(false);
+      return;
+    }
+    try {
+      const existingRaw = localStorage.getItem('statvidya_review_queue');
+      const queue = existingRaw ? JSON.parse(existingRaw) : [];
+      const item = queue.find(
+        (q: { id?: string; stem?: string }) =>
+          (activeQuestion.id && q.id === activeQuestion.id) ||
+          q.stem === activeQuestion.stemEn
+      );
+      if (item) {
+        if (item.status === 'APPROVED') {
+          setApprovedToBank(true);
+          setStagedToQueue(false);
+        } else {
+          setStagedToQueue(true);
+          setApprovedToBank(false);
+        }
+      } else {
+        setStagedToQueue(false);
+        setApprovedToBank(false);
+      }
+    } catch {
+      // ignore
+    }
+  }, [activeQuestion, currentIndex]);
 
   // Fetch live documents from backend Firestore
   useEffect(() => {
@@ -152,6 +186,7 @@ function MCQGeneratorInner() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     setStagedToQueue(false);
+    setApprovedToBank(false);
     setSessionAnswers({});
 
     try {
@@ -189,34 +224,51 @@ function MCQGeneratorInner() {
     }
   };
 
-  const handlePushToReview = () => {
-    if (!generatedQuestion) return;
+  const handlePushToReview = (customStatus: 'PENDING' | 'APPROVED' = 'PENDING') => {
+    const qToPush = questionList[currentIndex] || generatedQuestion;
+    if (!qToPush) return;
 
     try {
       const existingRaw = localStorage.getItem('statvidya_review_queue');
       const queue = existingRaw ? JSON.parse(existingRaw) : [];
 
       const newItem = {
-        id: generatedQuestion.id || `rq-${Date.now()}`,
+        id: qToPush.id || `rq-${Date.now()}`,
         competency: activeDoc.competencyName,
-        stem: generatedQuestion.stemEn,
-        stemHi: generatedQuestion.stemHi,
-        options: generatedQuestion.optionsEn,
-        optionsHi: generatedQuestion.optionsHi,
-        correctIndex: generatedQuestion.correctIndex,
-        citation: generatedQuestion.citation,
-        consensusScore: generatedQuestion.consensusScore,
-        status: 'PENDING',
+        stem: qToPush.stemEn,
+        stemHi: qToPush.stemHi,
+        options: qToPush.optionsEn,
+        optionsHi: qToPush.optionsHi,
+        correctIndex: qToPush.correctIndex,
+        citation: qToPush.citation,
+        consensusScore: qToPush.consensusScore,
+        status: customStatus,
         sourceDoc: activeDoc.title,
         createdAt: new Date().toISOString(),
       };
 
-      const updated = [newItem, ...queue.filter((item: { id: string }) => item.id !== newItem.id)];
+      const updated = [
+        newItem,
+        ...queue.filter(
+          (item: { id: string; stem?: string }) =>
+            item.id !== newItem.id && item.stem !== newItem.stem
+        ),
+      ];
       localStorage.setItem('statvidya_review_queue', JSON.stringify(updated));
-      setStagedToQueue(true);
+      if (customStatus === 'APPROVED') {
+        setApprovedToBank(true);
+        setStagedToQueue(false);
+      } else {
+        setStagedToQueue(true);
+        setApprovedToBank(false);
+      }
     } catch (err) {
       console.error('Failed to stage item to review queue:', err);
-      setStagedToQueue(true);
+      if (customStatus === 'APPROVED') {
+        setApprovedToBank(true);
+      } else {
+        setStagedToQueue(true);
+      }
     }
   };
 
@@ -359,14 +411,14 @@ function MCQGeneratorInner() {
           </div>
 
           <div className="pt-3 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <span className="text-xs text-[#705849] flex items-center gap-1.5">
+            <span className="text-xs text-muted-foreground flex items-center gap-1.5">
               <Sparkles className="h-3.5 w-3.5 text-amber-600" />
               Engine: <strong>MoSPI Cognitive Engine</strong> • Verified contextual inference
             </span>
             <button
               onClick={handleGenerate}
               disabled={isGenerating}
-              className="w-full sm:w-auto px-6 py-2.5 bg-[#555934] hover:bg-[#3e4225] text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-xs transition active:scale-95 disabled:opacity-60"
+              className="w-full sm:w-auto px-6 py-2.5 bg-[#555934] hover:bg-primary-dark text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 shadow-xs transition active:scale-95 disabled:opacity-60"
             >
               {isGenerating ? (
                 <>
@@ -418,8 +470,8 @@ function MCQGeneratorInner() {
 
           {viewMode === 'practice' ? (
             <DocumentPracticeCard
-              key={`${(questionList[currentIndex] || generatedQuestion).id}-${currentIndex}`}
-              question={questionList[currentIndex] || generatedQuestion}
+              key={`${activeQuestion.id}-${currentIndex}`}
+              question={activeQuestion}
               docTitle={activeDoc.title}
               difficulty={difficulty}
               currentIndex={currentIndex}
@@ -436,8 +488,10 @@ function MCQGeneratorInner() {
               onJumpToQuestion={(idx) => setCurrentIndex(idx)}
               onResetSession={handleGenerate}
               isGeneratingNext={isGenerating}
-              onStageToQueue={handlePushToReview}
+              onStageToQueue={() => handlePushToReview('PENDING')}
               stagedToQueue={stagedToQueue}
+              onApproveToBank={() => handlePushToReview('APPROVED')}
+              approvedToBank={approvedToBank}
             />
           ) : (
             <Card className="border-stone-200 bg-white shadow-sm">
@@ -449,26 +503,26 @@ function MCQGeneratorInner() {
                     </CardTitle>
                     <CardDescription className="text-xs text-stone-500 flex items-center gap-2 mt-1">
                       <Bot className="h-3.5 w-3.5 text-blue-600" />
-                      Evaluated by {generatedQuestion.modelsEvaluated.join(', ')}
+                      Evaluated by {activeQuestion.modelsEvaluated.join(', ')}
                     </CardDescription>
                   </div>
                   <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-800 font-bold border border-blue-200">
-                    Consensus Score: {(generatedQuestion.consensusScore * 100).toFixed(0)}%
+                    Consensus Score: {(activeQuestion.consensusScore * 100).toFixed(0)}%
                   </span>
                 </div>
               </CardHeader>
               <CardContent className="pt-5 space-y-4">
                 <div className="p-4 rounded-xl bg-stone-50 border border-stone-200">
                   <span className="text-xs font-bold text-stone-500 block mb-1">ENGLISH STEM</span>
-                  <p className="text-sm font-medium text-stone-900">{generatedQuestion.stemEn}</p>
+                  <p className="text-sm font-medium text-stone-900">{activeQuestion.stemEn}</p>
                   <span className="text-xs font-bold text-stone-500 block mt-3 mb-1">HINDI STEM</span>
-                  <p className="text-sm font-medium text-stone-900">{generatedQuestion.stemHi}</p>
+                  <p className="text-sm font-medium text-stone-900">{activeQuestion.stemHi}</p>
                 </div>
 
                 <div className="space-y-2">
                   <span className="text-xs font-bold text-stone-500 block">OPTIONS & VERIFIED KEY</span>
-                  {generatedQuestion.optionsEn.map((opt, idx) => {
-                    const isCorrect = idx === generatedQuestion.correctIndex;
+                  {activeQuestion.optionsEn.map((opt, idx) => {
+                    const isCorrect = idx === activeQuestion.correctIndex;
                     return (
                       <div
                         key={idx}
@@ -481,7 +535,7 @@ function MCQGeneratorInner() {
                         <span className="font-bold">{String.fromCharCode(65 + idx)}.</span>
                         <div className="flex-1">
                           <div>{opt}</div>
-                          <div className="text-xs text-stone-500 mt-0.5">{generatedQuestion.optionsHi[idx]}</div>
+                          <div className="text-xs text-stone-500 mt-0.5">{activeQuestion.optionsHi[idx]}</div>
                         </div>
                         {isCorrect && (
                           <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
@@ -494,17 +548,25 @@ function MCQGeneratorInner() {
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950">
-                  <strong>MoSPI Justification:</strong> {generatedQuestion.rationaleEn}
-                  <div className="mt-1 text-amber-800 font-medium">Source: {generatedQuestion.citation}</div>
+                  <strong>MoSPI Justification:</strong> {activeQuestion.rationaleEn}
+                  <div className="mt-1 text-amber-800 font-medium">Source: {activeQuestion.citation}</div>
                 </div>
 
-                <div className="pt-2 flex justify-end">
+                <div className="pt-2 flex flex-wrap items-center justify-end gap-2">
                   <button
-                    onClick={handlePushToReview}
-                    disabled={stagedToQueue}
-                    className="px-4 py-2 bg-blue-700 hover:bg-blue-800 disabled:bg-stone-300 text-white text-xs font-bold rounded-lg transition shadow-xs"
+                    onClick={() => handlePushToReview('PENDING')}
+                    disabled={stagedToQueue || approvedToBank}
+                    className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 disabled:bg-stone-100 disabled:text-stone-400 text-xs font-bold rounded-lg transition border border-stone-300"
                   >
-                    {stagedToQueue ? 'Staged in Faculty Queue' : 'Stage into Review Queue'}
+                    {stagedToQueue && !approvedToBank ? 'Staged in Faculty Queue' : 'Stage into Review Queue'}
+                  </button>
+                  <button
+                    onClick={() => handlePushToReview('APPROVED')}
+                    disabled={approvedToBank}
+                    className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 disabled:bg-emerald-200 disabled:text-emerald-800 text-white text-xs font-bold rounded-lg transition shadow-xs flex items-center gap-1.5"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    {approvedToBank ? 'Certified & Approved into Exam Bank' : 'Certify & Approve into Exam Bank'}
                   </button>
                 </div>
               </CardContent>

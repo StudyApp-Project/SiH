@@ -67,32 +67,103 @@ const INITIAL_QUEUE: QuestionItem[] = [
   },
 ];
 
+function loadQueueFromStorage(): QuestionItem[] {
+  if (typeof window === 'undefined') return INITIAL_QUEUE;
+  try {
+    const raw = localStorage.getItem('statvidya_review_queue');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const mapped: QuestionItem[] = parsed.map((item: {
+          id: string;
+          stem: string;
+          options?: string[];
+          correctIndex?: number;
+          consensusScore?: number;
+          competency?: string;
+          sourceDoc?: string;
+          citation?: string;
+          status?: string;
+        }) => ({
+          id: item.id,
+          stem: item.stem,
+          options: item.options || [],
+          correctIndex: item.correctIndex ?? 0,
+          confidence: Math.round((item.consensusScore ?? 0.8) * 100),
+          competencyTag: item.competency || 'MoSPI Competency',
+          sourceDoc: item.sourceDoc || 'Official MoSPI Manual',
+          section: item.citation || 'Statutory Guidelines',
+          status: (item.status?.toLowerCase() === 'approved' || item.status?.toLowerCase() === 'published')
+            ? 'approved' as const
+            : item.status?.toLowerCase() === 'rejected'
+              ? 'rejected' as const
+              : 'pending' as const,
+        }));
+
+        const existingIds = new Set(mapped.map((m) => m.id));
+        const nonDup = INITIAL_QUEUE.filter((q) => !existingIds.has(q.id));
+        return [...mapped, ...nonDup];
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load review queue for triage card:', e);
+  }
+  return INITIAL_QUEUE;
+}
+
+function syncToLocalStorage(id: string, newStatus: 'APPROVED' | 'REJECTED') {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = localStorage.getItem('statvidya_review_queue');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const updated = parsed.map((item: { id: string; status: string }) =>
+          item.id === id ? { ...item, status: newStatus } : item
+        );
+        localStorage.setItem('statvidya_review_queue', JSON.stringify(updated));
+      }
+    }
+  } catch {
+    // ignore
+  }
+}
+
 interface TrainerReviewTriageCardProps {
   onInspectItem?: (item: ItemAnalysisData) => void;
 }
 
 export function TrainerReviewTriageCard({ onInspectItem }: TrainerReviewTriageCardProps) {
-  const [queue, setQueue] = useState<QuestionItem[]>(INITIAL_QUEUE);
+  const [queue, setQueue] = useState<QuestionItem[]>(() => loadQueueFromStorage());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editedStem, setEditedStem] = useState('');
+
+  // Hydrate from localStorage on client mount
+  React.useEffect(() => {
+    setQueue(loadQueueFromStorage());
+  }, []);
 
   const currentItem = queue[currentIndex];
   const pendingCount = queue.filter((q) => q.status === 'pending').length;
 
   const handleApprove = (id: string) => {
-    setQueue((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, status: 'approved' } : q))
-    );
+    setQueue((prev) => {
+      const updated = prev.map((q) => (q.id === id ? { ...q, status: 'approved' as const } : q));
+      syncToLocalStorage(id, 'APPROVED');
+      return updated;
+    });
     if (currentIndex < queue.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     }
   };
 
   const handleReject = (id: string) => {
-    setQueue((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, status: 'rejected' } : q))
-    );
+    setQueue((prev) => {
+      const updated = prev.map((q) => (q.id === id ? { ...q, status: 'rejected' as const } : q));
+      syncToLocalStorage(id, 'REJECTED');
+      return updated;
+    });
     if (currentIndex < queue.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     }

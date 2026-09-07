@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { OFFICIAL_COURSE_CATALOG, type Course } from '@/services/recommendationService';
+import Link from 'next/link';
+import { OFFICIAL_LEARNING_CATALOG, type OfficialLearningItem } from '@/data/officialLearningCatalog';
 import { BookOpen, Award, ArrowUpRight, CheckCircle2, Play } from 'lucide-react';
 
 interface LearnerCoursesTableProps {
@@ -9,13 +10,21 @@ interface LearnerCoursesTableProps {
 }
 
 export function LearnerCoursesTable({ isHindi = false }: LearnerCoursesTableProps) {
-  // Sample course progress data
+  // Real government course modules from NSSTA & MoSPI
+  const displayItems = [
+    OFFICIAL_LEARNING_CATALOG.find((i) => i.id === 'manual-capi-handbook')!,
+    OFFICIAL_LEARNING_CATALOG.find((i) => i.id === 'nssta-data-collection-workshop')!,
+    OFFICIAL_LEARNING_CATALOG.find((i) => i.id === 'nssta-data-analytics-viz')!,
+    OFFICIAL_LEARNING_CATALOG.find((i) => i.id === 'manual-plfs-vol1')!,
+    OFFICIAL_LEARNING_CATALOG.find((i) => i.id === 'nssta-r-data-extraction-ai')!,
+  ].filter(Boolean);
+
   const progressMap: Record<string, { completedLessons: number; totalLessons: number; status: 'in-progress' | 'recommended' | 'completed' }> = {
-    'course-capi-101': { completedLessons: 14, totalLessons: 20, status: 'in-progress' },
-    'course-nsso-plfs': { completedLessons: 6, totalLessons: 18, status: 'in-progress' },
-    'course-sampling-design': { completedLessons: 0, totalLessons: 15, status: 'recommended' },
-    'course-data-scrutiny': { completedLessons: 16, totalLessons: 16, status: 'completed' },
-    'course-field-teamwork': { completedLessons: 0, totalLessons: 8, status: 'recommended' },
+    'nssta-data-collection-workshop': { completedLessons: 1, totalLessons: 2, status: 'in-progress' },
+    'manual-capi-handbook': { completedLessons: 4, totalLessons: 5, status: 'in-progress' },
+    'nssta-data-analytics-viz': { completedLessons: 0, totalLessons: 3, status: 'recommended' },
+    'manual-plfs-vol1': { completedLessons: 5, totalLessons: 5, status: 'completed' },
+    'nssta-r-data-extraction-ai': { completedLessons: 0, totalLessons: 5, status: 'recommended' },
   };
 
   return (
@@ -57,8 +66,8 @@ export function LearnerCoursesTable({ isHindi = false }: LearnerCoursesTableProp
             </tr>
           </thead>
           <tbody className="divide-y divide-[#BF9B7A]/15 text-xs">
-            {OFFICIAL_COURSE_CATALOG.map((course: Course) => {
-              const progress = progressMap[course.id] || { completedLessons: 0, totalLessons: 10, status: 'recommended' };
+            {displayItems.map((course: OfficialLearningItem) => {
+              const progress = progressMap[course.id] || { completedLessons: 0, totalLessons: 5, status: 'recommended' };
               const percent = Math.round((progress.completedLessons / progress.totalLessons) * 100);
               const courseTitle = isHindi && course.title_hi ? course.title_hi : course.title;
 
@@ -71,7 +80,12 @@ export function LearnerCoursesTable({ isHindi = false }: LearnerCoursesTableProp
                         <BookOpen className="h-4 w-4" />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-bold text-[#2d1f17] line-clamp-1">{courseTitle}</p>
+                        <Link
+                          href={`/pathways/${course.id}`}
+                          className="font-bold text-[#2d1f17] hover:text-[#555934] transition-colors line-clamp-1 block"
+                        >
+                          {courseTitle}
+                        </Link>
                         <p className="text-[11px] text-muted-foreground truncate mt-0.5">{course.provider}</p>
                       </div>
                     </div>
@@ -126,25 +140,21 @@ export function LearnerCoursesTable({ isHindi = false }: LearnerCoursesTableProp
                         {isHindi ? 'पूर्ण' : 'Passed'}
                       </span>
                     ) : progress.status === 'in-progress' ? (
-                      <a
-                        href={course.iGotLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <Link
+                        href={`/pathways/${course.id}`}
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#555934] text-white font-bold hover:bg-[#434728] transition-colors shadow-2xs"
                       >
                         <Play className="h-3 w-3 fill-current" />
                         <span>{isHindi ? 'जारी रखें' : 'Resume'}</span>
-                      </a>
+                      </Link>
                     ) : (
-                      <a
-                        href={course.iGotLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <Link
+                        href={`/pathways/${course.id}`}
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#FAF6F0] text-[#555934] border border-[#BF9B7A]/40 font-bold hover:bg-[#FAF6F0]/80 transition-colors"
                       >
                         <span>{isHindi ? 'प्रारंभ' : 'Start'}</span>
                         <ArrowUpRight className="h-3 w-3" />
-                      </a>
+                      </Link>
                     )}
                   </td>
                 </tr>
@@ -152,6 +162,19 @@ export function LearnerCoursesTable({ isHindi = false }: LearnerCoursesTableProp
             })}
           </tbody>
         </table>
+      </div>
+
+      {/* Footer Link to Discovery Hub */}
+      <div className="mt-4 pt-3 border-t border-[#BF9B7A]/20 flex items-center justify-between">
+        <span className="text-[11px] text-muted-foreground">
+          {isHindi ? '10 आधिकारिक मॉड्यूल उपलब्ध' : '10 verified government modules available'}
+        </span>
+        <Link
+          href="/pathways"
+          className="inline-flex items-center gap-1 text-xs font-bold text-[#555934] hover:text-primary-dark hover:underline"
+        >
+          <span>{isHindi ? 'सभी पाठ्यक्रम देखें →' : 'View All 10 Courses & Modules →'}</span>
+        </Link>
       </div>
     </div>
   );

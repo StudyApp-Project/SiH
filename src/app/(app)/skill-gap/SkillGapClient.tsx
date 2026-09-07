@@ -3,9 +3,11 @@
 import { useTranslations } from 'next-intl';
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { PlayCircle } from 'lucide-react';
+import { PlayCircle, BookOpen, GraduationCap, ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import type { RadarDataPoint } from '@/components/RadarChart';
+import { LearningCatalogService } from '@/services/learningCatalogService';
+import type { OfficialLearningItem } from '@/data/officialLearningCatalog';
 
 const RadarChart = dynamic(
   () => import('@/components/RadarChart').then((mod) => mod.RadarChart),
@@ -29,6 +31,11 @@ interface GapCardProps {
 }
 
 function GapCard({ gap }: GapCardProps) {
+  const matchingCourses = useMemo(
+    () => LearningCatalogService.getByCompetency(gap.competencyId),
+    [gap.competencyId]
+  );
+
   const severityPillColors = {
     HIGH: 'text-[#8C5B3E] bg-[#8C5B3E]/12',
     MODERATE: 'text-chart-5 bg-[#BF9B7A]/20',
@@ -58,38 +65,32 @@ function GapCard({ gap }: GapCardProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm bg-[#F2E6D8]/30 p-4 rounded-xl">
-        <div>
-          <p className="text-xs text-muted-foreground uppercase mb-1">Current</p>
-          <p className="font-bold text-[#2d1f17]">L{gap.currentLevel}</p>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-3 bg-[#F2E6D8]/30 px-4 py-2.5 rounded-xl text-xs">
+        <div className="flex items-center gap-3 font-mono">
+          <span className="text-muted-foreground">Current: <strong className="text-[#2d1f17] font-bold text-sm">L{gap.currentLevel}</strong></span>
+          <span className="text-[#BF9B7A]">→</span>
+          <span className="text-muted-foreground">Target: <strong className="text-[#555934] font-bold text-sm">L{gap.targetLevel}</strong></span>
         </div>
-        <div>
-          <p className="text-xs text-muted-foreground uppercase mb-1">Target</p>
-          <p className="font-bold text-[#2d1f17]">L{gap.targetLevel}</p>
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground uppercase mb-1">Priority</p>
-          <p className="font-semibold text-[#2d1f17] capitalize">
-            {gap.priority.charAt(0).toUpperCase() + gap.priority.slice(1)}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground uppercase mb-1">Gap Severity</p>
-          <p className="font-mono font-bold text-[#2d1f17]">
-            {CompetencyService.computeGapSeverity(gap.currentLevel, gap.targetLevel, gap.priority)}
-          </p>
+        <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+          <span className="capitalize">Priority: <strong className="text-[#2d1f17] font-semibold">{gap.priority}</strong></span>
+          <span>•</span>
+          <span>Severity Score: <strong className="text-[#8C5B3E] font-bold">{CompetencyService.computeGapSeverity(gap.currentLevel, gap.targetLevel, gap.priority)}</strong></span>
         </div>
       </div>
 
-      <div className="space-y-2">
-        <h4 className="text-sm font-medium text-[#2d1f17]">Why This Matters</h4>
-        <p className="text-sm text-muted-foreground leading-relaxed">
+      <details className="group mb-2">
+        <summary className="text-xs font-semibold text-[#555934] hover:text-primary-dark cursor-pointer inline-flex items-center gap-1 select-none">
+          <span>Why this matters</span>
+          <span className="text-[10px] group-open:rotate-180 transition-transform">▾</span>
+        </summary>
+        <p className="text-xs text-muted-foreground leading-relaxed mt-1.5 pl-2 border-l-2 border-[#555934]/30">
           {gap.evidenceType === 'assessment-verified'
-            ? `Your ${gap.activity.name} performance assessment showed ${gap.currentLevel}, requiring Level ${gap.targetLevel} for optimal ${gap.activity.name} effectiveness.`
-            : `Based on self-assessment, you need to develop ${gap.competency.name} to meet ${gap.activity.name} requirements at Level ${gap.targetLevel}.`
+            ? `Your verified proficiency is Level ${gap.currentLevel}. Cadre duties for ${gap.activity.name} require Level ${gap.targetLevel} for field data consistency.`
+            : `Self-assessed baseline is Level ${gap.currentLevel}. Take the diagnostic assessment to certify Level ${gap.targetLevel} for ${gap.activity.name}.`
           }
         </p>
-        <div className="flex items-center justify-between mt-3 pt-2">
+      </details>
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-3 pt-2 border-t border-[#BF9B7A]/15">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="px-2.5 py-1 rounded-full bg-[#F2E6D8] text-[#2d1f17]">
               Category: {gap.competency.category}
@@ -104,17 +105,72 @@ function GapCard({ gap }: GapCardProps) {
               </span>
             )}
           </div>
-          <Link
-            href={`/assessment/${gap.competencyId}`}
-            prefetch={true}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs text-white bg-[#555934] hover:bg-primary-dark font-semibold rounded-xl transition-all shadow-2xs active:scale-[0.98]"
-          >
-            <PlayCircle className="h-3.5 w-3.5" />
-            Take Assessment
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/pathways?competency=${gap.competencyId}`}
+              className="inline-flex items-center gap-1 text-xs text-[#555934] hover:text-primary-dark font-semibold"
+            >
+              <BookOpen className="h-3.5 w-3.5" />
+              <span>Learning Resources</span>
+            </Link>
+            <Link
+              href={`/assessment/${gap.competencyId}`}
+              prefetch={true}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs text-white bg-[#555934] hover:bg-primary-dark font-semibold rounded-xl transition-all shadow-2xs active:scale-[0.98]"
+            >
+              <PlayCircle className="h-3.5 w-3.5" />
+              Take Assessment
+            </Link>
+          </div>
         </div>
+
+        {/* Targeted Government Courses for this Competency Gap */}
+        {matchingCourses.length > 0 && (
+          <div className="mt-4 pt-3.5 border-t border-[#BF9B7A]/20 bg-[#FAF6F0]/70 -mx-6 -mb-6 px-6 py-3.5 rounded-b-2xl">
+            <div className="flex items-center justify-between gap-2 mb-2.5">
+              <span className="text-[11px] font-bold text-[#555934] uppercase tracking-wider flex items-center gap-1.5">
+                <GraduationCap className="h-3.5 w-3.5 text-[#555934]" />
+                Official Courses to Bridge Gap ({matchingCourses.length})
+              </span>
+              <Link
+                href={`/pathways?competency=${gap.competencyId}`}
+                className="text-[11px] font-bold text-[#8C5B3E] hover:underline"
+              >
+                View all in Catalog →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {matchingCourses.slice(0, 2).map((item: OfficialLearningItem) => (
+                <Link
+                  key={item.id}
+                  href={`/pathways/${item.id}`}
+                  className="group flex flex-col justify-between p-3 rounded-xl bg-white border border-[#BF9B7A]/30 hover:border-[#555934] transition-all shadow-2xs hover:shadow-xs"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#555934]/10 text-[#555934]">
+                        {item.provider}
+                      </span>
+                      <span className="text-[10px] font-mono font-bold text-[#8C5B3E]">
+                        Target L{item.targetLevel}
+                      </span>
+                    </div>
+                    <p className="font-bold text-xs text-[#2d1f17] group-hover:text-[#555934] transition-colors line-clamp-1">
+                      {item.title}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-[#BF9B7A]/15 text-[10px] text-muted-foreground font-medium">
+                    <span>{item.duration || 'Official Manual'} • {item.content_type}</span>
+                    <span className="text-[#555934] font-bold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                      Explore Course →
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-    </div>
   );
 }
 
@@ -178,6 +234,11 @@ export default function SkillGapClient({ user }: { user?: AppUser | null }) {
   const t = useTranslations();
   const [{ gaps, radarData }] = useState(() => buildPersonaGapsAndRadar(user));
   const [filter, setFilter] = useState<'all' | 'HIGH' | 'MODERATE' | 'PROFICIENT'>('all');
+
+  const topRecommendations = useMemo(
+    () => LearningCatalogService.rankForGaps(gaps, user).slice(0, 4),
+    [gaps, user]
+  );
 
   const severityCounts = useMemo(() => ({
     HIGH: gaps.filter((g) => g.severity === 'HIGH').length,
@@ -277,6 +338,76 @@ export default function SkillGapClient({ user }: { user?: AppUser | null }) {
           <p className="text-muted-foreground">
             All competencies are at or above target level for this filter.
           </p>
+        </div>
+      )}
+
+      {/* Recommended Government Courses to Bridge All Gaps */}
+      {topRecommendations.length > 0 && (
+        <div className="rounded-2xl bg-white p-6 sm:p-8 shadow-card space-y-5 border border-[#BF9B7A]/25">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#BF9B7A]/20">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-xl bg-[#555934]/15 text-[#555934] flex items-center justify-center">
+                  <GraduationCap className="h-4 w-4" />
+                </div>
+                <h2 className="text-lg sm:text-xl font-bold text-[#2d1f17]">
+                  Recommended Government Courses &amp; Modules
+                </h2>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Official curricula from NSSTA &amp; MoSPI prioritized by your critical competency gaps
+              </p>
+            </div>
+            <Link
+              href="/pathways"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#555934] text-white text-xs font-bold hover:bg-[#434728] transition-colors shrink-0 shadow-2xs"
+            >
+              <span>Explore All 10 Courses</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {topRecommendations.map(({ item, whyRecommended }) => (
+              <div
+                key={item.id}
+                className="p-4 rounded-xl bg-[#FAF6F0] border border-[#BF9B7A]/30 flex flex-col justify-between hover:border-[#555934] transition-all"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#555934]/15 text-[#555934]">
+                      {item.provider}
+                    </span>
+                    <span className="text-xs font-mono font-bold text-[#8C5B3E]">
+                      Target L{item.targetLevel} • {item.difficulty}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-sm text-[#2d1f17] line-clamp-1 mb-1">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
+                    {item.description}
+                  </p>
+                  <div className="p-2.5 rounded-lg bg-white border border-[#BF9B7A]/20 text-[11px] text-[#555934] font-medium mb-3">
+                    <strong>Why Recommended:</strong> {whyRecommended}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#BF9B7A]/20 text-xs">
+                  <span className="text-muted-foreground text-[11px]">
+                    {item.duration || 'Official Publication'} • {item.content_type}
+                  </span>
+                  <Link
+                    href={`/pathways/${item.id}`}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#555934] text-white text-xs font-bold hover:bg-[#434728] transition-colors"
+                  >
+                    <span>View Course</span>
+                    <ArrowRight className="h-3 w-3" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

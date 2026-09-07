@@ -42,7 +42,7 @@ export function LanguageSwitcher() {
         className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
           currentLocale === 'en'
             ? 'bg-primary text-white'
-            : 'text-[#705849] hover:bg-background'
+            : 'text-muted-foreground hover:bg-background'
         }`}
         aria-pressed={currentLocale === 'en'}
       >
@@ -53,7 +53,7 @@ export function LanguageSwitcher() {
         className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
           currentLocale === 'hi'
             ? 'bg-primary text-white'
-            : 'text-[#705849] hover:bg-background'
+            : 'text-muted-foreground hover:bg-background'
         }`}
         aria-pressed={currentLocale === 'hi'}
       >
