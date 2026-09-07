@@ -19,12 +19,71 @@ export interface PreMadeFaq {
 
 export const COPILOT_PREMADE_FAQS: PreMadeFaq[] = [
   {
+    id: 'greeting',
+    matchPatterns: [
+      /^(hi|hey|hello|namaste|yo|sup|hii+|heyy+|hola|good\s*(morning|afternoon|evening)|नमस्ते|हेलो|प्रणाम|सहायता|मदद|help)[!?\s.]*$/i,
+      /^what\s*(can\s*you|do\s*you)\s*(do|help)/i,
+      /^who\s*are\s*you/i,
+      /^tell\s*me\s*about\s*(yourself|this\s*(app|platform|bot))/i,
+      /^आप\s*कौन\s*हैं/i,
+      /^क्या\s*कर\s*सकत/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      const name = ctx?.name;
+      if (isHi) {
+        return `🙏 ${name ? `नमस्ते, ${name}!` : 'नमस्ते!'} मैं आपका स्टैटविद्या कोपायलट हूँ।
+
+मैं आपकी निम्नलिखित में त्वरित सहायता कर सकता हूँ:
+- 📊 डैशबोर्ड (\`/dashboard\`) — तैयारी सूचकांक और कर्म अंक
+- 🎯 कौशल अंतर (\`/skill-gap\`) — योग्यता अंतराल विश्लेषण
+- 📝 मूल्यांकन (\`/assignments\`) — 8 आधिकारिक परीक्षण
+- 🧠 MCQ अभ्यास (\`/mcq-generator\`) — MoSPI मैनुअल से प्रश्न
+- 📄 दस्तावेज़ (\`/documents\`) — सर्वेक्षण नियमावली
+- 🛤️ अध्ययन पथ (\`/pathways\`) — iGOT पाठ्यक्रम
+- 👤 प्रोफ़ाइल (\`/profile\`) — संवर्ग विवरण
+
+आप क्या खोजना चाहते हैं?`;
+      }
+      return `🙏 ${name ? `Namaste, ${name}!` : 'Namaste!'} I'm your StatVidya Copilot.
+
+I can help you instantly with:
+- 📊 Dashboard (\`/dashboard\`) — Readiness Index & Karma Points
+- 🎯 Skill Gap (\`/skill-gap\`) — Competency gap analysis
+- 📝 Assessments (\`/assignments\`) — 8 statutory drills
+- 🧠 Practice MCQs (\`/mcq-generator\`) — MoSPI manual practice
+- 📄 Documents (\`/documents\`) — Official MoSPI manuals
+- 🛤️ Pathways (\`/pathways\`) — iGOT Karmayogi courses
+- 👤 Profile (\`/profile\`) — Cadre dossier & badges
+
+What would you like to explore?`;
+    },
+  },
+  {
+    id: 'thanks',
+    matchPatterns: [
+      /^(thanks?|thank\s*you|thx|ty|appreciated?|great|awesome|perfect|got\s*it|ok\s*thanks?|धन्यवाद|शुक्रिया|बहुत\s*अच्छा)[!?\s.]*$/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🙏 आपका स्वागत है! कोई और प्रश्न हो तो बेझिझक पूछें।`;
+      }
+      return `🙏 You're welcome! Feel free to ask anything else about the platform.`;
+    },
+  },
+  {
     id: 'readiness-index',
     matchPatterns: [
       'What is my readiness index and how can I improve it?',
       /readiness\s*index/i,
       /how\s*can\s*i\s*improve\s*(my\s*)?readiness/i,
       /what\s*is\s*my\s*readiness/i,
+      /my\s*readiness/i,
+      /improve\s*readiness/i,
+      /readiness\s*score/i,
+      /तैयारी\s*सूचकांक/i,
+      /मेरी\s*तैयारी/i,
     ],
     getResponse: (ctx) => {
       const isHi = ctx?.preferredLanguage === 'hi';
@@ -66,7 +125,10 @@ Hello ${name}! As a **${designation}**, your **Readiness Index** represents the 
       'Show me my top competency gaps and what to do about them',
       /top\s*(competency\s*|skill\s*)?gaps/i,
       /what\s*are\s*my\s*gaps/i,
-      /skill\s*gaps/i,
+      /skill\s*gaps?/i,
+      /competency\s*gaps?/i,
+      /gap\s*analysis/i,
+      /show\s*(me\s*)?(my\s*)?gaps/i,
       /कौशल\s*अंतर/i,
       /योग्यता\s*कमी/i,
     ],
@@ -108,10 +170,16 @@ StatVidya classifies your competency gaps into 3 severity levels based on the de
     matchPatterns: [
       'How do I start an assessment?',
       /start\s*(an\s*)?assessment/i,
-      /take\s*(an\s*)?assessment/i,
+      /take\s*(an?\s*)?assessment/i,
+      /take\s*(an?\s*)?test/i,
       /how\s*to\s*test/i,
+      /begin\s*(a\s*)?test/i,
+      /give\s*(a\s*)?test/i,
+      /attempt\s*(a\s*)?test/i,
       /मूल्यांकन\s*कैसे/i,
       /परीक्षा\s*शुरू/i,
+      /टेस्ट\s*दें/i,
+      /टेस्ट\s*कैसे/i,
     ],
     getResponse: (ctx) => {
       const isHi = ctx?.preferredLanguage === 'hi';
@@ -147,10 +215,14 @@ Assessments on StatVidya are designed to verify your practical operational skill
     matchPatterns: [
       'Recommend iGOT courses for my skill gaps',
       /recommend\s*(igot\s*)?courses/i,
-      /recommended\s*courses/i,
-      /what\s*courses\s*should\s*i\s*take/i,
+      /recommended?\s*courses/i,
+      /what\s*courses?\s*should\s*i\s*take/i,
+      /suggest\s*(some\s*)?courses/i,
+      /igot\s*courses/i,
+      /learning\s*pathway/i,
       /पाठ्यक्रम\s*सिफारिश/i,
       /कोर्स\s*सुझाव/i,
+      /कोर्स\s*बताएं/i,
     ],
     getResponse: (ctx) => {
       const isHi = ctx?.preferredLanguage === 'hi';
@@ -206,11 +278,15 @@ Visit \`/pathways\` to browse the full catalog with direct enrolment links!`;
     matchPatterns: [
       'Explain the FRAC competency levels L1 to L5',
       /explain\s*(the\s*)?frac/i,
-      /frac\s*levels/i,
+      /frac\s*(competency\s*)?levels/i,
       /l1\s*to\s*l5/i,
       /what\s*is\s*frac/i,
+      /what\s*does\s*frac\s*mean/i,
+      /frac\s*framework/i,
+      /frac\s*kya\s*hai/i,
       /स्तर\s*l1/i,
       /फ्रैक\s*स्तर/i,
+      /फ्रैक\s*क्या/i,
     ],
     getResponse: (ctx) => {
       const isHi = ctx?.preferredLanguage === 'hi';
@@ -246,11 +322,15 @@ Your verified level increases as you complete authorized learning pathways and a
     matchPatterns: [
       'Give me a quick overview of all platform features',
       /overview\s*of\s*(all\s*)?platform/i,
-      /platform\s*guide/i,
-      /features\s*overview/i,
+      /platform\s*(guide|tour|overview)/i,
+      /features?\s*overview/i,
       /what\s*can\s*(this|statvidya)\s*do/i,
+      /what\s*(is|are)\s*(all\s*)?(the\s*)?features/i,
+      /show\s*me\s*(all\s*)?(the\s*)?features/i,
+      /platform\s*features/i,
       /मंच\s*का\s*परिचय/i,
       /सुविधाएं/i,
+      /सब\s*कुछ\s*बताओ/i,
     ],
     getResponse: (ctx) => {
       const isHi = ctx?.preferredLanguage === 'hi';
@@ -291,8 +371,13 @@ StatVidya is India's dedicated AI-powered competency management system for the *
       /where\s*(are|can\s*i\s*find)\s*(the\s*)?(manuals?|documents?|pdfs?)/i,
       /how\s*to\s*upload\s*manual/i,
       /open\s*documents?/i,
+      /go\s*to\s*documents?/i,
+      /mospi\s*manuals?/i,
+      /survey\s*manuals?/i,
+      /upload\s*(a\s*)?document/i,
       /दस्तावेज़\s*कहाँ/i,
       /मैनुअल\s*कहाँ/i,
+      /दस्तावेज़\s*कैसे/i,
     ],
     getResponse: (ctx) => {
       const isHi = ctx?.preferredLanguage === 'hi';
@@ -325,8 +410,14 @@ Head to \`/documents\` in the sidebar to access official MoSPI survey manuals an
       /how\s*(does\s*)?(the\s*)?mcq\s*generator\s*work/i,
       /how\s*to\s*generate\s*(mcqs?|questions?|quiz)/i,
       /open\s*(mcq|quiz)/i,
+      /go\s*to\s*(mcq|quiz)/i,
+      /practice\s*(mcq|question)/i,
+      /generate\s*(mcq|question)/i,
+      /mcq\s*station/i,
+      /mcq\s*kaise/i,
       /एमसीक्यू\s*जनरेटर/i,
       /प्रश्न\s*कैसे\s*बनाएं/i,
+      /अभ्यास\s*प्रश्न/i,
     ],
     getResponse: (ctx) => {
       const isHi = ctx?.preferredLanguage === 'hi';
@@ -356,9 +447,14 @@ Head to \`/mcq-generator\` under Content Tools for self-paced, authenticated que
       'What tests and assignments are available?',
       /what\s*(tests?|assignments?|drills?)\s*(are\s*)?available/i,
       /list\s*(all\s*)?tests/i,
-      /show\s*assessments/i,
+      /show\s*(all\s*)?(the\s*)?assessments/i,
+      /all\s*tests/i,
+      /all\s*assessments/i,
+      /how\s*many\s*tests/i,
+      /which\s*tests/i,
       /परीक्षण\s*सूची/i,
       /कौन\s*से\s*टेस्ट\s*हैं/i,
+      /सभी\s*टेस्ट/i,
     ],
     getResponse: (ctx) => {
       const isHi = ctx?.preferredLanguage === 'hi';
@@ -400,7 +496,10 @@ Each test features timed simulations, progress palettes, and automatic FRAC comp
       'How does offline mode work?',
       /how\s*(does\s*)?offline\s*(mode\s*)?work/i,
       /can\s*i\s*work\s*without\s*internet/i,
+      /offline\s*(mode|support|work)/i,
       /indexeddb/i,
+      /no\s*internet/i,
+      /without\s*internet/i,
       /ऑफ़लाइन\s*काम/i,
       /बिना\s*इंटरनेट/i,
     ],
@@ -430,7 +529,11 @@ StatVidya is engineered for seamless operation in remote field environments with
       'Where is my profile and badges?',
       /where\s*(is|are)\s*my\s*profile/i,
       /how\s*to\s*see\s*my\s*badges/i,
-      /view\s*cadre\s*details/i,
+      /view\s*(my\s*)?(cadre|profile)\s*details/i,
+      /open\s*(my\s*)?profile/i,
+      /go\s*to\s*(my\s*)?profile/i,
+      /my\s*profile/i,
+      /my\s*badges/i,
       /मेरी\s*प्रोफ़ाइल/i,
       /बैज\s*कहाँ/i,
     ],
@@ -452,6 +555,255 @@ Navigate to \`/profile\` in the sidebar (or click your user avatar in the Topbar
 - **Cadre Dossier**: View official cadre, designation, employee ID, and department deployment.
 - **Verified FRAC Badges**: Inspect Assessment-Verified vs Self-Assessed competency credentials.
 - **Career Growth Timeline**: Track milestones from completed statutory drills and verified pathway courses.`;
+    },
+  },
+  {
+    id: 'nav-dashboard',
+    matchPatterns: [
+      /where\s*(is\s*)?(the\s*)?dashboard/i,
+      /go\s*to\s*(the\s*)?dashboard/i,
+      /open\s*(the\s*)?dashboard/i,
+      /show\s*(me\s*)?(the\s*)?dashboard/i,
+      /dashboard\s*kahan/i,
+      /डैशबोर्ड\s*कहाँ/i,
+      /डैशबोर्ड\s*दिखाओ/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📊 डैशबोर्ड पर जाने के लिए साइडबार में \`/dashboard\` पर क्लिक करें।
+
+यहाँ आप अपना समग्र तैयारी सूचकांक %, कर्म अंक, योग्यता रडार चार्ट और दैनिक अभ्यास देख सकते हैं।`;
+      }
+      return `📊 Navigate to \`/dashboard\` in the sidebar.
+
+You will find your verified Readiness Index %, Karma points ledger, Competency Radar chart, and daily operational drills.`;
+    },
+  },
+  {
+    id: 'nav-pathways',
+    matchPatterns: [
+      /where\s*(are\s*)?(the\s*)?(learning\s*)?pathways?/i,
+      /go\s*to\s*(the\s*)?pathways?/i,
+      /open\s*(the\s*)?pathways?/i,
+      /igot\s*karmayogi/i,
+      /अध्ययन\s*पथ/i,
+      /पाठ्यक्रम\s*कहाँ/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🛤️ अनुशंसित अध्ययन पथ देखने के लिए \`/pathways\` पर जाएं।
+
+iGOT कर्मयोगी और NSSTA पाठ्यक्रम सीधे आपके योग्यता अंतराल की गंभीरता के अनुसार प्राथमिकता पर दिखाए जाते हैं।`;
+      }
+      return `🛤️ Navigate to \`/pathways\` in the sidebar.
+
+iGOT Karmayogi & NSSTA courses are ranked directly by your gap severity to quickly close operational deficits.`;
+    },
+  },
+  {
+    id: 'nav-review-queue',
+    matchPatterns: [
+      /where\s*(is\s*)?(the\s*)?review\s*queue/i,
+      /go\s*to\s*(the\s*)?review/i,
+      /open\s*review/i,
+      /faculty\s*review/i,
+      /question\s*review/i,
+      /approve\s*questions?/i,
+      /समीक्षा\s*कतार/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `✅ फैकल्टी समीक्षा कतार के लिए \`/review-queue\` पर जाएं।
+
+यहाँ संकाय AI-जनरेटेड प्रश्नों का विश्लेषण करते हैं और उन्हें आधिकारिक प्रश्न बैंक में स्वीकृत करते हैं।`;
+      }
+      return `✅ Navigate to \`/review-queue\` under Content Tools.
+
+Review AI-generated questions, verify competency alignment, and approve items for national testing banks.`;
+    },
+  },
+  {
+    id: 'nav-language',
+    matchPatterns: [
+      /how\s*to\s*(change|switch)\s*(the\s*)?language/i,
+      /switch\s*(to\s*)?(hindi|english)/i,
+      /change\s*language/i,
+      /language\s*(switch|change|toggle)/i,
+      /भाषा\s*बदल/i,
+      /हिन्दी\s*में\s*बदल/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🌐 भाषा बदलने के लिए टॉपबार में भाषा बटन (EN / हिन्दी) पर क्लिक करें। पूरा मंच तत्काल अनुवादित हो जाता है।`;
+      }
+      return `🌐 Click the language toggle (EN / हिन्दी) in the Topbar to switch between English and Hindi across the entire platform.`;
+    },
+  },
+  {
+    id: 'karma-points',
+    matchPatterns: [
+      /karma\s*points?/i,
+      /what\s*are\s*karma/i,
+      /how\s*do\s*i\s*(earn|get)\s*karma/i,
+      /कर्म\s*अंक/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `⭐ कर्म अंक आपकी प्लेटफ़ॉर्म गतिविधि और सीखने की प्रगति का माप है।
+
+आप कर्म अंक कैसे अर्जित करते हैं:
+- मूल्यांकन पूर्ण करने पर
+- MCQ अभ्यास पूर्ण करने पर
+- iGOT पाठ्यक्रम पूरा करने पर
+- दैनिक अभ्यास पूर्ण करने पर
+
+अपने कर्म अंक \`/dashboard\` पर देखें।`;
+      }
+      return `⭐ Karma points measure your platform activity and learning progress.
+
+You earn Karma by:
+- Completing assessments
+- Practicing MCQs from MoSPI manuals
+- Finishing iGOT pathway courses
+- Completing daily operational drills
+
+View your Karma ledger on \`/dashboard\`.`;
+    },
+  },
+  {
+    id: 'capi-operations',
+    matchPatterns: [
+      /what\s*is\s*capi/i,
+      /capi\s*(tablet\s*)?operations?/i,
+      /capi\s*kya\s*hai/i,
+      /capi\s*क्या/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📱 CAPI (कंप्यूटर सहायित व्यक्तिगत साक्षात्कार) MoSPI के क्षेत्रीय सर्वेक्षणों के लिए टैबलेट-आधारित डेटा संग्रह प्रणाली है।
+
+- \`/assessment/comp-capi\` पर CAPI कौशल परीक्षण दें।
+- स्टैटविद्या का CAPI इंजन IndexedDB के साथ 100% ऑफ़लाइन कार्य करता है।
+- घरेलू सूचीकरण, डेटा प्रविष्टि और त्रुटि सुलह सहित सभी फील्ड संचालन शामिल हैं।`;
+      }
+      return `📱 CAPI (Computer Assisted Personal Interviewing) is MoSPI's tablet-based data collection system for field surveys.
+
+- Take the CAPI skills assessment at \`/assessment/comp-capi\`.
+- StatVidya's CAPI engine works 100% offline with encrypted IndexedDB storage.
+- Covers household listing, data canvassing, error reconciliation, and field sync protocols.`;
+    },
+  },
+  {
+    id: 'plfs-survey',
+    matchPatterns: [
+      /what\s*is\s*plfs/i,
+      /plfs\s*(survey|methodology)/i,
+      /periodic\s*labour\s*force/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📊 PLFS (आवधिक श्रम बल सर्वेक्षण) MoSPI/NSSO द्वारा संचालित भारत का प्रमुख रोज़गार सर्वेक्षण है।
+
+- PLFS सर्वेक्षण कार्यप्रणाली का आकलन: \`/assessment/comp-survey\`
+- PLFS फ़ील्ड इंस्ट्रक्शन मैनुअल: \`/documents\` पर खोजें
+- अभ्यास प्रश्न: \`/mcq-generator\` पर PLFS मैनुअल चुनकर MCQ बनाएं`;
+      }
+      return `📊 PLFS (Periodic Labour Force Survey) is India's premier employment survey conducted by MoSPI/NSSO.
+
+- Assessment on PLFS methodology: \`/assessment/comp-survey\`
+- PLFS Field Instruction Manual: Search on \`/documents\`
+- Practice questions: Generate MCQs from the PLFS manual on \`/mcq-generator\``;
+    },
+  },
+  {
+    id: 'admin-analytics',
+    matchPatterns: [
+      /admin\s*(dashboard|analytics|panel)/i,
+      /regional\s*offices?/i,
+      /zonal\s*health/i,
+      /scrutiny\s*error/i,
+      /correlation\s*chart/i,
+      /flag\s*for\s*training/i,
+      /workforce\s*governance/i,
+      /प्रशासन/i,
+      /क्षेत्रीय\s*कार्यालय/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📈 प्रशासनिक विश्लेषण के लिए \`/dashboard\` पर Admin व्यू देखें।
+
+- **क्षेत्रीय कार्यालय स्वास्थ्य**: उत्तर, दक्षिण, पूर्व, पश्चिम, मध्य ज़ोन का प्रदर्शन।
+- **जांच त्रुटि बनाम प्रशिक्षण सहसंबंध**: r = -0.84 (अधिक प्रशिक्षण = कम त्रुटियाँ)।
+- **प्राथमिकता प्रशिक्षण ध्वजारोहण**: कमज़ोर क्षेत्रों को तत्काल प्रशिक्षण के लिए चिह्नित करें।`;
+      }
+      return `📈 Access Admin analytics on \`/dashboard\` with the Admin view.
+
+- **Regional Office Zonal Health**: Performance across North, South, East, West, and Central zones.
+- **Scrutiny Error vs Training Correlation**: r = -0.84 (more training = fewer errors).
+- **Priority Training Flags**: Flag underperforming regions for immediate training intervention.`;
+    },
+  },
+  {
+    id: 'mospi-info',
+    matchPatterns: [
+      /what\s*is\s*mospi/i,
+      /mospi\s*(kya|meaning)/i,
+      /ministry\s*of\s*statistics/i,
+      /mospi\s*क्या/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `🏛️ MoSPI — सांख्यिकी और कार्यक्रम कार्यान्वयन मंत्रालय, भारत सरकार।
+
+MoSPI राष्ट्रीय सांख्यिकीय संगठन (NSO), NSSO और NSSTA का संचालन करता है। स्टैटविद्या MoSPI के कार्यबल के लिए AI-संचालित क्षमता प्रबंधन प्रदान करता है।`;
+      }
+      return `🏛️ MoSPI — Ministry of Statistics and Programme Implementation, Government of India.
+
+MoSPI oversees the National Statistical Office (NSO), NSSO, and NSSTA. StatVidya provides AI-powered competency management for MoSPI's workforce across all cadres.`;
+    },
+  },
+  {
+    id: 'statvidya-info',
+    matchPatterns: [
+      /what\s*is\s*statvidya/i,
+      /about\s*statvidya/i,
+      /statvidya\s*(kya|meaning)/i,
+      /tell\s*me\s*about\s*statvidya/i,
+      /स्टैटविद्या\s*क्या/i,
+    ],
+    getResponse: (ctx) => {
+      const isHi = ctx?.preferredLanguage === 'hi';
+      if (isHi) {
+        return `📚 स्टैटविद्या भारत का AI-संचालित क्षमता प्रबंधन मंच है, जो MoSPI के कार्यबल (NSSO, SSS, ISS, NSSTA) के लिए बनाया गया है।
+
+मुख्य विशेषताएं:
+- मिशन कर्मयोगी FRAC (L1-L5) योग्यता ट्रैकिंग
+- अनुकूली मूल्यांकन और तैयारी सूचकांक
+- iGOT कर्मयोगी अध्ययन पथ
+- MoSPI मैनुअल से AI MCQ जनरेशन
+- 100% ऑफ़लाइन फील्ड ऑपरेशन
+
+अधिक जानने के लिए \`/dashboard\` पर जाएं।`;
+      }
+      return `📚 StatVidya is India's AI-powered competency management platform built for MoSPI's workforce (NSSO, SSS, ISS, NSSTA).
+
+Key Features:
+- Mission Karmayogi FRAC (L1-L5) competency tracking
+- Adaptive assessments and Readiness Index
+- iGOT Karmayogi learning pathways
+- AI MCQ generation from official MoSPI manuals
+- 100% offline field operations via encrypted IndexedDB
+
+Visit \`/dashboard\` to get started.`;
     },
   },
 ];
@@ -483,3 +835,4 @@ export function matchPreMadeFaq(
 
   return null;
 }
+

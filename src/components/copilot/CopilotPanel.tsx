@@ -164,27 +164,11 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
     setIsLoading(true);
 
     try {
-      // ─── Fast-path Curated FAQs & Suggestions ───
+      // ─── Ultra-Fast Curated FAQs & Suggestions (instant delivery) ───
       const preMadeResponse = matchPreMadeFaq(text, userContext);
       if (preMadeResponse) {
-        // Simulate a realistic slight AI thinking delay (~450ms)
-        await new Promise((resolve) => setTimeout(resolve, 450));
-
-        // Fast, organic token typewriter effect (~16ms per chunk)
-        const words = preMadeResponse.split(/(\s+)/);
-        const chunkSize = 4;
-
-        for (let i = chunkSize; i < words.length; i += chunkSize) {
-          const currentText = words.slice(0, i).join('');
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantId
-                ? { ...m, content: currentText, isStreaming: true }
-                : m
-            )
-          );
-          await new Promise((resolve) => setTimeout(resolve, 16));
-        }
+        // Minimal delay for natural feel, then render entire response at once
+        await new Promise((resolve) => setTimeout(resolve, 80));
 
         setMessages((prev) =>
           prev.map((m) =>
@@ -197,10 +181,10 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
         return;
       }
 
-      // Build conversation history (last 6 messages for ultra-fast prompt processing)
+      // Build conversation history (last 4 messages for fastest prompt processing)
       const history = [...effectiveMessages, userMsg]
         .filter((m) => m.id !== 'welcome')
-        .slice(-6)
+        .slice(-4)
         .map((m) => ({ role: m.role, content: m.content }));
 
       const response = await fetch('/api/copilot', {
