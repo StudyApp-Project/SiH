@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { X, Send, Sparkles, Zap, RotateCcw, WifiOff } from 'lucide-react';
 import { CopilotMessage } from './CopilotMessage';
 import type { CopilotUserContext } from '@/lib/copilotPrompt';
@@ -86,15 +86,13 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Auto-update welcome message if conversation hasn't started yet and language changed
-  useEffect(() => {
-    setMessages((prev) => {
-      if (prev.length === 1 && prev[0].id === 'welcome') {
-        return [getWelcomeMessage(userContext)];
-      }
-      return prev;
-    });
-  }, [userContext?.preferredLanguage]);
+  // Dynamic welcome message based on active language if conversation is not started yet
+  const effectiveMessages = useMemo(() => {
+    if (messages.length === 1 && messages[0].id === 'welcome') {
+      return [getWelcomeMessage(userContext)];
+    }
+    return messages;
+  }, [messages, userContext]);
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {
@@ -103,7 +101,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, scrollToBottom]);
+  }, [effectiveMessages, scrollToBottom]);
 
   // Focus input when panel opens
   useEffect(() => {
@@ -196,7 +194,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
       }
 
       // Build conversation history (last 6 messages for ultra-fast prompt processing)
-      const history = [...messages, userMsg]
+      const history = [...effectiveMessages, userMsg]
         .filter((m) => m.id !== 'welcome')
         .slice(-6)
         .map((m) => ({ role: m.role, content: m.content }));
@@ -318,7 +316,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
 
   if (!isOpen) return null;
 
-  const showQuickActions = messages.length <= 1;
+  const showQuickActions = effectiveMessages.length <= 1;
 
   return (
     <>
@@ -357,7 +355,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
             </div>
           </div>
           <div className="flex items-center gap-1">
-            {messages.length > 1 && (
+            {effectiveMessages.length > 1 && (
               <button
                 onClick={clearChat}
                 className="flex h-7 w-7 items-center justify-center rounded-lg text-white/70 hover:bg-white/15 hover:text-white transition-colors"
@@ -386,7 +384,7 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
 
         {/* ─── Messages ─── */}
         <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3" id="copilot-messages">
-          {messages.map((msg) => (
+          {effectiveMessages.map((msg) => (
             <CopilotMessage
               key={msg.id}
               role={msg.role}
