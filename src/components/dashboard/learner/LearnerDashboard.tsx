@@ -16,7 +16,7 @@ import { ManualReaderModal } from './modals/ManualReaderModal';
 import { OfficerDossierModal } from './modals/OfficerDossierModal';
 import { CAPIConnectivityModal } from './modals/CAPIConnectivityModal';
 import { LearnerKarmaLedgerModal } from './modals/LearnerKarmaLedgerModal';
-import { useLocale } from 'next-intl';
+import { useSafeLocale } from '@/lib/useSafeLocale';
 import { Globe2, LayoutDashboard, BookOpen, Target, GraduationCap, Wifi, Award } from 'lucide-react';
 import type { DemoPersona } from '@/lib/types';
 
@@ -24,14 +24,9 @@ export default function LearnerDashboard({ user }: { user: DashboardUserProps })
   // Retrieve official FRAC profile
   const profile = getPersonaFRAC(user);
 
-  // Read global app locale from next-intl
-  const globalLocale = useLocale();
-  const [isHindi, setIsHindi] = useState(globalLocale === 'hi');
-
-  // Keep synced with global locale changes
-  useEffect(() => {
-    setIsHindi(globalLocale === 'hi');
-  }, [globalLocale]);
+  // Read global app locale from next-intl (with fallback to user preferred language)
+  const globalLocale = useSafeLocale(user.user_metadata?.preferred_language || 'en');
+  const isHindi = globalLocale === 'hi';
   const [activeTab, setActiveTab] = useState<'overview' | 'manuals' | 'competencies' | 'pathways' | 'capi'>('overview');
 
   // Interactive Modal States

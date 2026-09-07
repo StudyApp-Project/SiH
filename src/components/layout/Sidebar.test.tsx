@@ -21,6 +21,13 @@ vi.mock('next-intl', () => ({
       'nav.documents': 'MoSPI Manuals & Ingestion',
       'nav.mcqGenerator': 'AI Question Studio',
       'nav.reviewQueue': 'QA Triage Queue',
+      'nav.facultyCommandDesk': 'Faculty Command Desk',
+      'nav.traineeErrorAnalytics': 'Trainee Error Analytics',
+      'nav.workforceCommand': 'Workforce Command',
+      'nav.scrutinyCorrelation': 'Scrutiny Correlation',
+      'nav.regionalOfficeHealth': 'Regional Office Health',
+      'nav.nationalCompetencyMatrix': 'National Competency Matrix',
+      'nav.statutoryAssessmentAudit': 'Statutory Assessment Audit',
     };
     return map[key] || key;
   },
