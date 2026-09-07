@@ -9,6 +9,7 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { useSafeLocale } from '@/lib/useSafeLocale';
 import { getAssessmentMetas } from '@/data/assessments';
 import { ClipboardCheck, Clock, BookOpen, ChevronRight } from 'lucide-react';
 
@@ -32,6 +33,8 @@ const accentByIndex = [
 
 export default function AssignmentsClient() {
   const t = useTranslations();
+  const locale = useSafeLocale();
+  const isHindi = locale === 'hi';
   const metas = getAssessmentMetas();
 
   return (
@@ -42,17 +45,19 @@ export default function AssignmentsClient() {
           {t('nav.assessment')}
         </h1>
         <p className="text-muted-foreground">
-          Select an assessment below. Each test has its own timer that begins only after you click &quot;Start Test&quot;.
+          {isHindi
+            ? 'नीचे दिए गए परीक्षणों में से एक चुनें। प्रत्येक परीक्षण का अपना टाइमर होता है जो केवल "परीक्षा शुरू करें" पर क्लिक करने के बाद प्रारंभ होता है।'
+            : 'Select an assessment below. Each test has its own timer that begins only after you click "Start Test".'}
         </p>
       </div>
 
       {/* Stats strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Available Tests', value: metas.length.toString(), color: 'text-[#555934]' },
-          { label: 'Questions Each', value: '10', color: 'text-[#BF9B7A]' },
-          { label: 'Time Limit', value: '5-10 min', color: 'text-[#8C5B3E]' },
-          { label: 'Question Type', value: 'MCQ', color: 'text-[#593E2E]' },
+          { label: isHindi ? 'उपलब्ध परीक्षण' : 'Available Tests', value: metas.length.toString(), color: 'text-[#555934]' },
+          { label: isHindi ? 'प्रत्येक में प्रश्न' : 'Questions Each', value: '10', color: 'text-[#BF9B7A]' },
+          { label: isHindi ? 'समय सीमा' : 'Time Limit', value: isHindi ? '5-10 मिनट' : '5-10 min', color: 'text-[#8C5B3E]' },
+          { label: isHindi ? 'प्रश्न प्रकार' : 'Question Type', value: isHindi ? 'बहुविकल्पीय' : 'MCQ', color: 'text-[#593E2E]' },
         ].map((stat) => (
           <div
             key={stat.label}
@@ -66,11 +71,15 @@ export default function AssignmentsClient() {
 
       {/* Assessment Cards */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-foreground">Available Assessments</h2>
+        <h2 className="text-xl font-semibold text-foreground">
+          {isHindi ? 'उपलब्ध मूल्यांकन' : 'Available Assessments'}
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {metas.map((meta, idx) => {
             const accent = accentByIndex[idx % accentByIndex.length];
             const durationMins = Math.round(meta.durationSeconds / 60);
+            const title = (isHindi && meta.title_hi) ? meta.title_hi : meta.title;
+            const description = (isHindi && meta.description_hi) ? meta.description_hi : meta.description;
 
             return (
               <div
@@ -81,35 +90,35 @@ export default function AssignmentsClient() {
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-3xl" role="img" aria-label={meta.title}>
+                      <span className="text-3xl" role="img" aria-label={title}>
                         {iconByIndex[idx % iconByIndex.length]}
                       </span>
                       <h3 className="text-xl font-bold text-foreground group-hover:text-[#555934] transition-colors">
-                        {meta.title}
+                        {title}
                       </h3>
                     </div>
                     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${accent.badge}`}>
                       <ClipboardCheck className="w-3 h-3" />
-                      {meta.type}
+                      {isHindi ? 'बहुविकल्पीय' : meta.type}
                     </span>
                   </div>
                 </div>
 
                 {/* Description */}
                 <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-                  {meta.description}
+                  {description}
                 </p>
 
                 {/* Meta Pills */}
                 <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6">
                   <span className="flex items-center gap-1.5">
                     <BookOpen className="w-4 h-4" />
-                    <span className="font-medium text-foreground">{meta.totalQuestions}</span> Questions
+                    <span className="font-medium text-foreground">{meta.totalQuestions}</span> {isHindi ? 'प्रश्न' : 'Questions'}
                   </span>
                   <span className="text-stone-300">•</span>
                   <span className="flex items-center gap-1.5">
                     <Clock className="w-4 h-4" />
-                    <span className="font-medium text-foreground">{durationMins}</span> Minutes
+                    <span className="font-medium text-foreground">{durationMins}</span> {isHindi ? 'मिनट' : 'Minutes'}
                   </span>
                 </div>
 
@@ -120,7 +129,7 @@ export default function AssignmentsClient() {
                   prefetch={true}
                   className={`w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold transition-all shadow-xs active:scale-95 ${accent.btn}`}
                 >
-                  Take Assessment
+                  {isHindi ? 'मूल्यांकन प्रारंभ करें' : 'Take Assessment'}
                   <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -132,7 +141,10 @@ export default function AssignmentsClient() {
       {/* Footer note */}
       <div className="rounded-2xl bg-[#BF9B7A]/15 px-5 py-4 text-sm text-[#593E2E]">
         <p>
-          <strong className="text-foreground">Note:</strong> The timer for each assessment begins only after you read the instructions and click <em>Start Test</em>. You can review your answers before final submission.
+          <strong className="text-foreground">{isHindi ? 'नोट:' : 'Note:'}</strong>{' '}
+          {isHindi
+            ? 'प्रत्येक मूल्यांकन के लिए टाइमर निर्देश पढ़ने और "परीक्षा शुरू करें" पर क्लिक करने के बाद ही शुरू होता है। आप अंतिम सबमिशन से पहले अपने उत्तरों की समीक्षा कर सकते हैं।'
+            : 'The timer for each assessment begins only after you read the instructions and click Start Test. You can review your answers before final submission.'}
         </p>
       </div>
     </div>
