@@ -28,7 +28,7 @@ interface CopilotPanelProps {
 // QUICK ACTION CHIPS
 // ============================================================================
 
-const QUICK_ACTIONS = [
+const QUICK_ACTIONS_EN = [
   { label: '📊 My Readiness', prompt: 'What is my readiness index and how can I improve it?' },
   { label: '🎯 Skill Gaps', prompt: 'Show me my top competency gaps and what to do about them' },
   { label: '📝 Take Assessment', prompt: 'How do I start an assessment?' },
@@ -37,14 +37,32 @@ const QUICK_ACTIONS = [
   { label: '🧭 Platform Guide', prompt: 'Give me a quick overview of all platform features' },
 ];
 
+const QUICK_ACTIONS_HI = [
+  { label: '📊 मेरी तैयारी', prompt: 'What is my readiness index and how can I improve it?' },
+  { label: '🎯 कौशल अंतर', prompt: 'Show me my top competency gaps and what to do about them' },
+  { label: '📝 टेस्ट दें', prompt: 'How do I start an assessment?' },
+  { label: '🛤️ अनुशंसित कोर्स', prompt: 'Recommend iGOT courses for my skill gaps' },
+  { label: '🏛️ FRAC स्तर', prompt: 'Explain the FRAC competency levels L1 to L5' },
+  { label: '🧭 मंच का परिचय', prompt: 'Give me a quick overview of all platform features' },
+];
+
 // ============================================================================
 // COMPONENT
 // ============================================================================
 
 function getWelcomeMessage(userContext?: CopilotUserContext): Message {
-  const greeting = userContext?.name
-    ? `🙏 Namaste, **${userContext.name}**! I'm your StatVidya Copilot.\n\nAs a **${userContext.designation || userContext.role || 'learner'}** in ${userContext.cadre || 'the Official Statistical System'}, I can help you navigate the platform, understand your competency gaps, and find relevant iGOT courses.\n\nWhat would you like to explore?`
-    : `🙏 **Namaste!** I'm your StatVidya Copilot.\n\nI can help you with FRAC competency tracking, iGOT learning pathways, and platform navigation.\n\nWhat would you like to explore?`;
+  const isHi = userContext?.preferredLanguage === 'hi';
+  let greeting: string;
+
+  if (isHi) {
+    greeting = userContext?.name
+      ? `🙏 नमस्ते, **${userContext.name}**! मैं आपका स्टैटविद्या कोपायलट हूँ।\n\n${userContext.cadre || 'आधिकारिक सांख्यिकी प्रणाली'} में एक **${userContext.designation || userContext.role || 'शिक्षार्थी'}** के रूप में, मैं आपको प्लेटफ़ॉर्म नेविगेट करने, अपने योग्यता अंतराल को समझने और उपयुक्त iGOT पाठ्यक्रम खोजने में मदद कर सकता हूँ।\n\nआप क्या खोजना चाहेंगे?`
+      : `🙏 **नमस्ते!** मैं आपका स्टैटविद्या कोपायलट हूँ।\n\nमैं आपकी FRAC योग्यता ट्रैकिंग, iGOT अध्ययन पथ और मंच नेविगेशन में मदद कर सकता हूँ।\n\nआप क्या खोजना चाहेंगे?`;
+  } else {
+    greeting = userContext?.name
+      ? `🙏 Namaste, **${userContext.name}**! I'm your StatVidya Copilot.\n\nAs a **${userContext.designation || userContext.role || 'learner'}** in ${userContext.cadre || 'the Official Statistical System'}, I can help you navigate the platform, understand your competency gaps, and find relevant iGOT courses.\n\nWhat would you like to explore?`
+      : `🙏 **Namaste!** I'm your StatVidya Copilot.\n\nI can help you with FRAC competency tracking, iGOT learning pathways, and platform navigation.\n\nWhat would you like to explore?`;
+  }
 
   return {
     id: 'welcome',
@@ -55,6 +73,8 @@ function getWelcomeMessage(userContext?: CopilotUserContext): Message {
 }
 
 export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps) {
+  const isHindi = userContext?.preferredLanguage === 'hi';
+  const quickActions = isHindi ? QUICK_ACTIONS_HI : QUICK_ACTIONS_EN;
   const [messages, setMessages] = useState<Message[]>(() => [getWelcomeMessage(userContext)]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -65,6 +85,16 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  // Auto-update welcome message if conversation hasn't started yet and language changed
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].id === 'welcome') {
+        return [getWelcomeMessage(userContext)];
+      }
+      return prev;
+    });
+  }, [userContext?.preferredLanguage]);
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {
@@ -373,10 +403,10 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
         {showQuickActions && (
           <div className="px-3 py-2 bg-[#F2E6D8]/30">
             <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#705849] flex items-center gap-1">
-              <Zap className="h-3 w-3 text-[#555934]" /> Quick Actions
+              <Zap className="h-3 w-3 text-[#555934]" /> {isHindi ? 'त्वरित विकल्प' : 'Quick Actions'}
             </p>
             <div className="flex flex-wrap gap-1.5">
-              {QUICK_ACTIONS.map((action) => (
+              {quickActions.map((action) => (
                 <button
                   key={action.label}
                   onClick={() => handleQuickAction(action.prompt)}
@@ -400,7 +430,11 @@ export function CopilotPanel({ isOpen, onClose, userContext }: CopilotPanelProps
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about FRAC, pathways, navigation..."
+            placeholder={
+              isHindi
+                ? 'FRAC, अध्ययन पथ, या नेविगेशन के बारे में पूछें...'
+                : 'Ask about FRAC, pathways, navigation...'
+            }
             disabled={isLoading}
             className="flex-1 rounded-xl bg-white px-3 py-2 text-[13px] text-[#2d1f17] placeholder:text-stone-400 shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#555934]/20 disabled:opacity-50"
             style={{ minHeight: '36px' }}

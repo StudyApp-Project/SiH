@@ -33,7 +33,8 @@ export async function POST(request: NextRequest) {
     if (!apiKey) {
       // No API key — use offline fallback
       const lastUserMessage = messages.filter(m => m.role === 'user').pop();
-      const fallbackResponse = getOfflineFallbackResponse(lastUserMessage?.content || '');
+      const isHindi = userContext?.preferredLanguage === 'hi';
+      const fallbackResponse = getOfflineFallbackResponse(lastUserMessage?.content || '', isHindi);
       return NextResponse.json({
         message: { role: 'assistant', content: fallbackResponse },
         source: 'offline-fallback',
