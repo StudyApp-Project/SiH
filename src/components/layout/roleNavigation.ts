@@ -41,6 +41,20 @@ export const LEARNER_NAV_ITEMS: RoleNavItem[] = [
     badgeType: 'accent',
   },
   {
+    href: '/mcq-generator',
+    label: 'nav.quiz',
+    icon: Brain,
+    badge: 'AI Quiz',
+    badgeType: 'default',
+  },
+  {
+    href: '/documents',
+    label: 'nav.documents',
+    icon: FileText,
+    badge: '6 Manuals',
+    badgeType: 'default',
+  },
+  {
     href: '/pathways',
     label: 'nav.pathways',
     icon: Flag,
@@ -69,6 +83,8 @@ export const TRAINER_NAV_ITEMS: RoleNavItem[] = [
     href: '/mcq-generator',
     label: 'nav.mcqGenerator',
     icon: Brain,
+    badge: 'Item Studio',
+    badgeType: 'accent',
   },
   {
     href: '/review-queue',
@@ -81,6 +97,16 @@ export const TRAINER_NAV_ITEMS: RoleNavItem[] = [
     href: '/assignments',
     label: 'nav.traineeErrorAnalytics',
     icon: Layers,
+  },
+  {
+    href: '/skill-gap',
+    label: 'nav.skillGap',
+    icon: Target,
+  },
+  {
+    href: '/profile',
+    label: 'nav.profile',
+    icon: UserCircle,
   },
 ];
 
@@ -113,6 +139,30 @@ export const ADMIN_NAV_ITEMS: RoleNavItem[] = [
     href: '/assignments',
     label: 'nav.statutoryAssessmentAudit',
     icon: BarChart3,
+  },
+  {
+    href: '/documents',
+    label: 'nav.documents',
+    icon: FileText,
+    badge: 'Manuals',
+    badgeType: 'default',
+  },
+  {
+    href: '/mcq-generator',
+    label: 'nav.quiz',
+    icon: Brain,
+  },
+  {
+    href: '/review-queue',
+    label: 'nav.reviewQueue',
+    icon: ClipboardCheck,
+    badge: '14 QA',
+    badgeType: 'warning',
+  },
+  {
+    href: '/profile',
+    label: 'nav.profile',
+    icon: UserCircle,
   },
 ];
 

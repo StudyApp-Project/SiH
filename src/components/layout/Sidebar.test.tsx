@@ -16,6 +16,7 @@ vi.mock('next-intl', () => ({
       'nav.dashboard': 'Dashboard & Readiness',
       'nav.skillGap': 'FRAC Competency Gaps',
       'nav.assessment': 'Field & Desk Drills',
+      'nav.quiz': 'Practice Quiz & MCQs',
       'nav.pathways': 'Karmayogi Pathways',
       'nav.profile': 'Official Cadre Profile',
       'nav.documents': 'MoSPI Manuals & Ingestion',
@@ -35,15 +36,16 @@ vi.mock('next-intl', () => ({
 }));
 
 describe('Sidebar Component', () => {
-  it('renders default learner sidebar with cadre information and learning links', () => {
+  it('renders default learner sidebar with cadre information, quiz, documents, and learning links', () => {
     const html = renderToString(<Sidebar initialRole="learner" />);
     expect(html).toContain('FRAC Competency Gaps');
     expect(html).toContain('Field &amp; Desk Drills');
+    expect(html).toContain('Practice Quiz &amp; MCQs');
+    expect(html).toContain('MoSPI Manuals &amp; Ingestion');
     expect(html).toContain('Karmayogi Pathways');
 
-    // Should NOT contain trainer-specific QA tools
+    // Should NOT contain faculty QA triage tools
     expect(html).not.toContain('QA Triage Queue');
-    expect(html).not.toContain('AI Question Studio');
   });
 
   it('renders trainer sidebar with NSSTA Faculty identity and QA tools', () => {
