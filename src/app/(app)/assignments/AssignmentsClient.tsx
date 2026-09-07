@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useSafeLocale } from '@/lib/useSafeLocale';
 import { getAssessmentMetas } from '@/data/assessments';
-import { ClipboardCheck, Clock, BookOpen, ChevronRight } from 'lucide-react';
+import { ClipboardCheck, Clock, BookOpen, ChevronRight, Brain } from 'lucide-react';
 
 const iconByIndex = [
   '📱', // CAPI Operations
@@ -67,6 +67,37 @@ export default function AssignmentsClient() {
             <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
           </div>
         ))}
+      </div>
+
+      {/* Self-paced Quiz & Practice Station Banner */}
+      <div className="rounded-2xl border border-[#BF9B7A]/30 bg-gradient-to-r from-[#FAF6F0] via-white to-[#FAF6F0] p-5 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-start sm:items-center gap-3.5">
+          <div className="h-10 w-10 rounded-xl bg-[#555934]/12 flex items-center justify-center text-[#555934] shrink-0">
+            <Brain className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm sm:text-base font-bold text-[#2d1f17]">
+                {isHindi ? 'स्व-गति क्विज़ एवं अभ्यास एमसीक्यू' : 'Self-Paced Practice & AI Quiz Studio'}
+              </h3>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#555934]/15 text-[#555934]">
+                {isHindi ? 'एआई समर्थित' : 'MoSPI Grounded'}
+              </span>
+            </div>
+            <p className="text-xs text-[#705849] mt-0.5">
+              {isHindi
+                ? 'मूल्यांकन से पहले आधिकारिक MoSPI मैनुअल (CAPI, अनुसूची 0.0, PLFS) से कस्टम अभ्यास प्रश्न उत्पन्न करें।'
+                : 'Generate targeted practice questions and test knowledge from MoSPI field manuals before statutory assessments.'}
+            </p>
+          </div>
+        </div>
+        <Link
+          href="/mcq-generator"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#555934] text-white text-xs font-bold hover:bg-[#3e4225] transition-all shadow-xs shrink-0 cursor-pointer"
+        >
+          <span>{isHindi ? 'क्विज़ स्टेशन खोलें' : 'Launch Quiz Station'}</span>
+          <ChevronRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
       {/* Assessment Cards */}

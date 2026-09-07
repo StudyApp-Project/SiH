@@ -18,6 +18,8 @@ import {
   Trash2,
   Download,
   Database,
+  Search,
+  Sparkles,
 } from 'lucide-react';
 import { useSafeLocale } from '@/lib/useSafeLocale';
 
@@ -32,6 +34,21 @@ export default function DocumentsPage() {
   const [selectedCompetency, setSelectedCompetency] = useState('comp-capi');
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
   const [selectedChunkDoc, setSelectedChunkDoc] = useState<IngestedDocument | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilterComp, setActiveFilterComp] = useState<string>('all');
+
+  const filteredDocuments = documents.filter((d) => {
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch =
+      q === '' ||
+      d.title.toLowerCase().includes(q) ||
+      d.filename.toLowerCase().includes(q) ||
+      (d.targetCompetencies && d.targetCompetencies.some((c) => c.toLowerCase().includes(q)));
+    const matchesComp =
+      activeFilterComp === 'all' ||
+      (d.targetCompetencies && d.targetCompetencies.includes(activeFilterComp));
+    return matchesSearch && matchesComp;
+  });
 
   // Manual refresh handler
   const handleRefresh = async () => {
@@ -198,9 +215,9 @@ export default function DocumentsPage() {
         </CardContent>
       </Card>
 
-      {/* Document Library Table */}
+      {/* Document Library Table with Interactive Documents Bar */}
       <Card className="rounded-2xl bg-white shadow-card">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
           <div>
             <div className="flex items-center gap-2">
               <CardTitle className="text-lg text-[#2d1f17]">
@@ -217,37 +234,126 @@ export default function DocumentsPage() {
                 : `${documents.length} reference manuals indexed for grounding Multi-AI Question Generation.`}
             </CardDescription>
           </div>
-          <button
-            onClick={handleRefresh}
-            disabled={isLoadingDocs}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-[#555934] bg-[#555934]/10 hover:bg-[#555934]/20 transition disabled:opacity-50 cursor-pointer"
-            title="Refresh documents from Firestore"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isLoadingDocs ? 'animate-spin' : ''}`} />
-            {isHindi ? 'रिफ्रेश' : 'Refresh'}
-          </button>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href="/mcq-generator"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#555934] text-white hover:bg-[#3e4225] transition shadow-xs cursor-pointer"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-[#F8C858]" />
+              <span>{isHindi ? 'दस्तावेज़ से क्विज़ बनाएं' : 'Practice Quiz from Manuals'}</span>
+            </Link>
+
+            <button
+              onClick={handleRefresh}
+              disabled={isLoadingDocs}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-[#555934] bg-[#555934]/10 hover:bg-[#555934]/20 transition disabled:opacity-50 cursor-pointer"
+              title="Refresh documents from Firestore"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${isLoadingDocs ? 'animate-spin' : ''}`} />
+              {isHindi ? 'रिफ्रेश' : 'Refresh'}
+            </button>
+          </div>
         </CardHeader>
-        <CardContent>
-          <div className="divide-y divide-[#F2E6D8]">
-            {documents.map((doc) => (
-              <div key={doc.id} className="py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-2.5 bg-[#555934]/10 rounded-xl text-[#555934] shrink-0 mt-0.5">
-                    <FileText className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-[#2d1f17]">{doc.title}</h4>
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-[#705849] mt-0.5">
-                      <span className="font-mono">{doc.filename}</span>
-                      <span>•</span>
-                      <span>{(doc.sizeBytes / 1024 / 1024).toFixed(1)} MB</span>
-                      <span>•</span>
-                      <span className="inline-flex items-center gap-1 font-semibold text-[#555934]">
-                        <Layers className="h-3 w-3" />
-                        {doc.chunkCount} {isHindi ? 'खंड' : 'Chunks'}
-                      </span>
+
+        {/* Dedicated Documents Bar (Search & Filter Toolbar) */}
+        <div className="px-6 pb-4 border-b border-[#F2E6D8] space-y-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* Search input */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#705849]/60" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={isHindi ? "दस्तावेज़ या नियमावली खोजें... (शीर्षक, फ़ाइल या क्षमता)" : "Search documents & manuals by title, filename, or competency..."}
+                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl bg-[#FAF6F0] border border-[#BF9B7A]/30 text-[#2d1f17] placeholder:text-[#705849]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#555934]/20 transition shadow-2xs"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#705849] hover:text-[#2d1f17]"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Document Count Badge */}
+            <span className="text-xs font-mono font-semibold text-[#705849] px-2.5 py-1.5 rounded-lg bg-[#FAF6F0] border border-[#BF9B7A]/25 shrink-0 self-center sm:self-auto">
+              {filteredDocuments.length} / {documents.length} {isHindi ? 'मैनुअल' : 'manuals'}
+            </span>
+          </div>
+
+          {/* Competency Filter Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
+            {[
+              { id: 'all', label: isHindi ? 'सभी दस्तावेज़' : 'All Manuals' },
+              { id: 'comp-capi', label: isHindi ? 'CAPI टैबलेट' : 'CAPI Operations' },
+              { id: 'comp-demarcation', label: isHindi ? 'सीमांकन (अनुसूची 0.0)' : 'Demarcation (Sch 0.0)' },
+              { id: 'comp-data', label: isHindi ? 'डेटा संवीक्षा (PLFS)' : 'Data Scrutiny (PLFS)' },
+              { id: 'comp-survey', label: isHindi ? 'नमूनाकरण एवं डिजाइन' : 'Sampling & Design' },
+              { id: 'comp-scrutiny', label: isHindi ? 'फील्ड सत्यापन' : 'Field Validation' },
+            ].map((comp) => (
+              <button
+                key={comp.id}
+                type="button"
+                onClick={() => setActiveFilterComp(comp.id)}
+                className={`px-3 py-1 rounded-xl font-medium transition cursor-pointer shrink-0 ${
+                  activeFilterComp === comp.id
+                    ? 'bg-[#555934] text-white shadow-2xs font-bold'
+                    : 'bg-[#FAF6F0] text-[#705849] hover:bg-[#F2E6D8] border border-[#BF9B7A]/25'
+                }`}
+              >
+                {comp.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <CardContent className="pt-4">
+          {filteredDocuments.length === 0 ? (
+            <div className="py-12 text-center space-y-3">
+              <FileText className="h-10 w-10 text-[#BF9B7A] mx-auto opacity-50" />
+              <p className="text-sm font-semibold text-[#2d1f17]">
+                {isHindi ? 'कोई दस्तावेज़ नहीं मिला' : 'No documents match your filter'}
+              </p>
+              <p className="text-xs text-[#705849]">
+                {isHindi ? 'कृपया दूसरा खोज शब्द आज़माएँ या फ़िल्टर रीसेट करें।' : 'Try adjusting your search query or competency filter.'}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setActiveFilterComp('all');
+                }}
+                className="px-3.5 py-1.5 rounded-xl bg-[#555934] text-white text-xs font-semibold hover:bg-[#3e4225] transition"
+              >
+                {isHindi ? 'फ़िल्टर साफ़ करें' : 'Clear Filters'}
+              </button>
+            </div>
+          ) : (
+            <div className="divide-y divide-[#F2E6D8]">
+              {filteredDocuments.map((doc) => (
+                <div key={doc.id} className="py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2.5 bg-[#555934]/10 rounded-xl text-[#555934] shrink-0 mt-0.5">
+                      <FileText className="h-5 w-5" />
                     </div>
-                  </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-[#2d1f17]">{doc.title}</h4>
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-[#705849] mt-0.5">
+                        <span className="font-mono">{doc.filename}</span>
+                        <span>•</span>
+                        <span>{(doc.sizeBytes / 1024 / 1024).toFixed(1)} MB</span>
+                        <span>•</span>
+                        <span className="inline-flex items-center gap-1 font-semibold text-[#555934]">
+                          <Layers className="h-3 w-3" />
+                          {doc.chunkCount} {isHindi ? 'खंड' : 'Chunks'}
+                        </span>
+                      </div>
+                    </div>
                 </div>
 
                 <div className="flex items-center gap-2 self-end md:self-auto">
@@ -295,7 +401,8 @@ export default function DocumentsPage() {
               </div>
             ))}
           </div>
-        </CardContent>
+        )}
+      </CardContent>
       </Card>
 
       {/* Semantic Chunks Modal */}
