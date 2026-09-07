@@ -234,17 +234,17 @@
   },
   "skillGap": {
     "title": "कौशल अंतर विश्लेषण",
-    "subtitle": "वर्तमान बनाम आवश्यक कौशल स्तर",
-    "highSeverity": "उच्च 심각성",
+    "subtitle": "वर्तमान बनाम आवश्यक क्षमता स्तर",
+    "highSeverity": "उच्च गंभीरता",
     "moderateSeverity": "मध्यम",
-    "lowSeverity": "दक्ष",
+    "lowSeverity": "प्रवीण",
     "activity": "गतिविधि",
     "currentLevel": "वर्तमान स्तर",
-    "targetLevel": "लक्ष्य स्तर",
-    "gap": "अंतर",
-    "explanation": "यह महत्वपूर्ण क्यों है",
+    "targetLevel": "लक्षित स्तर",
+    "gap": "कौशल अंतर",
+    "explanation": "यह क्यों महत्वपूर्ण है",
     "assessmentVerified": "मूल्यांकन सत्यापित",
-    "selfAssessed": "स्व-मूल्यांकन"
+    "selfAssessed": "स्व-मूल्यांकित"
   },
   "pathways": {
     "title": "अध्ययन पथ",
