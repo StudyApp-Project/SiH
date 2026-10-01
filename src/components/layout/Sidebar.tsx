@@ -209,15 +209,16 @@ export function Sidebar({ initialRole, currentUser }: SidebarProps) {
   const [syncing, setSyncing] = useState(false);
   const [synced, setSynced] = useState(false);
 
-  const togglePin = () => {
+  const setPinned = (pinned: boolean) => {
     try {
-      const next = !isPinned;
-      localStorage.setItem('statvidya_sidebar_pinned', String(next));
+      localStorage.setItem('statvidya_sidebar_pinned', String(pinned));
       window.dispatchEvent(new Event('statvidya_pin_changed'));
     } catch {
       // ignore
     }
   };
+
+  const togglePin = () => setPinned(!isPinned);
 
   const handleMouseEnter = () => {
     if (leaveTimeoutRef.current) {
@@ -586,7 +587,7 @@ export function Sidebar({ initialRole, currentUser }: SidebarProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    if (isPinned) setIsPinned(false);
+                    if (isPinned) setPinned(false);
                     setIsHovered(false);
                   }}
                   aria-label="Collapse sidebar"
